@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Bán hàng — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="256.0" cy="396.0" rx="182.0" ry="46.0" fill="#4B2E2E" />
+</g>
+<ellipse cx="256.0" cy="396.0" rx="182.0" ry="46.0" fill="#FFFDF8" />
+<ellipse cx="256.0" cy="392.0" rx="120.0" ry="22.0" fill="#EDE3D3" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M350,232 C432,226 442,330 352,338 L352,306 C398,300 396,262 350,266 Z" fill="#4B2E2E" />
+<path d="M134,214 L378,214 C378,330 340,392 256,392 C172,392 134,330 134,214 Z" fill="#4B2E2E" />
+</g>
+<path d="M350,232 C432,226 442,330 352,338 L352,306 C398,300 396,262 350,266 Z" fill="#FFFDF8" />
+<path d="M134,214 L378,214 C378,330 340,392 256,392 C172,392 134,330 134,214 Z" fill="#FFFDF8" />
+<ellipse cx="256.0" cy="216.0" rx="114.0" ry="26.0" fill="#5B3A29" />
+<ellipse cx="232.0" cy="210.0" rx="48.0" ry="8.0" fill="#8A5A3E" />
+<path d="M162,250 C166,316 192,356 226,372" fill="none" stroke="#E8DCC8" stroke-width="16" stroke-linecap="round"/>
+</svg>

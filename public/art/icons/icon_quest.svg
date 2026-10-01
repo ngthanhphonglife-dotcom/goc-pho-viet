@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Nhiệm vụ — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="118.0" y="132.0" width="290.0" height="322.0" rx="26.0" fill="#4B2E2E" transform="rotate(-7 263 293)"/>
+</g>
+<rect x="118.0" y="132.0" width="290.0" height="322.0" rx="26.0" fill="#B23A32" transform="rotate(-7 263 293)"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="98.0" y="96.0" width="290.0" height="322.0" rx="20.0" fill="#4B2E2E" transform="rotate(-7 243 257)"/>
+</g>
+<rect x="98.0" y="96.0" width="290.0" height="322.0" rx="20.0" fill="#FFF8EC" transform="rotate(-7 243 257)"/>
+<line x1="150.0" y1="176.0" x2="330.0" y2="156.0" stroke="#C9B59A" stroke-width="12.0" stroke-linecap="round" />
+<line x1="150.0" y1="228.0" x2="300.0" y2="208.0" stroke="#C9B59A" stroke-width="12.0" stroke-linecap="round" />
+<line x1="150.0" y1="280.0" x2="336.0" y2="260.0" stroke="#C9B59A" stroke-width="12.0" stroke-linecap="round" />
+<line x1="150.0" y1="332.0" x2="276.0" y2="312.0" stroke="#C9B59A" stroke-width="12.0" stroke-linecap="round" />
+<path d="M330,410 L388,348 L388,392 Q384,408 368,412 Z" fill="#EAD9BD" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="330.0,92.0 366.0,88.0 372.0,168.0 352.0,150.0 336.0,172.0" fill="#4B2E2E" />
+</g>
+<polygon points="330.0,92.0 366.0,88.0 372.0,168.0 352.0,150.0 336.0,172.0" fill="#D2453B" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="-14.0" y="-120.0" width="28.0" height="210.0" rx="12.0" fill="#4B2E2E" transform="translate(400 300) rotate(32)"/>
+</g>
+<rect x="-14.0" y="-120.0" width="28.0" height="210.0" rx="12.0" fill="#F2B632" transform="translate(400 300) rotate(32)"/>
+<polygon points="-14.0,90.0 14.0,90.0 0.0,124.0" fill="#F3D7A6" transform="translate(400 300) rotate(32)"/>
+</svg>

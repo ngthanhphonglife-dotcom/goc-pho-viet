@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="2340" viewBox="0 0 1080 2340">
+<title>Bầu trời — Góc Phố Việt (original vector art)</title>
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FCBEA"/><stop offset="0.55" stop-color="#C9E7F4"/><stop offset="1" stop-color="#F3E9D2"/></linearGradient></defs>
+<rect x="0.0" y="0.0" width="1080.0" height="1300.0" rx="0.0" fill="url(#sky)"/>
+<g opacity="0.9">
+<ellipse cx="150.0" cy="330.0" rx="90.0" ry="34.0" fill="#FFFFFF"/>
+<ellipse cx="95.0" cy="338.0" rx="55.0" ry="26.0" fill="#FFFFFF"/>
+<ellipse cx="210.0" cy="340.0" rx="60.0" ry="24.0" fill="#FFFFFF"/>
+</g>
+<g opacity="0.9">
+<ellipse cx="360.0" cy="470.0" rx="63.0" ry="23.8" fill="#FFFFFF"/>
+<ellipse cx="321.5" cy="475.6" rx="38.5" ry="18.2" fill="#FFFFFF"/>
+<ellipse cx="402.0" cy="477.0" rx="42.0" ry="16.8" fill="#FFFFFF"/>
+</g>
+<g opacity="0.9">
+<ellipse cx="60.0" cy="640.0" rx="72.0" ry="27.2" fill="#FFFFFF"/>
+<ellipse cx="16.0" cy="646.4" rx="44.0" ry="20.8" fill="#FFFFFF"/>
+<ellipse cx="108.0" cy="648.0" rx="48.0" ry="19.2" fill="#FFFFFF"/>
+</g>
+</svg>

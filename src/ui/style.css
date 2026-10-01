@@ -1,0 +1,265 @@
+/* Góc Phố Việt — Master UI (Phase 0)
+   Đơn vị thiết kế: 1 u = 1 px trên màn 1080 × 1920. --u quy đổi ra px thật theo bề ngang khung game,
+   nên toàn bộ UI là vector/HTML vẽ đúng độ phân giải màn hình (không ảnh bị phóng → không mờ).
+   Không dùng transform để bù kích thước màn hình; transform chỉ dùng cho hiệu ứng nhấn/mở popup. */
+
+@font-face {
+  font-family: "Be Vietnam Pro";
+  src: url("/fonts/BeVietnamPro-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: block;
+}
+@font-face {
+  font-family: "Be Vietnam Pro";
+  src: url("/fonts/BeVietnamPro-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: block;
+}
+
+:root {
+  --primary: #ae1c3f;
+  --cream: #f5ede0;
+  --ink: #4b2e2e;
+  --sub: #6b705c;
+  --gold: #e6b325;
+  --green: #79a867;
+  --pink: #e57373;
+  --border: rgba(75, 46, 46, 0.38);
+  --shadow: 0 calc(8 * var(--u)) calc(18 * var(--u)) rgba(40, 20, 10, 0.28);
+  /* khung game: dọc, rộng tối đa = cao × 9/16 (màn rộng như iPad/desktop có viền hai bên) */
+  --app-w: min(100vw, 100dvh * 0.5625);
+  --u: calc(var(--app-w) / 1080);
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #2a1c1a;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+#app {
+  position: relative;
+  width: var(--app-w);
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #cfe8f3;
+}
+
+#world { position: absolute; inset: 0; }
+#world canvas { display: block; width: 100%; height: 100%; }
+
+#ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Safe Area: mọi khối UI nằm trong vùng an toàn (tai thỏ, Dynamic Island, home indicator). */
+.safe-area {
+  position: absolute;
+  top: var(--safe-t);
+  bottom: var(--safe-b);
+  left: var(--safe-l);
+  right: var(--safe-r);
+}
+
+.panel {
+  position: absolute;
+  background: var(--cream);
+  border: calc(3 * var(--u)) solid var(--border);
+  border-radius: calc(24 * var(--u));
+  box-shadow: var(--shadow);
+}
+
+.btn {
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  transition: transform 80ms ease-out, filter 80ms;
+}
+.btn:active, .btn.pressed { transform: scale(0.95); filter: brightness(0.94); }
+/* nút có dạng panel (ô Thời tiết): giữ nền + viền của panel */
+.btn.panel { background: var(--cream); border: calc(3 * var(--u)) solid var(--border); }
+.btn:focus-visible { outline: calc(5 * var(--u)) solid var(--gold); outline-offset: calc(4 * var(--u)); }
+
+.icon { display: block; object-fit: contain; pointer-events: none; }
+.fit { white-space: nowrap; overflow: hidden; }
+
+/* ---------------- TopHUD (bố cục theo % bề ngang thiết kế 1080) ---------------- */
+.top-hud {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: calc(240 * var(--u));
+}
+
+.calendar { left: 1.852%; width: 18.519%; top: calc(26 * var(--u)); height: calc(214 * var(--u)); text-align: center; }
+.calendar .head {
+  margin: calc(6 * var(--u)) calc(6 * var(--u)) 0;
+  height: calc(62 * var(--u));
+  border-radius: calc(18 * var(--u));
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: calc(34 * var(--u));
+  display: flex; align-items: center; justify-content: center;
+}
+.calendar .weekday { margin-top: calc(10 * var(--u)); font-size: calc(30 * var(--u)); }
+.calendar .clock { font-weight: 700; font-size: calc(50 * var(--u)); line-height: 1.15; letter-spacing: calc(1 * var(--u)); }
+.ring {
+  position: absolute;
+  top: calc(-20 * var(--u));
+  width: calc(18 * var(--u)); height: calc(46 * var(--u));
+  border-radius: calc(9 * var(--u));
+  background: #dad4cc;
+  border: calc(3 * var(--u)) solid var(--border);
+}
+
+.weather { left: 21.481%; width: 18.519%; top: calc(24 * var(--u)); height: calc(110 * var(--u)); display: flex; align-items: center; }
+.weather .icon { width: calc(70 * var(--u)); height: calc(70 * var(--u)); margin-left: calc(8 * var(--u)); flex: none; }
+.weather .txt { margin-left: calc(6 * var(--u)); margin-right: calc(10 * var(--u)); flex: 1; min-width: 0; text-align: left; }
+.weather .label { font-size: calc(26 * var(--u)); line-height: 1.25; }
+.weather .temp { font-weight: 700; font-size: calc(38 * var(--u)); line-height: 1.1; }
+
+.pill { border-radius: calc(48 * var(--u)); display: flex; align-items: center; }
+.money { left: 41.296%; width: 31.481%; top: calc(31 * var(--u)); height: calc(96 * var(--u)); }
+.money .icon { width: calc(62 * var(--u)); height: calc(62 * var(--u)); margin-left: calc(12 * var(--u)); flex: none; }
+.money .value { flex: 1; text-align: center; font-weight: 700; font-size: calc(36 * var(--u)); min-width: 0; }
+.add-money {
+  width: calc(64 * var(--u)); height: calc(64 * var(--u));
+  margin-right: calc(14 * var(--u));
+  border-radius: calc(14 * var(--u));
+  background: var(--green);
+  border: calc(3 * var(--u)) solid var(--border);
+  color: #fff; font-weight: 700; font-size: calc(46 * var(--u)); line-height: 1;
+  display: flex; align-items: center; justify-content: center; flex: none;
+}
+/* vùng chạm rộng hơn hình (≥ 44pt theo Apple HIG) mà không đổi giao diện */
+.add-money { position: relative; }
+.add-money::after { content: ""; position: absolute; inset: calc(-22 * var(--u)) calc(-16 * var(--u)) calc(-22 * var(--u)) calc(-30 * var(--u)); }
+.reputation { left: 74.074%; width: 13.889%; top: calc(31 * var(--u)); height: calc(96 * var(--u)); }
+.reputation .icon { width: calc(56 * var(--u)); height: calc(56 * var(--u)); margin-left: calc(12 * var(--u)); flex: none; }
+.reputation .value { flex: 1; text-align: center; font-weight: 700; font-size: calc(38 * var(--u)); }
+
+.settings-btn { position: absolute; left: 89.259%; width: 10.185%; top: calc(24 * var(--u)); height: calc(110 * var(--u)); display: flex; align-items: center; justify-content: center; }
+.settings-btn .icon { width: calc(96 * var(--u)); height: calc(96 * var(--u)); filter: drop-shadow(0 calc(4 * var(--u)) calc(3 * var(--u)) rgba(0, 0, 0, 0.28)); }
+
+/* ---------------- Quest panel ---------------- */
+.quest { left: calc(20 * var(--u)); top: calc(256 * var(--u)); width: calc(620 * var(--u)); height: calc(222 * var(--u)); border-radius: calc(24 * var(--u)); background: rgba(245, 237, 224, 0.97); }
+.quest .ring { left: calc(36 * var(--u)); }
+.quest .title { position: absolute; left: calc(22 * var(--u)); top: calc(12 * var(--u)); right: calc(22 * var(--u)); height: calc(50 * var(--u)); display: flex; align-items: center; color: var(--primary); font-weight: 700; font-size: calc(32 * var(--u)); }
+.quest .title .icon { width: calc(40 * var(--u)); height: calc(40 * var(--u)); margin-right: calc(10 * var(--u)); }
+.qrow { position: absolute; left: calc(20 * var(--u)); right: calc(20 * var(--u)); height: calc(70 * var(--u)); }
+.qrow .box { position: absolute; left: 0; top: calc(12 * var(--u)); width: calc(46 * var(--u)); height: calc(46 * var(--u)); border-radius: calc(10 * var(--u)); background: #fff; border: calc(3 * var(--u)) solid rgba(75, 46, 46, 0.55); }
+.qrow.done .box { background: var(--green); border-color: rgba(75, 46, 46, 0.5); }
+.qrow .box .icon { width: 100%; height: 100%; padding: calc(5 * var(--u)); display: none; }
+.qrow.done .box .icon { display: block; }
+.qrow .qtitle { position: absolute; left: calc(62 * var(--u)); right: calc(120 * var(--u)); top: calc(2 * var(--u)); font-size: calc(28 * var(--u)); line-height: calc(40 * var(--u)); }
+.qrow.no-count .qtitle { right: 0; top: calc(15 * var(--u)); }
+.qrow .qprog { position: absolute; right: 0; top: calc(2 * var(--u)); font-weight: 700; font-size: calc(28 * var(--u)); line-height: calc(40 * var(--u)); }
+.qrow .bar { position: absolute; left: calc(62 * var(--u)); right: 0; bottom: calc(8 * var(--u)); height: calc(16 * var(--u)); border-radius: calc(8 * var(--u)); background: rgba(107, 112, 92, 0.25); overflow: hidden; }
+.qrow .bar i { display: block; height: 100%; border-radius: inherit; background: var(--green); transition: width 300ms ease-out; }
+
+/* ---------------- Right action menu ---------------- */
+.right-menu { position: absolute; right: calc(10 * var(--u)); top: calc(256 * var(--u)); width: calc(170 * var(--u)); }
+.rbtn { position: absolute; left: calc(10 * var(--u)); width: calc(150 * var(--u)); height: calc(160 * var(--u)); background: var(--cream); border: calc(3 * var(--u)) solid var(--border); border-radius: calc(24 * var(--u)); box-shadow: var(--shadow); }
+.rbtn .icon { position: absolute; left: 50%; top: calc(10 * var(--u)); width: calc(96 * var(--u)); height: calc(96 * var(--u)); margin-left: calc(-48 * var(--u)); }
+.rbtn .lbl { position: absolute; left: calc(4 * var(--u)); right: calc(4 * var(--u)); bottom: calc(10 * var(--u)); text-align: center; font-weight: 700; font-size: calc(26 * var(--u)); }
+
+/* ---------------- Bottom navigation (anchor theo % bề ngang thanh) ---------------- */
+.bottom-nav { position: absolute; left: calc(12 * var(--u)); right: calc(12 * var(--u)); bottom: calc(12 * var(--u)); height: calc(220 * var(--u)); border-radius: calc(32 * var(--u)); }
+.nbtn { position: absolute; top: calc(10 * var(--u)); height: calc(200 * var(--u)); }
+.nbtn .icon { position: absolute; left: 50%; top: calc(12 * var(--u)); width: calc(110 * var(--u)); height: calc(110 * var(--u)); margin-left: calc(-55 * var(--u)); }
+.nbtn .lbl { position: absolute; left: calc(4 * var(--u)); right: calc(4 * var(--u)); bottom: calc(14 * var(--u)); text-align: center; font-weight: 700; font-size: calc(28 * var(--u)); }
+.divider { position: absolute; top: calc(40 * var(--u)); width: calc(3 * var(--u)); height: calc(140 * var(--u)); background: rgba(75, 46, 46, 0.18); border-radius: calc(2 * var(--u)); }
+
+.sell-btn {
+  position: absolute;
+  left: 37.12%; width: 25.76%;
+  bottom: calc(16 * var(--u));
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--primary);
+  border: calc(15 * var(--u)) solid var(--cream);
+  box-shadow: 0 0 0 calc(5 * var(--u)) var(--ink), 0 calc(10 * var(--u)) calc(24 * var(--u)) rgba(40, 20, 10, 0.4);
+  color: #fff;
+}
+.sell-btn .icon { position: absolute; left: 20%; right: 20%; top: 8%; height: 56%; width: 60%; }
+.sell-btn .lbl { position: absolute; left: 6%; right: 6%; bottom: 13%; text-align: center; font-weight: 700; font-size: calc(36 * var(--u)); }
+
+/* ---------------- Popup placeholder ---------------- */
+.overlay {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: auto;
+  opacity: 0; transition: opacity 180ms ease-out;
+}
+.overlay.open { opacity: 1; }
+.overlay[hidden] { display: none; }
+.card {
+  position: relative;
+  width: calc(860 * var(--u));
+  min-height: calc(900 * var(--u));
+  background: var(--cream);
+  border: calc(3 * var(--u)) solid var(--border);
+  border-radius: calc(32 * var(--u));
+  box-shadow: 0 calc(16 * var(--u)) calc(40 * var(--u)) rgba(0, 0, 0, 0.35);
+  padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(44 * var(--u));
+  text-align: center;
+  transform: scale(0.88); transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.overlay.open .card { transform: scale(1); }
+.card .head { height: calc(120 * var(--u)); border-radius: calc(24 * var(--u)); background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: calc(48 * var(--u)); padding: 0 calc(110 * var(--u)); position: relative; }
+.card .x { position: absolute; right: calc(18 * var(--u)); top: 50%; margin-top: calc(-42 * var(--u)); width: calc(84 * var(--u)); height: calc(84 * var(--u)); border-radius: 50%; background: var(--cream); color: var(--primary); font-weight: 700; font-size: calc(40 * var(--u)); }
+.card .big { width: calc(220 * var(--u)); height: calc(220 * var(--u)); margin: calc(36 * var(--u)) auto 0; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; border: calc(3 * var(--u)) solid var(--border); }
+.card .big .icon { width: calc(170 * var(--u)); height: calc(170 * var(--u)); }
+.card .tag { display: inline-block; margin-top: calc(26 * var(--u)); padding: calc(10 * var(--u)) calc(34 * var(--u)); border-radius: calc(32 * var(--u)); background: var(--gold); font-weight: 700; font-size: calc(30 * var(--u)); }
+.card .body { margin: calc(26 * var(--u)) calc(50 * var(--u)) 0; font-size: calc(36 * var(--u)); line-height: 1.4; }
+.card .note { margin-top: calc(18 * var(--u)); font-size: calc(26 * var(--u)); color: var(--sub); font-style: italic; }
+.card .close { display: block; margin: calc(44 * var(--u)) auto 0; width: calc(460 * var(--u)); height: calc(120 * var(--u)); border-radius: calc(24 * var(--u)); background: var(--primary); color: #fff; font-weight: 700; font-size: calc(40 * var(--u)); border: calc(3 * var(--u)) solid rgba(75, 46, 46, 0.5); }
+
+/* ---------------- Toast ---------------- */
+.toast {
+  position: absolute; left: 50%; bottom: calc(300 * var(--u));
+  width: calc(860 * var(--u)); margin-left: calc(-430 * var(--u));
+  padding: calc(26 * var(--u)) calc(24 * var(--u));
+  border-radius: calc(32 * var(--u));
+  background: rgba(75, 46, 46, 0.92); color: #fff; text-align: center;
+  font-weight: 700; font-size: calc(36 * var(--u));
+  opacity: 0; transition: opacity 200ms; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* ---------------- Xoay dọc ---------------- */
+#rotate { display: none; }
+@media (orientation: landscape) and (max-height: 520px) {
+  #app { display: none; }
+  #rotate {
+    display: flex; position: fixed; inset: 0; flex-direction: column; align-items: center; justify-content: center;
+    background: #f5ede0; color: #4b2e2e; font: 700 20px "Be Vietnam Pro", system-ui, sans-serif; text-align: center; padding: 24px;
+  }
+  #rotate img { border-radius: 22px; margin-bottom: 16px; }
+}

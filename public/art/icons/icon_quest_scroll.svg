@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Nhiệm vụ chính — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="122.0" y="120.0" width="268.0" height="300.0" rx="30.0" fill="#4B2E2E" />
+<rect x="96.0" y="96.0" width="320.0" height="64.0" rx="32.0" fill="#4B2E2E" />
+<rect x="96.0" y="384.0" width="320.0" height="64.0" rx="32.0" fill="#4B2E2E" />
+</g>
+<rect x="122.0" y="120.0" width="268.0" height="300.0" rx="30.0" fill="#FFF8EC" />
+<rect x="96.0" y="96.0" width="320.0" height="64.0" rx="32.0" fill="#E3CFA9" />
+<rect x="96.0" y="384.0" width="320.0" height="64.0" rx="32.0" fill="#E3CFA9" />
+<line x1="170.0" y1="220.0" x2="342.0" y2="220.0" stroke="#D2453B" stroke-width="18.0" stroke-linecap="round" />
+<line x1="170.0" y1="280.0" x2="342.0" y2="280.0" stroke="#D2453B" stroke-width="18.0" stroke-linecap="round" />
+<line x1="170.0" y1="340.0" x2="290.0" y2="340.0" stroke="#D2453B" stroke-width="18.0" stroke-linecap="round" />
+</svg>

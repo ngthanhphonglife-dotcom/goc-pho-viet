@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Túi đồ — Góc Phố Việt (original art)</title>
+<path d="M200,160 C200,62 312,62 312,160" fill="none" stroke="#4B2E2E" stroke-width="40.0" stroke-linecap="round" stroke-linejoin="round" /><path d="M200,160 C200,70 312,70 312,160" fill="none" stroke="#97592B" stroke-width="16.0" stroke-linecap="round" stroke-linejoin="round" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="370.0" y="200.0" width="40.0" height="200.0" rx="20.0" fill="#4B2E2E" />
+</g>
+<rect x="370.0" y="200.0" width="40.0" height="200.0" rx="20.0" fill="#97592B" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="118.0" y="140.0" width="276.0" height="320.0" rx="72.0" fill="#4B2E2E" />
+<path d="M118,250 L118,212 C118,150 168,128 256,128 C344,128 394,150 394,212 L394,250 Q256,292 118,250 Z" fill="#4B2E2E" />
+</g>
+<rect x="118.0" y="140.0" width="276.0" height="320.0" rx="72.0" fill="#B5733E" />
+<path d="M118,250 L118,212 C118,150 168,128 256,128 C344,128 394,150 394,212 L394,250 Q256,292 118,250 Z" fill="#CC8C55" />
+<rect x="166.0" y="316.0" width="180.0" height="116.0" rx="30.0" fill="#97592B" />
+<line x1="176.0" y1="340.0" x2="336.0" y2="340.0" stroke="#7E4A24" stroke-width="8.0" stroke-linecap="round" />
+<rect x="168.0" y="238.0" width="30.0" height="82.0" rx="10.0" fill="#7E4A24" />
+<rect x="314.0" y="238.0" width="30.0" height="82.0" rx="10.0" fill="#7E4A24" />
+<rect x="160.0" y="280.0" width="46.0" height="34.0" rx="8.0" fill="#F2B632" />
+<rect x="306.0" y="280.0" width="46.0" height="34.0" rx="8.0" fill="#F2B632" />
+<path d="M150,200 C170,160 220,148 256,148" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.35"/>
+</svg>

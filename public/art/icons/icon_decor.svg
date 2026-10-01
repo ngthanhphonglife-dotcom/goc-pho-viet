@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Trang trí — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M256.0,300.0 Q208.4,212.5 108.8,215.0 Q156.4,302.5 256.0,300.0 Z" fill="#4B2E2E" />
+</g>
+<path d="M256.0,300.0 Q208.4,212.5 108.8,215.0 Q156.4,302.5 256.0,300.0 Z" fill="#5E9150" />
+<line x1="256.0" y1="300.0" x2="138.2" y2="232.0" stroke="#4C7A40" stroke-width="6.0" stroke-linecap="round" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M256.0,300.0 Q355.6,302.5 403.2,215.0 Q303.6,212.5 256.0,300.0 Z" fill="#4B2E2E" />
+</g>
+<path d="M256.0,300.0 Q355.6,302.5 403.2,215.0 Q303.6,212.5 256.0,300.0 Z" fill="#5E9150" />
+<line x1="256.0" y1="300.0" x2="373.8" y2="232.0" stroke="#4C7A40" stroke-width="6.0" stroke-linecap="round" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M256.0,300.0 Q257.3,191.7 166.8,132.2 Q165.5,240.5 256.0,300.0 Z" fill="#4B2E2E" />
+</g>
+<path d="M256.0,300.0 Q257.3,191.7 166.8,132.2 Q165.5,240.5 256.0,300.0 Z" fill="#79A867" />
+<line x1="256.0" y1="300.0" x2="184.6" y2="165.8" stroke="#4C7A40" stroke-width="6.0" stroke-linecap="round" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M256.0,300.0 Q346.5,240.5 345.2,132.2 Q254.7,191.7 256.0,300.0 Z" fill="#4B2E2E" />
+</g>
+<path d="M256.0,300.0 Q346.5,240.5 345.2,132.2 Q254.7,191.7 256.0,300.0 Z" fill="#79A867" />
+<line x1="256.0" y1="300.0" x2="327.4" y2="165.8" stroke="#4C7A40" stroke-width="6.0" stroke-linecap="round" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M256.0,300.0 Q308.0,200.0 256.0,100.0 Q204.0,200.0 256.0,300.0 Z" fill="#4B2E2E" />
+</g>
+<path d="M256.0,300.0 Q308.0,200.0 256.0,100.0 Q204.0,200.0 256.0,300.0 Z" fill="#A6CF8A" />
+<line x1="256.0" y1="300.0" x2="256.0" y2="140.0" stroke="#4C7A40" stroke-width="6.0" stroke-linecap="round" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="166.0,330.0 346.0,330.0 322.0,456.0 190.0,456.0" fill="#4B2E2E" />
+<rect x="146.0" y="296.0" width="220.0" height="50.0" rx="16.0" fill="#4B2E2E" />
+</g>
+<polygon points="166.0,330.0 346.0,330.0 322.0,456.0 190.0,456.0" fill="#C8693E" />
+<rect x="146.0" y="296.0" width="220.0" height="50.0" rx="16.0" fill="#D97B4C" />
+<rect x="160.0" y="304.0" width="192.0" height="10.0" rx="5.0" fill="#FFFFFF" opacity="0.3"/>
+<path d="M190,360 L200,440" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.25"/>
+</svg>

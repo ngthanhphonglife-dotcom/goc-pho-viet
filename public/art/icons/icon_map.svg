@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Bản đồ — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="62.0,176.0 190.0,132.0 190.0,434.0 62.0,476.0" fill="#4B2E2E" />
+<polygon points="190.0,132.0 322.0,176.0 322.0,476.0 190.0,434.0" fill="#4B2E2E" />
+<polygon points="322.0,176.0 450.0,132.0 450.0,434.0 322.0,476.0" fill="#4B2E2E" />
+</g>
+<polygon points="62.0,176.0 190.0,132.0 190.0,434.0 62.0,476.0" fill="#8CC47F" />
+<polygon points="190.0,132.0 322.0,176.0 322.0,476.0 190.0,434.0" fill="#6FAE6A" />
+<polygon points="322.0,176.0 450.0,132.0 450.0,434.0 322.0,476.0" fill="#93CBDA" />
+<path d="M335,470 C360,420 345,380 380,340 S440,300 448,250" fill="none" stroke="#5DA9C9" stroke-width="22.0" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M80,420 C130,380 150,330 200,320 S290,360 330,300 S410,250 440,210" fill="none" stroke="#FFF8EC" stroke-width="16.0" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1,28"/>
+<line x1="190.0" y1="140.0" x2="190.0" y2="428.0" stroke="#4B2E2E" stroke-width="7.0" stroke-linecap="round" />
+<line x1="322.0" y1="182.0" x2="322.0" y2="468.0" stroke="#4B2E2E" stroke-width="7.0" stroke-linecap="round" />
+<polygon points="70.0,190.0 182.0,152.0 182.0,200.0 70.0,236.0" fill="#FFFFFF" opacity="0.18"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M330,292 C300,240 262,206 262,160 A68,68 0 1 1 398,160 C398,206 360,240 330,292 Z" fill="#4B2E2E" />
+</g>
+<path d="M330,292 C300,240 262,206 262,160 A68,68 0 1 1 398,160 C398,206 360,240 330,292 Z" fill="#D2453B" />
+<circle cx="330.0" cy="160.0" r="26.0" fill="#FFF8EC" />
+<path d="M292,128 A44,44 0 0 1 344,104" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.55"/>
+</svg>

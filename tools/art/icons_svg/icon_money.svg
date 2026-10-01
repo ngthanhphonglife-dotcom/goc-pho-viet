@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Tiền — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="96.0" y="256.0" width="320.0" height="150.0" rx="18.0" fill="#4B2E2E" transform="rotate(6 256 326)"/>
+</g>
+<rect x="96.0" y="256.0" width="320.0" height="150.0" rx="18.0" fill="#4E8F4A" transform="rotate(6 256 326)"/>
+<rect x="118.0" y="274.0" width="276.0" height="114.0" rx="12.0" fill="none" transform="rotate(6 256 326)" stroke="#A9D89D" stroke-width="8"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="96.0" y="206.0" width="320.0" height="150.0" rx="18.0" fill="#4B2E2E" transform="rotate(-3 256 276)"/>
+</g>
+<rect x="96.0" y="206.0" width="320.0" height="150.0" rx="18.0" fill="#5FA35A" transform="rotate(-3 256 276)"/>
+<rect x="118.0" y="224.0" width="276.0" height="114.0" rx="12.0" fill="none" transform="rotate(-3 256 276)" stroke="#A9D89D" stroke-width="8"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="96.0" y="156.0" width="320.0" height="150.0" rx="18.0" fill="#4B2E2E" transform="rotate(-9 256 226)"/>
+</g>
+<rect x="96.0" y="156.0" width="320.0" height="150.0" rx="18.0" fill="#6DB566" transform="rotate(-9 256 226)"/>
+<rect x="118.0" y="174.0" width="276.0" height="114.0" rx="12.0" fill="none" transform="rotate(-9 256 226)" stroke="#A9D89D" stroke-width="8"/>
+<circle cx="256.0" cy="231.0" r="36.0" fill="#E9C45A" transform="rotate(-9 256 226)"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="226.0" y="150.0" width="60.0" height="230.0" rx="12.0" fill="#4B2E2E" transform="rotate(-9 256 226)"/>
+</g>
+<rect x="226.0" y="150.0" width="60.0" height="230.0" rx="12.0" fill="#F2B632" transform="rotate(-9 256 226)"/>
+<circle cx="256.0" cy="226.0" r="30.0" fill="#F7D774" transform="rotate(-9 256 226)"/>
+</svg>

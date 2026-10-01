@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Cài đặt — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(0)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(45)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(90)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(135)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(180)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(225)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(270)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#4B2E2E" transform="translate(256 256) rotate(315)"/>
+<circle cx="256.0" cy="256.0" r="150.0" fill="#4B2E2E" />
+</g>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(0)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(45)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(90)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(135)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(180)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(225)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(270)"/>
+<rect x="-38.0" y="-212.0" width="76.0" height="100.0" rx="18.0" fill="#EDEAE5" transform="translate(256 256) rotate(315)"/>
+<circle cx="256.0" cy="256.0" r="150.0" fill="#EDEAE5" />
+<circle cx="256.0" cy="256.0" r="120.0" fill="#F7F5F2" />
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="256.0" cy="256.0" r="58.0" fill="#4B2E2E" />
+</g>
+<circle cx="256.0" cy="256.0" r="58.0" fill="#B9B0A6" />
+<circle cx="256.0" cy="256.0" r="30.0" fill="#8E837A" />
+<path d="M168,206 A100,100 0 0 1 222,152" fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round"/>
+</svg>

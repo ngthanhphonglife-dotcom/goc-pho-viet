@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Mưa — Góc Phố Việt (original art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="186.0" cy="236.0" r="76.0" fill="#4B2E2E" />
+<circle cx="270.0" cy="196.0" r="96.0" fill="#4B2E2E" />
+<circle cx="352.0" cy="248.0" r="70.0" fill="#4B2E2E" />
+<rect x="130.0" y="230.0" width="284.0" height="88.0" rx="44.0" fill="#4B2E2E" />
+</g>
+<circle cx="186.0" cy="236.0" r="76.0" fill="#F2F5F7" />
+<circle cx="270.0" cy="196.0" r="96.0" fill="#F2F5F7" />
+<circle cx="352.0" cy="248.0" r="70.0" fill="#F2F5F7" />
+<rect x="130.0" y="230.0" width="284.0" height="88.0" rx="44.0" fill="#F2F5F7" />
+<path d="M150,292 L380,292" fill="none" stroke="#D5DEE4" stroke-width="16" stroke-linecap="round"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M190,334 C224,378 220,418 190,418 C160,418 156,378 190,334 Z" fill="#4B2E2E" />
+</g>
+<path d="M190,334 C224,378 220,418 190,418 C160,418 156,378 190,334 Z" fill="#5DA9C9" />
+<circle cx="181.0" cy="394.0" r="7.0" fill="#FFFFFF" opacity="0.6"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M262,366 C296,410 292,450 262,450 C232,450 228,410 262,366 Z" fill="#4B2E2E" />
+</g>
+<path d="M262,366 C296,410 292,450 262,450 C232,450 228,410 262,366 Z" fill="#5DA9C9" />
+<circle cx="253.0" cy="426.0" r="7.0" fill="#FFFFFF" opacity="0.6"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round" stroke-linecap="round">
+<path d="M334,334 C368,378 364,418 334,418 C304,418 300,378 334,334 Z" fill="#4B2E2E" />
+</g>
+<path d="M334,334 C368,378 364,418 334,418 C304,418 300,378 334,334 Z" fill="#5DA9C9" />
+<circle cx="325.0" cy="394.0" r="7.0" fill="#FFFFFF" opacity="0.6"/>
+</svg>
