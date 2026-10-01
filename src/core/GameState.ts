@@ -60,6 +60,21 @@ export const DEMO_STATE: GameStateData = {
   ],
 };
 
+/** Ván mới (Phase 1): Ngày 1 · Thứ Hai · 06:00 · 1.000.000đ · Uy tín 0. */
+export function newGameState(): GameStateData {
+  return {
+    day: 1,
+    minuteOfDay: 6 * 60,
+    weather: { label: "Nắng nhẹ", temperatureC: 27, icon: "sun" },
+    money: 1_000_000,
+    reputation: 0,
+    quests: [
+      { id: "sell-20-coffee", title: "Bán 20 ly cà phê", current: 0, target: 20, done: false, tracked: true },
+      { id: "talk-chu-tu", title: "Nói chuyện với chú Tư sửa xe", current: 0, target: 0, done: false, tracked: false },
+    ],
+  };
+}
+
 type Listener = (s: Readonly<GameStateData>) => void;
 
 export class GameState {
@@ -78,6 +93,12 @@ export class GameState {
     this.listeners.add(fn);
     fn(this.data);
     return () => this.listeners.delete(fn);
+  }
+
+  /** Thay toàn bộ trạng thái (Chơi mới / Tiếp tục). */
+  replace(data: GameStateData): void {
+    this.data = structuredClone(data);
+    for (const fn of this.listeners) fn(this.data);
   }
 
   update(patch: Partial<GameStateData> | ((d: GameStateData) => void)): void {

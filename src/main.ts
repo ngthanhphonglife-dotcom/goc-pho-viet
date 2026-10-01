@@ -1,26 +1,29 @@
 import "./ui/style.css";
-import { DEMO_STATE, GameState } from "./core/GameState";
-import { MasterUI, fitTexts } from "./ui/MasterUI";
-import { World } from "./world/World";
+import "./screens/screens.css";
+import { Boot } from "./app/Boot";
+import { DEMO_STATE } from "./core/GameState";
 
-const state = new GameState(DEMO_STATE);
+const $ = (id: string) => document.getElementById(id)!;
+const boot = new Boot({ app: $("app"), world: $("world"), ui: $("ui"), screens: $("screens") });
 
-async function start(): Promise<void> {
-  // chờ font tiếng Việt nạp xong để đo chữ chính xác (tránh nhảy chữ)
-  await Promise.all([document.fonts.load('700 32px "Be Vietnam Pro"'), document.fonts.load('500 32px "Be Vietnam Pro"')]);
-  const ui = new MasterUI(document.getElementById("ui")!, state);
-  window.addEventListener("resize", () => fitTexts(ui.root));
+// cổng kiểm tra cho test tự động (không ảnh hưởng người chơi)
+const hook = {
+  boot,
+  get state() { return boot.state; },
+  get ui() { return boot.ui; },
+  get world() { return boot.world; },
+  get screen() { return boot.screen; },
+  get loadingHistory() { return boot.loading?.history ?? []; },
+  ready: false,
+  /** test: vào thẳng game với dữ liệu demo của Phase 0 */
+  async demo() {
+    boot.saves.save(DEMO_STATE);
+    await boot.continueGame();
+  },
+};
+(window as unknown as { __gpv: typeof hook }).__gpv = hook;
 
-  const world = new World();
-  await world.init(document.getElementById("world")!);
-
-  // cổng kiểm tra cho test tự động
-  (window as unknown as { __gpv: unknown }).__gpv = { state, ui, world, ready: true };
-}
-
-start().catch((e) => {
-  console.error(e);
-});
+boot.start().then(() => { hook.ready = true; }).catch((e) => console.error(e));
 
 // PWA: service worker (chỉ bản build, tránh cache khi đang phát triển)
 if ("serviceWorker" in navigator && import.meta.env.PROD) {

@@ -1,4 +1,5 @@
 import { Application, Container, Sprite, Texture } from "pixi.js";
+import { loadImage, type LoadTask } from "../core/preload";
 
 /**
  * World Area (tách khỏi UI): khu phố Hoa Sữa vẽ vector (SVG nhiều lớp) trên canvas PixiJS.
@@ -24,16 +25,6 @@ const MAX_TEX = 4096;
 /** Vị trí điểm nhìn (xe cà phê) trên màn hình, tính theo chiều cao. */
 const FOCUS_SCREEN = 0.62;
 
-function loadImage(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.decoding = "async";
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error("Không tải được " + url));
-    img.src = url;
-  });
-}
-
 export interface WorldStats {
   cssWidth: number;
   cssHeight: number;
@@ -54,6 +45,7 @@ export class World {
   private resizeTimer = 0;
   stats: WorldStats | null = null;
 
+  /** Tạo canvas PixiJS (chưa tải art). */
   async init(host: HTMLElement): Promise<void> {
     await this.app.init({
       resizeTo: host,
@@ -65,9 +57,19 @@ export class World {
     });
     host.appendChild(this.app.canvas);
     this.app.stage.addChild(this.stage);
+  }
 
+  /** Việc tải cho màn Loading: layers.json rồi từng lớp SVG (mỗi lớp = 1 bước tiến độ). */
+  async loadTasks(): Promise<LoadTask[]> {
     this.meta = await (await fetch(BASE + "layers.json")).json();
-    await Promise.all(this.meta.layers.map(async (n) => this.images.set(n, await loadImage(BASE + n + ".svg"))));
+    return this.meta.layers.map((n) => ({
+      name: "world/" + n,
+      run: async () => { this.images.set(n, await loadImage(BASE + n + ".svg")); },
+    }));
+  }
+
+  /** Dựng khu phố (raster các lớp) — gọi sau khi tải xong. */
+  build(): void {
     this.layout(true);
     window.addEventListener("resize", () => this.scheduleLayout());
     window.visualViewport?.addEventListener("resize", () => this.scheduleLayout());

@@ -1,28 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
+import { boot, enterDemo, type Safe } from "./helpers";
 
 // PHASE 0 — Master UI + khu phố Hoa Sữa (web). Chạy trên 5 màn hình trong playwright.config.ts.
 
 const ACTIONS = ["map", "quests", "inventory", "shop", "settings", "addMoney", "weather", "stall", "ingredients", "sell", "upgrade", "decorate"];
 const BLOCKS = ["CalendarPanel", "WeatherPanel", "MoneyPanel", "ReputationPanel", "SettingsButton", "QuestPanel", "RightActionMenu", "BottomNavigation"];
 
-async function open(page: Page, safe?: { top: number; bottom: number }) {
-  const errors: string[] = [];
-  page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
-  page.on("pageerror", (e) => errors.push(e.message));
-  page.on("requestfailed", (r) => errors.push("request failed: " + r.url()));
-  page.on("response", (r) => { if (r.status() >= 400) errors.push(r.status() + " " + r.url()); });
-  if (safe) {
-    // Chromium không giả lập được env(safe-area-inset-*): đặt thẳng biến CSS như máy có tai thỏ.
-    await page.addInitScript(([t, b]) => {
-      document.addEventListener("DOMContentLoaded", () => {
-        document.documentElement.style.setProperty("--safe-t", t + "px");
-        document.documentElement.style.setProperty("--safe-b", b + "px");
-      });
-    }, [safe.top, safe.bottom]);
-  }
-  await page.goto("./");
-  await page.waitForFunction(() => (window as any).__gpv?.ready === true, null, { timeout: 30_000 });
-  await page.waitForTimeout(300);
+async function open(page: Page, safe?: Safe) {
+  const errors = await boot(page, safe);
+  await enterDemo(page);
   return errors;
 }
 
@@ -97,10 +83,18 @@ test("Phase 0: Master UI sắc nét, không đè, bấm được, không lỗi",
     expect(Math.min(hit.w, hit.h), `Nút ${id} quá nhỏ để chạm`).toBeGreaterThanOrEqual(24);
     await page.locator(`[data-action="${id}"]`).tap();
     await page.waitForTimeout(250);
+    if (id === "settings") {
+      // từ Phase 1 nút ⚙ mở bảng Cài đặt thật
+      const panel = page.locator('[data-name="SettingsPanel"]');
+      await expect(panel).toBeVisible();
+      await panel.locator(".x").tap();
+      await expect(panel).toBeHidden();
+      continue;
+    }
     const p = await page.evaluate(() => ({ open: (window as any).__gpv.ui.placeholderOpen, title: (window as any).__gpv.ui.placeholderTitle }));
     expect(p.open, `Bấm ${id} không mở popup`).toBe(true);
     expect(p.title.length).toBeGreaterThan(0);
-    await page.locator(".card .x").tap();
+    await page.locator("#ui .card .x").tap();
     await page.waitForTimeout(250);
     expect(await page.evaluate(() => (window as any).__gpv.ui.placeholderOpen)).toBe(false);
   }
