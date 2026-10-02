@@ -1,30 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="154" height="194" viewBox="1762 1568 154 194">
+<svg xmlns="http://www.w3.org/2000/svg" width="154" height="194" viewBox="1762 1534 154 194">
 <title>dog — Góc Phố Việt (original vector art)</title>
-<ellipse cx="1850.0" cy="1745.0" rx="58.0" ry="10.0" fill="#000000" opacity="0.15"/>
-<path d="M1816,1725 C1776,1721 1772,1683 1790,1669" fill="none" stroke="#4B2E2E" stroke-width="20.0" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M1816,1725 C1776,1721 1772,1683 1790,1669" fill="none" stroke="#D99A5B" stroke-width="13.0" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="1850.0" cy="1712.0" rx="58.0" ry="10.0" fill="#000000" opacity="0.15"/>
+<path d="M1816,1692 C1776,1688 1772,1650 1790,1636" fill="none" stroke="#4B2E2E" stroke-width="20.0" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1816,1692 C1776,1688 1772,1650 1790,1636" fill="none" stroke="#D99A5B" stroke-width="13.0" stroke-linecap="round" stroke-linejoin="round"/>
 <g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
-<ellipse cx="1846.0" cy="1701.0" rx="42.0" ry="46.0" fill="#4B2E2E"/>
-<circle cx="1870.0" cy="1637.0" r="36.0" fill="#4B2E2E"/>
-<polygon points="1842.0,1617.0 1848.0,1577.0 1870.0,1607.0" fill="#4B2E2E"/>
-<polygon points="1878.0,1607.0 1900.0,1577.0 1904.0,1621.0" fill="#4B2E2E"/>
-<rect x="1828.0" y="1729.0" width="22.0" height="16.0" rx="7.0" fill="#4B2E2E"/>
-<rect x="1858.0" y="1729.0" width="22.0" height="16.0" rx="7.0" fill="#4B2E2E"/>
+<ellipse cx="1846.0" cy="1668.0" rx="42.0" ry="46.0" fill="#4B2E2E"/>
+<circle cx="1870.0" cy="1604.0" r="36.0" fill="#4B2E2E"/>
+<polygon points="1842.0,1584.0 1848.0,1544.0 1870.0,1574.0" fill="#4B2E2E"/>
+<polygon points="1878.0,1574.0 1900.0,1544.0 1904.0,1588.0" fill="#4B2E2E"/>
+<rect x="1828.0" y="1696.0" width="22.0" height="16.0" rx="7.0" fill="#4B2E2E"/>
+<rect x="1858.0" y="1696.0" width="22.0" height="16.0" rx="7.0" fill="#4B2E2E"/>
 </g>
-<ellipse cx="1846.0" cy="1701.0" rx="42.0" ry="46.0" fill="#D99A5B"/>
-<circle cx="1870.0" cy="1637.0" r="36.0" fill="#D99A5B"/>
-<polygon points="1842.0,1617.0 1848.0,1577.0 1870.0,1607.0" fill="#D99A5B"/>
-<polygon points="1878.0,1607.0 1900.0,1577.0 1904.0,1621.0" fill="#D99A5B"/>
-<rect x="1828.0" y="1729.0" width="22.0" height="16.0" rx="7.0" fill="#FFF6E6"/>
-<rect x="1858.0" y="1729.0" width="22.0" height="16.0" rx="7.0" fill="#FFF6E6"/>
-<ellipse cx="1856.0" cy="1707.0" rx="22.0" ry="32.0" fill="#FFF6E6"/>
-<ellipse cx="1880.0" cy="1651.0" rx="20.0" ry="15.0" fill="#FFF6E6"/>
-<ellipse cx="1888.0" cy="1645.0" rx="6.0" ry="5.0" fill="#4B2E2E"/>
-<circle cx="1860.0" cy="1631.0" r="4.5" fill="#4B2E2E"/>
-<circle cx="1884.0" cy="1629.0" r="4.5" fill="#4B2E2E"/>
-<path d="M1878,1655 Q1886,1663 1894,1655" fill="none" stroke="#4B2E2E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="1846.0" cy="1668.0" rx="42.0" ry="46.0" fill="#D99A5B"/>
+<circle cx="1870.0" cy="1604.0" r="36.0" fill="#D99A5B"/>
+<polygon points="1842.0,1584.0 1848.0,1544.0 1870.0,1574.0" fill="#D99A5B"/>
+<polygon points="1878.0,1574.0 1900.0,1544.0 1904.0,1588.0" fill="#D99A5B"/>
+<rect x="1828.0" y="1696.0" width="22.0" height="16.0" rx="7.0" fill="#FFF6E6"/>
+<rect x="1858.0" y="1696.0" width="22.0" height="16.0" rx="7.0" fill="#FFF6E6"/>
+<ellipse cx="1856.0" cy="1674.0" rx="22.0" ry="32.0" fill="#FFF6E6"/>
+<ellipse cx="1880.0" cy="1618.0" rx="20.0" ry="15.0" fill="#FFF6E6"/>
+<ellipse cx="1888.0" cy="1612.0" rx="6.0" ry="5.0" fill="#4B2E2E"/>
+<circle cx="1860.0" cy="1598.0" r="4.5" fill="#4B2E2E"/>
+<circle cx="1884.0" cy="1596.0" r="4.5" fill="#4B2E2E"/>
+<path d="M1878,1622 Q1886,1630 1894,1622" fill="none" stroke="#4B2E2E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round">
-<rect x="1844.0" y="1669.0" width="44.0" height="9.0" rx="4.0" fill="#4B2E2E"/>
+<rect x="1844.0" y="1636.0" width="44.0" height="9.0" rx="4.0" fill="#4B2E2E"/>
 </g>
-<rect x="1844.0" y="1669.0" width="44.0" height="9.0" rx="4.0" fill="#D9463B"/>
+<rect x="1844.0" y="1636.0" width="44.0" height="9.0" rx="4.0" fill="#D9463B"/>
 </svg>

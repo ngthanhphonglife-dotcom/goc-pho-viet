@@ -118,6 +118,12 @@ export class Boot {
       else this.ui.toast(h.name);
     });
 
+    // Phase 3: chạm nhân vật → chào
+    this.world.onCharacter((c) => {
+      c.react();
+      this.ui.toast(`${c.info.name} — ${c.info.role}`);
+    });
+
     this.menu = new MainMenu(screens, {
       newGame: () => this.newGamePanel.show(this.saves.hasSave() && !this.corruptSave, () => void this.startNewGame()),
       continueGame: () => void this.continueGame(),

@@ -847,11 +847,12 @@ def build_props():
     prop("bench_l", bench(840, 1640, 210), 1640)
     prop("bike_red", motorbike(810, 1440, "#D9463B"), 1440)
     prop("bike_blue", motorbike(980, 1520, "#3F7DB5", -1), 1520)
-    prop("bike_fix", motorbike(CX + 290, 1420, "#9AA5AD", 1, "#5B4E45"), 1420)
-    prop("toolbox", [outlined([rect(CX + 395, 1385, 70, 40, "#D9463B", 6), rect(CX + 415, 1370, 30, 18, "#8E8A82", 5)], 3)], 1426)
+    prop("bike_fix", motorbike(CX + 345, 1420, "#9AA5AD", 1, "#5B4E45"), 1420)
+    prop("stool_tu", stool(CX + 185, 1432, 0.8, "#7A8894").replace("#F07A6E", "#A9B6C0"), 1431)
+    prop("toolbox", [outlined([rect(CX + 232, 1436, 70, 40, "#D9463B", 6), rect(CX + 252, 1421, 30, 18, "#8E8A82", 5)], 3)], 1478)
 
     # ===== bên phải =====
-    prop("dog", dog(CX + 770, 1745), 1745)
+    prop("dog", dog(CX + 770, 1712), 1712)
     prop("pot_c1", pot(2290, 1350, rnd, 0.9, "#8FA8B5"), 1350)
     prop("pot_c2", pot(2610, 1350, rnd, 0.9), 1350)
     prop("bicycle", bicycle(2430, 1400, "#2F9C8F"), 1400)

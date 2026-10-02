@@ -3,7 +3,7 @@ import type { Page } from "@playwright/test";
 export type Safe = { top: number; bottom: number } | undefined;
 
 /** Mở trang, gom mọi lỗi console/mạng, chờ boot xong (đang ở Menu chính). */
-export async function boot(page: Page, safe?: Safe, opts: { clear?: boolean } = {}) {
+export async function boot(page: Page, safe?: Safe, opts: { clear?: boolean; life?: boolean } = {}) {
   const errors: string[] = [];
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
   page.on("pageerror", (e) => errors.push(e.message));
@@ -21,6 +21,8 @@ export async function boot(page: Page, safe?: Safe, opts: { clear?: boolean } = 
   if (opts.clear !== false) await page.addInitScript(() => { if (!sessionStorage.getItem("gpv.test.keep")) localStorage.clear(); });
   await page.goto("./");
   await page.waitForFunction(() => (window as any).__gpv?.ready === true, null, { timeout: 60_000 });
+  // Phase 0–2 không cần nhân vật chuyển động (vẽ liên tục rất chậm trên GPU giả lập của máy test)
+  if (!opts.life) await page.evaluate(() => { (window as any).__gpv.world.lifeEnabled = false; });
   await page.waitForTimeout(400);
   return errors;
 }

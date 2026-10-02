@@ -1,4 +1,6 @@
-import { Application, Container, Graphics, Sprite, Texture } from "pixi.js";
+import { Application, Container, Graphics, Rectangle, Sprite, Texture } from "pixi.js";
+import type { Character, CharInfo, CharTextures, PartCell, Rig } from "./Character";
+import { StreetLife } from "./StreetLife";
 import { loadImage, type LoadTask } from "../core/preload";
 
 /**
@@ -15,7 +17,10 @@ interface PropInfo { id: string; x: number; y: number; w: number; h: number; foo
 export interface Hotspot { id: string; name: string; rect: [number, number, number, number]; action?: string }
 interface WorldMeta { width: number; height: number; focusY: number; layers: LayerInfo[]; props: PropInfo[]; hotspots: Hotspot[] }
 
+interface CharMeta { rig: Rig; faces: { file: string; w: number; h: number; parts: Record<string, PartCell> }; chars: CharInfo[] }
+
 const BASE = import.meta.env.BASE_URL + "art/world/";
+const CHARS = import.meta.env.BASE_URL + "art/chars/";
 const MAX_TEX = 4096;
 const TILE = 1080;
 /** Vị trí điểm nhìn (xe cà phê) trên màn hình, tính theo chiều cao. */
@@ -40,6 +45,13 @@ export class World {
   private stage = new Container();
   private layerBoxes = new Map<string, Container>();
   private actors = new Container();
+  private propSprites: Sprite[] = [];
+  private charMeta!: CharMeta;
+  private charSubTextures: Texture[] = [];
+  private charHandlers: ((c: Character) => void)[] = [];
+  life!: StreetLife;
+  /** Bật/tắt chuyển động nhân vật (tắt thì chỉ vẽ lại khi camera đổi). */
+  lifeEnabled = true;
   private fx = new Graphics();
   private textures: Texture[] = [];
   private rasterScale = 0;
@@ -80,10 +92,12 @@ export class World {
   /** Việc tải cho màn Loading: layers.json rồi từng lớp + đạo cụ SVG (mỗi file = 1 bước tiến độ). */
   async loadTasks(): Promise<LoadTask[]> {
     this.meta = await (await fetch(BASE + "layers.json")).json();
-    const files = [...this.meta.layers.map((l) => [l.name, l.name + ".svg"]), ...this.meta.props.map((p) => ["prop:" + p.id, "props/" + p.id + ".svg"])];
-    return files.map(([key, file]) => ({
+    this.charMeta = await (await fetch(CHARS + "characters.json")).json();
+    const files = [...this.meta.layers.map((l) => [l.name, BASE + l.name + ".svg"]), ...this.meta.props.map((p) => ["prop:" + p.id, BASE + "props/" + p.id + ".svg"]),
+      ["char:faces", CHARS + this.charMeta.faces.file], ...this.charMeta.chars.map((c) => ["char:" + c.id, CHARS + c.file])];
+    return files.map(([key, url]) => ({
       name: "world/" + key,
-      run: async () => { this.images.set(key, await loadImage(BASE + file)); },
+      run: async () => { this.images.set(key, await loadImage(url)); },
     }));
   }
 
@@ -101,6 +115,7 @@ export class World {
         this.stage.addChild(this.fx);
       }
     }
+    this.life = new StreetLife(this.charMeta.chars, this.charMeta.rig, this.actors, this.meta.width);
     this.layout(true);
     window.addEventListener("resize", () => this.scheduleLayout());
     window.visualViewport?.addEventListener("resize", () => this.scheduleLayout());
@@ -178,6 +193,10 @@ export class World {
         .stroke({ width: 8 * this.rasterScale * (1 - k) + 1, color: 0xffffff, alpha: 0.9 * (1 - k) });
       moved = true;
     }
+    if (this.lifeEnabled && !document.hidden) {
+      this.life.update(dt);
+      moved = true;
+    }
     return moved;
   }
 
@@ -204,6 +223,10 @@ export class World {
   }
 
   // ------------------------------------------------------------------ nhập liệu
+
+  onCharacter(fn: (c: Character) => void): void {
+    this.charHandlers.push(fn);
+  }
 
   onHotspot(fn: (h: Hotspot) => void): void {
     this.hotspotHandlers.push(fn);
@@ -278,6 +301,12 @@ export class World {
       this.vel = 0;
       const p = local(e);
       const w = this.toWorld(p.x, p.y);
+      const c = this.life.characterAt(w.x, w.y);
+      if (c) {
+        this.ring = { x: w.x, y: w.y, t: 0 };
+        for (const fn of this.charHandlers) fn(c);
+        return;
+      }
       const h = this.hotspotAt(w.x, w.y);
       if (!h) return;
       this.ring = { x: w.x, y: w.y, t: 0 };
@@ -353,7 +382,11 @@ export class World {
 
   /** Vẽ các lớp SVG ra canvas ở tỉ lệ rs (pixel thật / đơn vị thiết kế). */
   private rasterize(rs: number): void {
-    for (const c of [...this.layerBoxes.values(), this.actors]) for (const ch of c.removeChildren()) ch.destroy();
+    for (const c of this.layerBoxes.values()) for (const ch of c.removeChildren()) ch.destroy();
+    for (const sp of this.propSprites) { this.actors.removeChild(sp); sp.destroy(); }
+    this.propSprites = [];
+    for (const t of this.charSubTextures) t.destroy(false);
+    this.charSubTextures = [];
     for (const t of this.textures) t.destroy(true);
     this.textures = [];
     this.rasterScale = rs;
@@ -385,7 +418,27 @@ export class World {
       sp.position.set(Math.round(p.x * rs), Math.round(p.y * rs));
       sp.zIndex = p.foot;
       this.actors.addChild(sp);
+      this.propSprites.push(sp);
     }
+
+    // nhân vật: mỗi người một atlas, cắt thành texture con theo từng bộ phận
+    const cut = (key: string, w: number, h: number, cells: Record<string, PartCell>) => {
+      const img = this.images.get(key)!;
+      const base = this.makeTexture(key, Math.ceil(w * rs), Math.ceil(h * rs), (ctx) => ctx.drawImage(img, 0, 0, w * rs, h * rs));
+      const out: Record<string, Texture> = {};
+      for (const [name, c] of Object.entries(cells)) {
+        const t = new Texture({ source: base.source, frame: new Rectangle(c.x * rs, c.y * rs, c.w * rs, c.h * rs) });
+        this.charSubTextures.push(t);
+        out[name] = t;
+      }
+      return out;
+    };
+    const f = this.charMeta.faces;
+    const faces = cut("char:faces", f.w, f.h, f.parts);
+    const tex = new Map<string, CharTextures>();
+    for (const c of this.charMeta.chars) tex.set(c.id, { parts: cut("char:" + c.id, c.w, c.h, c.parts), faces, faceCells: f.parts, rs });
+    this.life.setTextures(tex);
+    this.dirty = true;
   }
 
   /** Màu điểm ảnh thật trên canvas tại (x, y) CSS px — cho test (kiểm tra không hở nền). */

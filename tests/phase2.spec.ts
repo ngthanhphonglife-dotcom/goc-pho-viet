@@ -39,7 +39,7 @@ async function aim(page: Page, id: string) {
       const q = w.toScreen(wx, wy);
       const s = { x: q.x + r.left, y: q.y + r.top };
       const e = document.elementFromPoint(s.x, s.y);
-      if (e && e.tagName === "CANVAS" && w.hotspotAt(wx, wy)?.id === id) return s;
+      if (e && e.tagName === "CANVAS" && w.hotspotAt(wx, wy)?.id === id && !w.life.characterAt(wx, wy)) return s;
     }
     return null;
   }, id);
