@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<title>drink_tratac — Góc Phố Việt (original vector art)</title>
+<clipPath id="g"><path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z"/></clipPath>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="10.0" stroke-linejoin="round" stroke-linecap="round">
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="#4B2E2E"/>
+</g>
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="#F4FAFD"/>
+<g clip-path="url(#g)">
+<rect x="60.0" y="91.0" width="140.0" height="136.0" rx="0.0" fill="#E9A23B"/>
+<g transform="translate(98,112) rotate(10)">
+<rect x="0.0" y="0.0" width="30.0" height="28.0" rx="7.0" fill="#FFFFFF" opacity="0.45"/>
+</g>
+<g transform="translate(140,104) rotate(-12)">
+<rect x="0.0" y="0.0" width="30.0" height="28.0" rx="7.0" fill="#FFFFFF" opacity="0.45"/>
+</g>
+<g transform="translate(120,142) rotate(6)">
+<rect x="0.0" y="0.0" width="30.0" height="28.0" rx="7.0" fill="#FFFFFF" opacity="0.45"/>
+</g>
+</g>
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="none" stroke="#4B2E2E" stroke-width="6.0" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="84.0,84.0 98.0,84.0 104.0,200.0 94.0,200.0" fill="#FFFFFF" opacity="0.35"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="146.0" y="30.0" width="12.0" height="150.0" rx="5.0" fill="#4B2E2E"/>
+</g>
+<rect x="146.0" y="30.0" width="12.0" height="150.0" rx="5.0" fill="#D93A30"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="8.0" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="182.0" cy="78.0" r="26.0" fill="#4B2E2E"/>
+</g>
+<circle cx="182.0" cy="78.0" r="26.0" fill="#F2A23A"/>
+<circle cx="182.0" cy="78.0" r="17.0" fill="#FFD98A"/>
+<line x1="165.0" y1="78.0" x2="199.0" y2="78.0" stroke="#F2A23A" stroke-width="3.0" stroke-linecap="round"/>
+<line x1="182.0" y1="61.0" x2="182.0" y2="95.0" stroke="#F2A23A" stroke-width="3.0" stroke-linecap="round"/>
+</svg>

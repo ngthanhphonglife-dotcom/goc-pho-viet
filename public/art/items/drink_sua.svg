@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<title>drink_sua — Góc Phố Việt (original vector art)</title>
+<clipPath id="g"><path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z"/></clipPath>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="10.0" stroke-linejoin="round" stroke-linecap="round">
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="#4B2E2E"/>
+</g>
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="#F4FAFD"/>
+<g clip-path="url(#g)">
+<rect x="60.0" y="188.5" width="140.0" height="38.5" rx="0.0" fill="#F1DFC0"/>
+<rect x="60.0" y="91.0" width="140.0" height="98.5" rx="0.0" fill="#8A5632"/>
+<g transform="translate(98,112) rotate(10)">
+<rect x="0.0" y="0.0" width="30.0" height="28.0" rx="7.0" fill="#FFFFFF" opacity="0.45"/>
+</g>
+<g transform="translate(140,104) rotate(-12)">
+<rect x="0.0" y="0.0" width="30.0" height="28.0" rx="7.0" fill="#FFFFFF" opacity="0.45"/>
+</g>
+<g transform="translate(120,142) rotate(6)">
+<rect x="0.0" y="0.0" width="30.0" height="28.0" rx="7.0" fill="#FFFFFF" opacity="0.45"/>
+</g>
+</g>
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="none" stroke="#4B2E2E" stroke-width="6.0" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="84.0,84.0 98.0,84.0 104.0,200.0 94.0,200.0" fill="#FFFFFF" opacity="0.35"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="146.0" y="30.0" width="12.0" height="150.0" rx="5.0" fill="#4B2E2E"/>
+</g>
+<rect x="146.0" y="30.0" width="12.0" height="150.0" rx="5.0" fill="#D93A30"/>
+
+</svg>

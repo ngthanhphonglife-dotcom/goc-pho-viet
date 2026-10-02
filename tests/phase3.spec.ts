@@ -94,8 +94,9 @@ test("Phase 3: nhân vật sống trên phố, chuyển động, chạm để ch
   await page.mouse.click(q.x, q.y);
   await page.evaluate(() => (window as any).__gpv.world.step(12));
   await page.waitForTimeout(300);
-  expect(await page.evaluate(() => (window as any).__gpv.ui.placeholderTitle)).toBe("Quầy hàng");
-  await page.locator("#ui .card .x").tap();
+  await expect(page.locator('[data-name="Stall"]')).toBeVisible();
+  await page.locator('[data-name="Stall"] .x').tap();
+  await expect(page.locator('[data-name="Stall"]')).toBeHidden();
 
   // tắt chuyển động → mọi thứ đứng yên (dùng cho chế độ tiết kiệm sau này)
   await page.evaluate(() => { (window as any).__gpv.world.lifeEnabled = false; });

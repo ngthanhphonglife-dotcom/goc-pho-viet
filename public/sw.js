@@ -1,6 +1,6 @@
 // Service worker Góc Phố Việt — chơi lại được khi mất mạng.
 // Đổi VERSION mỗi lần phát hành để người chơi nhận bản mới.
-const VERSION = "gpv-phase6-1";
+const VERSION = "gpv-phase7-1";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png",
   "./fonts/BeVietnamPro-Bold.woff2", "./fonts/BeVietnamPro-Medium.woff2"];
 

@@ -15,6 +15,9 @@ import { dialogueFor } from "../data/dialogues";
 import { QuestDonePanel, QuestLogPanel, QuestOfferPanel } from "../screens/QuestPanels";
 import type { Character } from "../world/Character";
 import type { Hotspot } from "../world/World";
+import { Business } from "../core/Business";
+import { BrewPanel, IngredientsPanel, StallPanel } from "../screens/StallPanels";
+import { QUALITY, type Recipe } from "../data/items";
 import { World } from "../world/World";
 import type { ActionId } from "../core/actions";
 import { VERSION } from "../version";
@@ -42,6 +45,10 @@ export class Boot {
   questOffer!: QuestOfferPanel;
   questDone!: QuestDonePanel;
   questLog!: QuestLogPanel;
+  readonly biz = new Business(this.state);
+  ingredientsPanel!: IngredientsPanel;
+  stallPanel!: StallPanel;
+  brewPanel!: BrewPanel;
   private talking = false;
   private abortTalk = false;
   ui!: MasterUI;
@@ -129,6 +136,14 @@ export class Boot {
         this.settingsPanel.show(() => void this.backToMenu());
         return true;
       }
+      if (id === "ingredients") {
+        this.ingredientsPanel.show();
+        return true;
+      }
+      if (id === "stall") {
+        this.stallPanel.show();
+        return true;
+      }
       if (id === "quests") {
         this.questLog.show();
         return true;
@@ -142,6 +157,11 @@ export class Boot {
 
     // Phase 2: chạm điểm tương tác trên phố
     this.world.onHotspot((h) => void this.visit(h));
+
+    // Phase 7: kho, thực đơn, pha chế
+    this.ingredientsPanel = new IngredientsPanel(this.hosts.app, this.biz, () => this.ui.invoke("shop"));
+    this.stallPanel = new StallPanel(this.hosts.app, this.biz, (r) => void this.brew(r));
+    this.brewPanel = new BrewPanel(this.hosts.app);
 
     // Phase 6: hội thoại + nhiệm vụ
     this.dialogue = new Dialogue(this.hosts.app, import.meta.env.BASE_URL + "art/chars/");
@@ -212,6 +232,8 @@ export class Boot {
       this.hosts.ui.classList.remove("hidden");
       fitTexts(this.ui.root);
       this.screen = "game";
+      this.biz.ensure();
+      this.abortTalk = false;
       this.time.forced = null;
       this.world.atmo.set(data.minuteOfDay, data.weather.kind ?? "sunny", true);
       this.world.placePlayer(data.player);
@@ -238,6 +260,20 @@ export class Boot {
     }
     await this.enterGame(r.file.state);
     if (r.fromBackup) this.ui.toast("Đã khôi phục từ bản lưu dự phòng");
+  }
+
+  /** Pha một ly (minigame). Xong thì trừ nguyên liệu, đặt ly lên khay rồi quay lại thực đơn. */
+  async brew(r: Recipe): Promise<void> {
+    const me = this.world.player.c;
+    if (this.world.player.atHome) me.play("brew");
+    const q = await this.brewPanel.show(r);
+    if (this.world.player.atHome) me.play("idle");
+    if (this.abortTalk || this.screen !== "game") return;
+    if (q !== null && this.biz.finishBrew(r, q)) {
+      this.ui.toast(`${r.name} — ${QUALITY[q]}! Đã đặt lên khay.`);
+      this.saveNow();
+    }
+    this.stallPanel.show();
   }
 
   // ---------------------------------------------------------------- hội thoại & nhiệm vụ (Phase 6)
@@ -299,6 +335,7 @@ export class Boot {
   async backToMenu(): Promise<void> {
     this.abortTalk = true;
     this.dialogue.close();
+    this.brewPanel.close();
     this.saveNow();
     window.clearInterval(this.autosaveTimer);
     await this.fader.run(() => this.showMenu());

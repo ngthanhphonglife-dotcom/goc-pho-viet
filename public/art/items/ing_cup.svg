@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<title>ing_cup — Góc Phố Việt (original vector art)</title>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="10.0" stroke-linejoin="round" stroke-linecap="round">
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="#4B2E2E"/>
+</g>
+<path d="M70,70 L186,70 L172,222 Q128,232 84,222 Z" fill="#F4FAFD"/>
+<polygon points="84.0,84.0 98.0,84.0 104.0,200.0 94.0,200.0" fill="#FFFFFF" opacity="0.7"/>
+<path d="M78,150 L178,150" fill="none" stroke="#D5E6EE" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M82,190 L174,190" fill="none" stroke="#D5E6EE" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

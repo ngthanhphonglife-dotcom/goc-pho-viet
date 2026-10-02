@@ -34,6 +34,10 @@ export interface GameStateData {
   completed?: string[];
   /** Các việc đã làm của từng nhiệm vụ đang nhận: { questId: ["talk:coba", …] }. */
   questFlags?: Record<string, string[]>;
+  /** Kho nguyên liệu (Phase 7): { id: số lượng }. */
+  stock?: Record<string, number>;
+  /** Khay ly pha sẵn: món + chất lượng 1–3. */
+  ready?: { recipe: string; quality: number }[];
 }
 
 const WEEKDAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];

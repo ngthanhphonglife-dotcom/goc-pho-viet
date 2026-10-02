@@ -18,7 +18,7 @@ Nguyên tắc sắp xếp: dựng **thế giới → nhân vật → điều khi
 | 4 | **Điều khiển người chơi:** joystick + chạm để đi, camera theo nhân vật, nút tương tác hiện khi lại gần NPC/vật thể, hint "Chạm để tương tác" | 3.7 §1·§5, 3.4 §1 | ✅ |
 | 5 | **Thời gian, Ngày/Đêm, Thời tiết:** đồng hồ chạy, 6 khung giờ đổi ánh sáng (sáng→đêm), nắng/nhiều mây/mưa nhẹ/mưa lớn, mưa + mặt đường ướt, đèn đường/đèn quán bật buổi tối | 3.5 §1·§2·§3·§8, 3.4 §9 | ✅ |
 | 6 | **Hội thoại & Nhiệm vụ cơ bản:** khung hội thoại có lựa chọn, bảng nhận nhiệm vụ + phần thưởng, QuestPanel theo dõi tiến độ | 3.4 §2·§3, 3.11 §4 | ✅ |
-| 7 | **Kinh doanh cà phê:** kho nguyên liệu, công thức (cà phê đen/sữa, bạc xỉu, trà tắc…), minigame pha chế theo bước + thanh thời gian | 3.8 §1–4, 3.4 §5 | |
+| 7 | **Kinh doanh cà phê:** kho nguyên liệu, công thức (cà phê đen/sữa, bạc xỉu, trà tắc…), minigame pha chế theo bước + thanh thời gian | 3.8 §1–4, 3.4 §5 | ✅ |
 | 8 | **Khách hàng AI + Đơn hàng:** loại khách (văn phòng, học sinh, shipper, du lịch, khách quen), hàng chờ tối đa 6, bảng đơn có hẹn giờ, giao món – nhận tiền – tip, phản ứng hài lòng → uy tín | 3.9, 3.8 §5–7 | |
 | 9 | **Tạp hoá Cô Ba:** mua nguyên liệu (− số lượng +), giá dao động theo ngày | 3.4 §4, 3.19 §2 | |
 | 10 | **Kết thúc ngày + Thống kê:** tổng kết doanh thu/chi phí/lợi nhuận, số ly, khách hài lòng, biểu đồ khách theo giờ | 3.8 §9, 3.9 §11 | |

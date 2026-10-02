@@ -138,7 +138,14 @@ test("Phase 2: chạm điểm tương tác, kéo không kích hoạt, UI không 
   const open = () => page.evaluate(() => ({ open: (window as any).__gpv.ui.placeholderOpen, title: (window as any).__gpv.ui.placeholderTitle }));
 
   // chạm có hành động → mở đúng bảng
-  for (const [id, title] of [["cart", "Quầy hàng"], ["river", "Bản đồ khu phố"]]) {
+  { // Phase 7: xe cà phê mở bảng Quầy hàng thật
+    const p = await aim(page, "cart");
+    await page.mouse.click(p.x, p.y);
+    await expect(page.locator('[data-name="Stall"]')).toBeVisible();
+    await page.locator('[data-name="Stall"] .x').tap();
+    await expect(page.locator('[data-name="Stall"]')).toBeHidden();
+  }
+  for (const [id, title] of [["river", "Bản đồ khu phố"]]) {
     const p = await aim(page, id);
     await page.mouse.click(p.x, p.y);
     await page.waitForTimeout(250);
@@ -161,12 +168,13 @@ test("Phase 2: chạm điểm tương tác, kéo không kích hoạt, UI không 
   await drag(page, p.x, p.y, -90);
   await page.waitForTimeout(250);
   expect((await open()).open, "Kéo không được kích hoạt điểm chạm").toBe(false);
+  await expect(page.locator('[data-name="Stall"]')).toBeHidden();
   expect((await cam(page)).x).toBeGreaterThan(x0 + 50);
 
   // kéo bắt đầu trên nút UI → phố đứng yên
   await settle(page);
   const x1 = (await cam(page)).x;
-  const b = (await page.locator('[data-action="ingredients"]').boundingBox())!;
+  const b = (await page.locator('[data-action="upgrade"]').boundingBox())!;
   await drag(page, b.x + b.width / 2, b.y + b.height / 2, 0);
   await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
   await page.mouse.down();

@@ -110,8 +110,9 @@ test("Phase 4: chạm để đi, tìm đường, tương tác khi tới nơi", a
   await page.waitForTimeout(300);
   m = await me(page);
   expect(m.home, "Chưa về sau quầy").toBe(true);
-  expect(await page.evaluate(() => (window as any).__gpv.ui.placeholderTitle)).toBe("Quầy hàng");
-  await page.locator("#ui .card .x").tap();
+  await expect(page.locator('[data-name="Stall"]')).toBeVisible();
+  await page.locator('[data-name="Stall"] .x').tap();
+  await expect(page.locator('[data-name="Stall"]')).toBeHidden();
   // rảnh sau quầy → tự pha chế/mời khách như Phase 3
   await step(page, 6);
   expect(["idle", "brew", "serve"]).toContain((await me(page)).anim);

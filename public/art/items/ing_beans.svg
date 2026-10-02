@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<title>ing_beans — Góc Phố Việt (original vector art)</title>
+<g transform="translate(92,150) rotate(-25)">
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="10.0" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="0.0" cy="0.0" rx="44.0" ry="30.0" fill="#4B2E2E"/>
+</g>
+<ellipse cx="0.0" cy="0.0" rx="44.0" ry="30.0" fill="#6B3F22"/>
+<path d="M-34,0 Q0,12 34,0" fill="none" stroke="#3F2413" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="-12.0" cy="-12.0" rx="14.0" ry="6.0" fill="#9A6B45" opacity="0.7"/>
+</g>
+<g transform="translate(168,160) rotate(30)">
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="10.0" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="0.0" cy="0.0" rx="44.0" ry="30.0" fill="#4B2E2E"/>
+</g>
+<ellipse cx="0.0" cy="0.0" rx="44.0" ry="30.0" fill="#6B3F22"/>
+<path d="M-34,0 Q0,12 34,0" fill="none" stroke="#3F2413" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="-12.0" cy="-12.0" rx="14.0" ry="6.0" fill="#9A6B45" opacity="0.7"/>
+</g>
+<g transform="translate(130,92) rotate(10)">
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="10.0" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="0.0" cy="0.0" rx="44.0" ry="30.0" fill="#4B2E2E"/>
+</g>
+<ellipse cx="0.0" cy="0.0" rx="44.0" ry="30.0" fill="#6B3F22"/>
+<path d="M-34,0 Q0,12 34,0" fill="none" stroke="#3F2413" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="-12.0" cy="-12.0" rx="14.0" ry="6.0" fill="#9A6B45" opacity="0.7"/>
+</g>
+</svg>
