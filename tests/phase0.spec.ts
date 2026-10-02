@@ -83,6 +83,14 @@ test("Phase 0: Master UI sắc nét, không đè, bấm được, không lỗi",
     expect(Math.min(hit.w, hit.h), `Nút ${id} quá nhỏ để chạm`).toBeGreaterThanOrEqual(24);
     await page.locator(`[data-action="${id}"]`).tap();
     await page.waitForTimeout(250);
+    if (id === "weather") {
+      // từ Phase 5 ô thời tiết mở bảng Dự báo hôm nay
+      const panel = page.locator('[data-name="WeatherForecast"]');
+      await expect(panel).toBeVisible();
+      await panel.locator(".x").tap();
+      await expect(panel).toBeHidden();
+      continue;
+    }
     if (id === "settings") {
       // từ Phase 1 nút ⚙ mở bảng Cài đặt thật
       const panel = page.locator('[data-name="SettingsPanel"]');

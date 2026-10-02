@@ -86,3 +86,7 @@
 .switch::after { content: ""; position: absolute; top: calc(6 * var(--u)); left: calc(6 * var(--u)); width: calc(58 * var(--u)); height: calc(58 * var(--u)); border-radius: 50%; background: #fff; box-shadow: var(--shadow); transition: transform 150ms; }
 .switch:checked { background: var(--green); }
 .switch:checked::after { transform: translateX(calc(60 * var(--u))); }
+
+/* Phase 5: bảng dự báo */
+.sv-row.now { border-color: var(--primary); background: #fff4ee; }
+.sv-row .sv-label strong { color: var(--ink); }

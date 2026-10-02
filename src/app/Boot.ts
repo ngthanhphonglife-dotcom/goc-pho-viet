@@ -6,12 +6,15 @@ import { ICONS, UI_ART } from "../screens/dom";
 import { Fader, LoadingScreen, MainMenu, NewGamePanel, SettingsPanel, SplashScreen } from "../screens/screens";
 import { MasterUI, fitTexts } from "../ui/MasterUI";
 import { Controls } from "../ui/Controls";
+import { TimeSystem } from "../core/TimeSystem";
+import { weekdayOf } from "../core/GameState";
+import { WeatherPanel } from "../screens/WeatherPanel";
 import { World } from "../world/World";
 import type { ActionId } from "../core/actions";
 import { VERSION } from "../version";
 
 const ICON_NAMES = ["icon_bag", "icon_calendar", "icon_check", "icon_decor", "icon_ingredients", "icon_map", "icon_money", "icon_quest",
-  "icon_quest_scroll", "icon_sell", "icon_settings", "icon_shop", "icon_stall", "icon_star", "icon_upgrade", "icon_weather_rain", "icon_weather_sun"];
+  "icon_quest_scroll", "icon_sell", "icon_settings", "icon_shop", "icon_stall", "icon_star", "icon_upgrade", "icon_weather_rain", "icon_weather_sun", "icon_weather_cloud", "icon_weather_moon"];
 
 const AUTOSAVE_MS = 30_000;
 
@@ -26,6 +29,8 @@ export class Boot {
   readonly saves = new SaveService();
   readonly settings = new SettingsService();
   readonly world = new World();
+  readonly time = new TimeSystem(this.state);
+  weatherPanel!: WeatherPanel;
   ui!: MasterUI;
   controls!: Controls;
   menu!: MainMenu;
@@ -111,6 +116,10 @@ export class Boot {
         this.settingsPanel.show(() => void this.backToMenu());
         return true;
       }
+      if (id === "weather") {
+        this.weatherPanel.show(this.state.value, this.time.kind);
+        return true;
+      }
       return false;
     });
 
@@ -118,6 +127,19 @@ export class Boot {
     this.world.onHotspot((h) => {
       if (h.action) this.ui.invoke(h.action as ActionId);
       else this.ui.toast(h.name);
+    });
+
+    // Phase 5: đồng hồ chạy khi đang trong game và không mở bảng nào; ánh sáng + thời tiết theo trạng thái
+    this.weatherPanel = new WeatherPanel(this.hosts.app);
+    this.world.onTick((dt) => {
+      if (this.screen !== "game" || !this.world.lifeEnabled || this.fader.busy || document.querySelector(".overlay.open")) return;
+      this.time.update(dt);
+    });
+    this.state.subscribe((s) => { if (this.screen === "game") this.world.atmo.set(s.minuteOfDay, this.time.kind); });
+    this.time.onNewDay((day) => {
+      this.world.placePlayer();
+      this.saveNow();
+      void this.fader.run(() => {}).then(() => this.ui.toast(`Ngày ${day} · ${weekdayOf(day)} — chào buổi sáng!`));
     });
 
     // Phase 4: joystick + nút tương tác
@@ -160,6 +182,7 @@ export class Boot {
     this.world.interactive = false;
     this.hosts.controls.classList.add("hidden");
     this.controls.reset();
+    this.world.atmo.set(9 * 60, "sunny", true); // menu luôn là buổi sáng đẹp trời
     this.world.placePlayer();
   }
 
@@ -172,6 +195,8 @@ export class Boot {
       this.hosts.ui.classList.remove("hidden");
       fitTexts(this.ui.root);
       this.screen = "game";
+      this.time.forced = null;
+      this.world.atmo.set(data.minuteOfDay, data.weather.kind ?? "sunny", true);
       this.world.placePlayer(data.player);
       this.world.interactive = true;
       this.hosts.controls.classList.remove("hidden");
@@ -201,7 +226,7 @@ export class Boot {
   saveNow(): boolean {
     if (this.screen === "game") {
       const p = this.world.player;
-      this.state.update({ player: p.atHome ? undefined : { x: Math.round(p.pos.x), y: Math.round(p.pos.y) } });
+      this.state.patchQuiet({ player: p.atHome ? undefined : { x: Math.round(p.pos.x), y: Math.round(p.pos.y) } });
     }
     return this.saves.save(this.state.value);
   }

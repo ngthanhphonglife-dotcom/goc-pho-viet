@@ -3,6 +3,7 @@ import type { Character, CharInfo, CharTextures, PartCell, Rig } from "./Charact
 import { StreetLife } from "./StreetLife";
 import { NavGrid, type Box } from "./Nav";
 import { PlayerController } from "./Player";
+import { Atmosphere, type Light } from "./Atmosphere";
 import { loadImage, type LoadTask } from "../core/preload";
 
 /**
@@ -18,7 +19,7 @@ interface LayerInfo { name: string; width: number; parallax: number; bbox: [numb
 interface PropInfo { id: string; x: number; y: number; w: number; h: number; foot: number; solid: [number, number] | null }
 export interface Hotspot { id: string; name: string; rect: [number, number, number, number]; stand: [number, number]; action?: string }
 export type Nearby = { kind: "char"; c: Character; name: string } | { kind: "hotspot"; h: Hotspot; name: string };
-interface WorldMeta { width: number; height: number; focusY: number; layers: LayerInfo[]; props: PropInfo[]; hotspots: Hotspot[]; solids: [number, number, number, number][]; walk: [number, number, number, number] }
+interface WorldMeta { width: number; height: number; focusY: number; layers: LayerInfo[]; props: PropInfo[]; hotspots: Hotspot[]; solids: [number, number, number, number][]; walk: [number, number, number, number]; lights: Light[] }
 
 interface CharMeta { rig: Rig; faces: { file: string; w: number; h: number; parts: Record<string, PartCell> }; chars: CharInfo[] }
 
@@ -54,6 +55,8 @@ export class World {
   private charHandlers: ((c: Character) => void)[] = [];
   life!: StreetLife;
   nav!: NavGrid;
+  atmo!: Atmosphere;
+  private tickHandlers: ((dt: number) => void)[] = [];
   player!: PlayerController;
   /** Camera đang bám theo người chơi (tắt khi người chơi kéo phố để xem tự do). */
   private follow = false;
@@ -126,6 +129,10 @@ export class World {
         this.stage.addChild(this.fx);
       }
     }
+    // Phase 5: ánh sáng, đèn, mưa
+    this.atmo = new Atmosphere(this.layerBoxes, this.actors, this.meta.width, this.meta.height, this.meta.lights);
+    this.stage.addChildAt(this.atmo.lights, this.stage.getChildIndex(this.fx));
+    this.app.stage.addChild(this.atmo.rainFx);
     this.life = new StreetLife(this.charMeta.chars, this.charMeta.rig, this.actors, this.meta.width);
     // Phase 4: vỉa hè đi được + vật cản quanh chân đạo cụ, gốc cây, người đang đứng
     const boxes: Box[] = this.meta.solids.map(([x0, y0, x1, y1]) => ({ x0, y0, x1, y1 }));
@@ -190,9 +197,16 @@ export class World {
     this.centerOn(this.meta.width / 2, animate);
   }
 
+  /** Gọi mỗi khung hình (đồng hồ game…). */
+  onTick(fn: (dt: number) => void): void {
+    this.tickHandlers.push(fn);
+  }
+
   private tick(dt: number): boolean {
     dt = Math.min(dt, 0.05);
     let moved = false;
+    if (!document.hidden) for (const fn of this.tickHandlers) fn(dt);
+    if (this.atmo.update(dt, this.app.renderer.screen.width, this.app.renderer.screen.height)) moved = true;
     if (this.target !== null) {
       const d = this.target - this.camX;
       if (Math.abs(d) < 0.5) { this.camX = this.target; this.target = null; } else this.camX += d * Math.min(1, dt * 7);
@@ -241,6 +255,7 @@ export class World {
     const mainX = Math.round(-this.camX * rs);
     this.actors.x = mainX;
     this.fx.x = mainX;
+    this.atmo.lights.x = mainX;
     this.dirty = true;
   }
 
@@ -506,7 +521,7 @@ export class World {
 
   /** Vẽ các lớp SVG ra canvas ở tỉ lệ rs (pixel thật / đơn vị thiết kế). */
   private rasterize(rs: number): void {
-    for (const c of this.layerBoxes.values()) for (const ch of c.removeChildren()) ch.destroy();
+    for (const c of this.layerBoxes.values()) for (const ch of [...c.children]) if (ch instanceof Sprite) { c.removeChild(ch); ch.destroy(); }
     for (const sp of this.propSprites) { this.actors.removeChild(sp); sp.destroy(); }
     this.propSprites = [];
     for (const t of this.charSubTextures) t.destroy(false);
@@ -562,6 +577,7 @@ export class World {
     const tex = new Map<string, CharTextures>();
     for (const c of this.charMeta.chars) tex.set(c.id, { parts: cut("char:" + c.id, c.w, c.h, c.parts), faces, faceCells: f.parts, rs });
     this.life.setTextures(tex);
+    this.atmo.rebuild(rs);
     this.dirty = true;
   }
 

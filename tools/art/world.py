@@ -354,7 +354,9 @@ def pole(dx):
          poly([(108, 560), (118, 560), (112, 1720), (100, 1720)], "#8E8A82"),
          outlined([rect(135, 760, 50, 80, "#C9C6BE", 4)], 3),
          outlined([rect(96, 1000, 44, 70, "#C9C6BE", 4)], 3),
-         outlined([rect(70, 600, 110, 18, "#7A766F", 3)], 3)]
+         outlined([rect(70, 600, 110, 18, "#7A766F", 3)], 3),
+         outlined([rect(140, 668, 96, 12, "#7A766F", 4), path("M206,680 L262,680 L250,704 L218,704 Z", "#5E5A54")], 3),   # đèn đường
+         ellipse(234, 706, 15, 6, "#FFF2B0")]
     return shift(b, dx)
 
 
@@ -882,6 +884,26 @@ SOLID = {"pole_": None, "cat": None, "toolbox": None, "dog": [CX + 735, CX + 805
 SOLIDS = [[CX + 25, 1300, CX + 105, 1346], [2683, 1300, 2729, 1348]] + [[dx + 100, 1690, dx + 150, 1724] for dx in POLES]
 
 
+def lights():
+    """Đèn buổi tối (Phase 5): quầng sáng tròn (glow) và ô cửa sáng (rect), toạ độ phố."""
+    L = []
+    for dx in POLES:
+        L.append({"t": "glow", "x": dx + 234, "y": 720, "r": 330, "a": 0.85})
+        L.append({"t": "glow", "x": dx + 234, "y": 1700, "r": 300, "ry": 90, "a": 0.5})
+    L.append({"t": "glow", "x": CX + 610, "y": 1260, "r": 330, "a": 0.8})            # đèn xe cà phê
+    L.append({"t": "glow", "x": CX + 610, "y": 1560, "r": 300, "ry": 80, "a": 0.4})
+    for (x, y, w, h) in [(CX + 460, 986, 290, 289), (CX + 800, 1015, 310, 260),                 # tiệm Chú Tư, Cô Ba
+                         (90, 480, 70, 150), (292, 960, 86, 150), (720, 880, 110, 395),          # nhà bạn, nhà xanh
+                         (590, 50, 80, 170), (642, 342, 92, 186),
+                         (CX + 475, 40, 110, 190), (CX + 950, 40, 100, 170), (CX + 512, 342, 186, 186), (CX + 830, 320, 200, 170),
+                         (2300, 300, 110, 170), (2500, 580, 90, 130), (2452, 870, 70, 405),
+                         (2810, 40, 110, 190), (2860, 320, 200, 170)]:
+        L.append({"t": "rect", "x": x, "y": y, "w": w, "h": h, "a": 0.55})
+    L.append({"t": "glow", "x": CX + 605, "y": 1130, "r": 240, "a": 0.35})
+    L.append({"t": "glow", "x": CX + 955, "y": 1150, "r": 260, "a": 0.4})
+    return L
+
+
 def render_bbox(body, lw, defs=""):
     import io
     import cairosvg
@@ -939,7 +961,7 @@ def main():
     panorama.save(os.path.join(HERE, "..", "..", "docs", "art", "street_panorama.png"))
     print("props", len(props), "hotspots", len(HOTSPOTS))
     with open(os.path.join(OUT, "layers.json"), "w", encoding="utf-8") as f:
-        json.dump({"width": WW, "height": H, "focusY": 1380, "layers": layers, "props": props, "hotspots": HOTSPOTS, "solids": SOLIDS, "walk": [40, 1304, WW - 40, 1772]}, f, ensure_ascii=False, indent=1)
+        json.dump({"width": WW, "height": H, "focusY": 1380, "layers": layers, "props": props, "hotspots": HOTSPOTS, "solids": SOLIDS, "lights": lights(), "walk": [40, 1304, WW - 40, 1772]}, f, ensure_ascii=False, indent=1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Đêm trong — Góc Phố Việt (original art)</title>
+<path d="M330,96 A170,170 0 1 0 420,340 A130,130 0 1 1 330,96 Z" fill="#4B2E2E" stroke="#4B2E2E" stroke-width="26" stroke-linejoin="round"/>
+<path d="M330,96 A170,170 0 1 0 420,340 A130,130 0 1 1 330,96 Z" fill="#F7D774"/>
+<circle cx="380" cy="150" r="14" fill="#F7D774" stroke="#4B2E2E" stroke-width="8"/>
+<circle cx="430" cy="230" r="9" fill="#F7D774" stroke="#4B2E2E" stroke-width="7"/>
+</svg>

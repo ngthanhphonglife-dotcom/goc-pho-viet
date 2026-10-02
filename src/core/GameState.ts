@@ -15,7 +15,9 @@ export interface Quest {
 export interface Weather {
   label: string;
   temperatureC: number;
-  icon: "sun" | "rain";
+  icon: "sun" | "rain" | "cloud" | "moon";
+  /** Loại thời tiết (Phase 5). */
+  kind?: "sunny" | "cloudy" | "lightRain" | "heavyRain";
 }
 
 export interface GameStateData {
@@ -101,6 +103,11 @@ export class GameState {
   replace(data: GameStateData): void {
     this.data = structuredClone(data);
     for (const fn of this.listeners) fn(this.data);
+  }
+
+  /** Ghi dữ liệu mà không vẽ lại giao diện (vd. vị trí nhân vật). */
+  patchQuiet(patch: Partial<GameStateData>): void {
+    Object.assign(this.data, patch);
   }
 
   update(patch: Partial<GameStateData> | ((d: GameStateData) => void)): void {

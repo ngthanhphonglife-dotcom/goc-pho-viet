@@ -177,7 +177,7 @@ export class MainMenu {
 
 // ---------------------------------------------------------------- Modal panels
 
-abstract class Modal {
+export abstract class Modal {
   readonly el: HTMLElement;
   protected card: HTMLElement;
   protected body: HTMLElement;

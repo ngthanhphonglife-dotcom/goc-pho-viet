@@ -237,18 +237,25 @@ export class MasterUI {
 
   // ------------------------------------------------------------------ render
 
+  private questKey = "";
+
   private render(s: Readonly<GameStateData>): void {
     const r = this.refs;
     r.day.textContent = "Ngày " + s.day;
     r.weekday.textContent = weekdayOf(s.day);
     r.clock.textContent = formatClock(s.minuteOfDay);
-    r.weatherIcon.src = ICON_BASE + (s.weather.icon === "rain" ? "icon_weather_rain" : "icon_weather_sun") + ".svg";
+    const wsrc = ICON_BASE + "icon_weather_" + (["rain", "cloud", "moon"].includes(s.weather.icon) ? s.weather.icon : "sun") + ".svg";
+    if (r.weatherIcon.dataset.src !== wsrc) { r.weatherIcon.dataset.src = wsrc; r.weatherIcon.src = wsrc; }
     r.weatherIcon.alt = s.weather.label;
     r.weatherLabel.textContent = s.weather.label;
     r.weatherTemp.textContent = s.weather.temperatureC + "°C";
     r.money.textContent = formatMoney(s.money);
     r.reputation.textContent = String(s.reputation);
 
+    // chỉ dựng lại danh sách nhiệm vụ khi dữ liệu nhiệm vụ đổi (đồng hồ chạy mỗi phút không đụng tới)
+    const qkey = JSON.stringify(s.quests.slice(0, 2));
+    if (qkey === this.questKey) { fitTexts(this.root); return; }
+    this.questKey = qkey;
     r.quests.replaceChildren();
     s.quests.slice(0, 2).forEach((q, i) => {
       const counted = q.target > 0;
