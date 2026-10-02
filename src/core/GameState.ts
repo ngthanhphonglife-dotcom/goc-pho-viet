@@ -19,6 +19,8 @@ export interface Weather {
 }
 
 export interface GameStateData {
+  /** Vị trí chủ quầy trên phố (Phase 4); chưa có = đứng sau quầy. */
+  player?: { x: number; y: number };
   day: number;
   /** Phút trong ngày (06:45 = 405). */
   minuteOfDay: number;

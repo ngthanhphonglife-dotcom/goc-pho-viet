@@ -4,7 +4,7 @@ import { Boot } from "./app/Boot";
 import { DEMO_STATE } from "./core/GameState";
 
 const $ = (id: string) => document.getElementById(id)!;
-const boot = new Boot({ app: $("app"), world: $("world"), ui: $("ui"), screens: $("screens") });
+const boot = new Boot({ app: $("app"), world: $("world"), ui: $("ui"), screens: $("screens"), controls: $("controls") });
 
 // cổng kiểm tra cho test tự động (không ảnh hưởng người chơi)
 const hook = {

@@ -122,13 +122,6 @@ test("Phase 2: phố dài, camera kéo ngang, parallax, không hở nền", asyn
   for (const t of tex) expect(Math.max(t.width, t.height), `Texture ${t.name} quá lớn`).toBeLessThanOrEqual(4096);
   expect(tex.filter((t: any) => t.name.startsWith("prop:")).length).toBeGreaterThanOrEqual(30);
 
-  // Phím mũi tên
-  await W(page, "w.centerHome()");
-  const k0 = (await cam(page)).x;
-  await page.keyboard.press("ArrowRight");
-  await settle(page);
-  expect((await cam(page)).x).toBeGreaterThan(k0 + 100);
-
   // Về menu: camera về giữa, khoá kéo
   await page.locator('[data-action="settings"]').tap();
   await page.locator('[data-panel="to-menu"]').tap();

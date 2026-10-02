@@ -1,6 +1,8 @@
 import { Application, Container, Graphics, Rectangle, Sprite, Texture } from "pixi.js";
 import type { Character, CharInfo, CharTextures, PartCell, Rig } from "./Character";
 import { StreetLife } from "./StreetLife";
+import { NavGrid, type Box } from "./Nav";
+import { PlayerController } from "./Player";
 import { loadImage, type LoadTask } from "../core/preload";
 
 /**
@@ -13,9 +15,10 @@ import { loadImage, type LoadTask } from "../core/preload";
  */
 
 interface LayerInfo { name: string; width: number; parallax: number; bbox: [number, number, number, number] }
-interface PropInfo { id: string; x: number; y: number; w: number; h: number; foot: number }
-export interface Hotspot { id: string; name: string; rect: [number, number, number, number]; action?: string }
-interface WorldMeta { width: number; height: number; focusY: number; layers: LayerInfo[]; props: PropInfo[]; hotspots: Hotspot[] }
+interface PropInfo { id: string; x: number; y: number; w: number; h: number; foot: number; solid: [number, number] | null }
+export interface Hotspot { id: string; name: string; rect: [number, number, number, number]; stand: [number, number]; action?: string }
+export type Nearby = { kind: "char"; c: Character; name: string } | { kind: "hotspot"; h: Hotspot; name: string };
+interface WorldMeta { width: number; height: number; focusY: number; layers: LayerInfo[]; props: PropInfo[]; hotspots: Hotspot[]; solids: [number, number, number, number][]; walk: [number, number, number, number] }
 
 interface CharMeta { rig: Rig; faces: { file: string; w: number; h: number; parts: Record<string, PartCell> }; chars: CharInfo[] }
 
@@ -50,6 +53,14 @@ export class World {
   private charSubTextures: Texture[] = [];
   private charHandlers: ((c: Character) => void)[] = [];
   life!: StreetLife;
+  nav!: NavGrid;
+  player!: PlayerController;
+  /** Camera đang bám theo người chơi (tắt khi người chơi kéo phố để xem tự do). */
+  private follow = false;
+  private nearbyHandlers: ((n: Nearby | null) => void)[] = [];
+  private nearbyKey = "";
+  nearby: Nearby | null = null;
+  private keysDown = new Set<string>();
   /** Bật/tắt chuyển động nhân vật (tắt thì chỉ vẽ lại khi camera đổi). */
   lifeEnabled = true;
   private fx = new Graphics();
@@ -116,6 +127,15 @@ export class World {
       }
     }
     this.life = new StreetLife(this.charMeta.chars, this.charMeta.rig, this.actors, this.meta.width);
+    // Phase 4: vỉa hè đi được + vật cản quanh chân đạo cụ, gốc cây, người đang đứng
+    const boxes: Box[] = this.meta.solids.map(([x0, y0, x1, y1]) => ({ x0, y0, x1, y1 }));
+    for (const p of this.meta.props) if (p.solid) boxes.push({ x0: p.solid[0], y0: p.foot - 30, x1: p.solid[1], y1: p.foot + 6 });
+    for (const s of this.life.stationedSpots()) boxes.push({ x0: s.x - 40, y0: s.y - 22, x1: s.x + 40, y1: s.y + 8 });
+    const [wx0, wy0, wx1, wy1] = this.meta.walk;
+    this.nav = new NavGrid({ x0: wx0, y0: wy0, x1: wx1, y1: wy1 }, boxes);
+    const me = this.life.agent("player")!;
+    this.player = new PlayerController(me.c, this.nav, { x: me.c.wx, y: me.c.wy });
+    me.hold = () => !this.player.idleAtHome;
     this.layout(true);
     window.addEventListener("resize", () => this.scheduleLayout());
     window.visualViewport?.addEventListener("resize", () => this.scheduleLayout());
@@ -153,6 +173,7 @@ export class World {
   /** Đặt camera ngay lập tức (x = mép trái khung nhìn). */
   setCamera(x: number): void {
     this.target = null;
+    this.follow = false;
     this.vel = 0;
     this.camX = this.clamp(x);
     this.applyCamera();
@@ -194,6 +215,14 @@ export class World {
       moved = true;
     }
     if (this.lifeEnabled && !document.hidden) {
+      if (this.interactive) {
+        if (this.player.update(dt)) this.follow = true;
+        if (this.follow && !this.drag && this.target === null) {
+          const want = this.clamp(this.player.c.wx - this.viewW / 2);
+          if (Math.abs(want - this.camX) > 0.5) { this.camX += (want - this.camX) * Math.min(1, dt * 5); this.vel = 0; this.applyCamera(); }
+        }
+        this.updateNearby();
+      }
       this.life.update(dt);
       moved = true;
     }
@@ -220,6 +249,88 @@ export class World {
     const o: Record<string, number> = {};
     for (const l of this.meta.layers) o[l.name] = this.layerX(l);
     return o;
+  }
+
+  /** Chạy mô phỏng thêm `seconds` giây ngay lập tức (test / tua nhanh). */
+  step(seconds: number): void {
+    for (let t = 0; t < seconds; t += 1 / 30) this.tick(1 / 30);
+    this.dirty = true;
+  }
+
+  // ------------------------------------------------------------------ người chơi & tương tác
+
+  /** Đặt chủ quầy tại (x, y); không truyền = về sau quầy. Camera nhìn theo nếu ở xa giữa phố. */
+  placePlayer(pos?: { x: number; y: number }): void {
+    const p = pos ?? this.player.home;
+    if (pos) this.player.setPos(p.x, p.y);
+    else { this.player.c.wx = p.x; this.player.c.wy = p.y; this.player.stop(); this.player.c.place(); }
+    this.follow = false;
+    if (this.player.atHome) this.centerHome();
+    else this.centerOn(this.player.c.wx, false);
+    this.dirty = true;
+  }
+
+  onNearby(fn: (n: Nearby | null) => void): void {
+    this.nearbyHandlers.push(fn);
+  }
+
+  private shortName(h: Hotspot): string {
+    return h.name.split(/ — |:/)[0];
+  }
+
+  private updateNearby(): void {
+    const p = this.player.pos;
+    let best: Nearby | null = null;
+    let bd = 150;
+    for (const { c } of this.life.agents) {
+      if (!c.tappable) continue;
+      const d = Math.hypot(c.wx - p.x, (c.wy - p.y) * 1.6) * 0.6; // ưu tiên người hơn đồ vật
+      if (d < bd) { bd = d; best = { kind: "char", c, name: c.info.name }; }
+    }
+    for (const h of this.meta.hotspots) {
+      const d = Math.hypot(h.stand[0] - p.x, (h.stand[1] - p.y) * 1.6);
+      if (d < bd && !(h.id === "cart" && this.player.atHome)) { bd = d; best = { kind: "hotspot", h, name: this.shortName(h) }; }
+    }
+    const key = best ? (best.kind === "char" ? "c:" + best.c.info.id : "h:" + best.h.id) : "";
+    this.nearby = best;
+    if (key !== this.nearbyKey) {
+      this.nearbyKey = key;
+      for (const fn of this.nearbyHandlers) fn(best);
+    }
+  }
+
+  /** Thực hiện tương tác (đã đứng gần): quay mặt về phía đối tượng rồi báo cho game. */
+  private fire(n: Nearby): void {
+    if (n.kind === "char") {
+      this.player.faceTo(n.c.wx);
+      if (n.c.anim !== "walk" && n.c.anim !== "fix" && n.c.anim !== "sit") n.c.dir = this.player.c.wx > n.c.wx ? 1 : -1;
+      for (const fn of this.charHandlers) fn(n.c);
+    } else {
+      if (n.h.id !== "cart") this.player.faceTo((n.h.rect[0] + n.h.rect[2]) / 2);
+      else this.player.c.dir = 1;
+      for (const fn of this.hotspotHandlers) fn(n.h);
+    }
+  }
+
+  /** Người chơi muốn tương tác với n: đi tới gần rồi mới tương tác (không có chuyển động thì tương tác ngay). */
+  interact(n: Nearby): void {
+    if (!this.lifeEnabled) { this.fire(n); return; }
+    let x: number, y: number;
+    if (n.kind === "char") {
+      const side = this.player.c.wx >= n.c.wx ? 1 : -1;
+      const a = this.nav.free({ x: n.c.wx + side * 125, y: n.c.wy + 10 });
+      const b = this.nav.free({ x: n.c.wx - side * 125, y: n.c.wy + 10 });
+      const far = (q: { x: number; y: number }) => Math.hypot(q.x - n.c.wx, q.y - n.c.wy);
+      ({ x, y } = far(a) <= far(b) + 40 ? a : b);
+    } else [x, y] = n.h.stand;
+    if (Math.hypot(x - this.player.c.wx, y - this.player.c.wy) < 14) { this.player.stop(); this.fire(n); return; }
+    this.follow = true;
+    this.player.goTo(x, y, () => this.fire(n));
+  }
+
+  /** Bấm nút tương tác: tương tác với đối tượng đang ở gần. */
+  interactNearby(): void {
+    if (this.nearby) this.interact(this.nearby);
   }
 
   // ------------------------------------------------------------------ nhập liệu
@@ -280,6 +391,7 @@ export class World {
       const p = local(e);
       if (!d.moved && Math.hypot(p.x - d.startX, p.y - d.startY) > 8) d.moved = true;
       if (d.moved) {
+        this.follow = false; // kéo phố = xem tự do
         const now = performance.now();
         const dx = (p.x - d.lastX) / this.scale;
         const dt = Math.max(1, now - d.lastT) / 1000;
@@ -302,15 +414,13 @@ export class World {
       const p = local(e);
       const w = this.toWorld(p.x, p.y);
       const c = this.life.characterAt(w.x, w.y);
-      if (c) {
-        this.ring = { x: w.x, y: w.y, t: 0 };
-        for (const fn of this.charHandlers) fn(c);
-        return;
-      }
-      const h = this.hotspotAt(w.x, w.y);
-      if (!h) return;
+      const h = c ? null : this.hotspotAt(w.x, w.y);
+      const [, wy0, , wy1] = this.meta.walk;
+      if (c) this.interact({ kind: "char", c, name: c.info.name });
+      else if (h) this.interact({ kind: "hotspot", h, name: this.shortName(h) });
+      else if (this.lifeEnabled && w.y > wy0 - 60 && w.y < wy1 + 90) { this.follow = true; this.player.goTo(w.x, w.y); }   // chạm vỉa hè → đi tới
+      else return;
       this.ring = { x: w.x, y: w.y, t: 0 };
-      for (const fn of this.hotspotHandlers) fn(h);
     };
     el.addEventListener("pointerup", (e) => end(e, false));
     el.addEventListener("pointercancel", (e) => end(e, true));
@@ -318,15 +428,29 @@ export class World {
       if (!this.interactive) return;
       e.preventDefault();
       const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      this.follow = false;
       this.setCamera(this.camX + d / this.scale);
     }, { passive: false });
+    // bàn phím: WASD / mũi tên điều khiển chủ quầy
+    const KEYS: Record<string, [number, number]> = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], ArrowUp: [0, -1], w: [0, -1], ArrowDown: [0, 1], s: [0, 1] };
+    const sync = () => {
+      let x = 0, y = 0;
+      for (const k of this.keysDown) { x += KEYS[k][0]; y += KEYS[k][1]; }
+      this.player.keys = { x: Math.sign(x), y: Math.sign(y) };
+    };
     window.addEventListener("keydown", (e) => {
-      if (!this.interactive || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) return;
-      if ((e.target as HTMLElement | null)?.closest?.("input, textarea, select")) return;
-      const base = this.target ?? this.camX;
-      this.target = this.clamp(base + (e.key === "ArrowLeft" ? -1 : 1) * this.viewW * 0.4);
-      this.vel = 0;
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (!KEYS[k] || !this.interactive) return;
+      if ((e.target as HTMLElement | null)?.closest?.("input, textarea, select") || document.querySelector(".overlay:not([hidden])")) return;
+      e.preventDefault();
+      this.keysDown.add(k);
+      sync();
     });
+    window.addEventListener("keyup", (e) => {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (this.keysDown.delete(k)) sync();
+    });
+    window.addEventListener("blur", () => { this.keysDown.clear(); sync(); });
   }
 
   // ------------------------------------------------------------------ bố cục + raster

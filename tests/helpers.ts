@@ -7,7 +7,8 @@ export async function boot(page: Page, safe?: Safe, opts: { clear?: boolean; lif
   const errors: string[] = [];
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
   page.on("pageerror", (e) => errors.push(e.message));
-  page.on("requestfailed", (r) => errors.push("request failed: " + r.url()));
+  // ERR_ABORTED = yêu cầu bị huỷ do trang tải lại/chuyển trang (không phải lỗi tải)
+  page.on("requestfailed", (r) => { if (r.failure()?.errorText !== "net::ERR_ABORTED") errors.push("request failed: " + r.url() + " " + r.failure()?.errorText); });
   page.on("response", (r) => { if (r.status() >= 400) errors.push(r.status() + " " + r.url()); });
   if (safe) {
     // Chromium không giả lập được env(safe-area-inset-*): đặt thẳng biến CSS như máy có tai thỏ.

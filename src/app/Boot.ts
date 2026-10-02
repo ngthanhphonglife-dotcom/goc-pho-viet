@@ -5,6 +5,7 @@ import { SettingsService } from "../core/settings";
 import { ICONS, UI_ART } from "../screens/dom";
 import { Fader, LoadingScreen, MainMenu, NewGamePanel, SettingsPanel, SplashScreen } from "../screens/screens";
 import { MasterUI, fitTexts } from "../ui/MasterUI";
+import { Controls } from "../ui/Controls";
 import { World } from "../world/World";
 import type { ActionId } from "../core/actions";
 import { VERSION } from "../version";
@@ -26,6 +27,7 @@ export class Boot {
   readonly settings = new SettingsService();
   readonly world = new World();
   ui!: MasterUI;
+  controls!: Controls;
   menu!: MainMenu;
   loading!: LoadingScreen;
   newGamePanel!: NewGamePanel;
@@ -35,7 +37,7 @@ export class Boot {
   private autosaveTimer = 0;
   private corruptSave = false;
 
-  constructor(private hosts: { world: HTMLElement; ui: HTMLElement; screens: HTMLElement; app: HTMLElement }) {}
+  constructor(private hosts: { world: HTMLElement; ui: HTMLElement; screens: HTMLElement; app: HTMLElement; controls: HTMLElement }) {}
 
   async start(): Promise<void> {
     const { screens, ui, app } = this.hosts;
@@ -118,6 +120,12 @@ export class Boot {
       else this.ui.toast(h.name);
     });
 
+    // Phase 4: joystick + nút tương tác
+    this.controls = new Controls(this.hosts.controls);
+    this.controls.onVector((x, y) => { this.world.player.stick = { x, y }; });
+    this.controls.onInteract(() => this.world.interactNearby());
+    this.world.onNearby((n) => this.controls.setInteract(n ? n.name : null));
+
     // Phase 3: chạm nhân vật → chào
     this.world.onCharacter((c) => {
       c.react();
@@ -150,7 +158,9 @@ export class Boot {
     this.hosts.ui.classList.add("hidden");
     this.screen = "menu";
     this.world.interactive = false;
-    this.world.centerHome();
+    this.hosts.controls.classList.add("hidden");
+    this.controls.reset();
+    this.world.placePlayer();
   }
 
   // ---------------------------------------------------------------- game
@@ -162,8 +172,9 @@ export class Boot {
       this.hosts.ui.classList.remove("hidden");
       fitTexts(this.ui.root);
       this.screen = "game";
-      this.world.centerHome();
+      this.world.placePlayer(data.player);
       this.world.interactive = true;
+      this.hosts.controls.classList.remove("hidden");
       window.clearInterval(this.autosaveTimer);
       this.autosaveTimer = window.setInterval(() => this.saveNow(), AUTOSAVE_MS);
     });
@@ -174,7 +185,7 @@ export class Boot {
     this.saves.save(data); // lưu ngay khi bắt đầu ván
     this.corruptSave = false;
     await this.enterGame(data);
-    this.ui.toast("Kéo sang trái / phải để dạo phố Hoa Sữa");
+    this.ui.toast("Chạm vỉa hè hoặc dùng cần điều khiển để đi dạo phố Hoa Sữa");
   }
 
   async continueGame(): Promise<void> {
@@ -188,6 +199,10 @@ export class Boot {
   }
 
   saveNow(): boolean {
+    if (this.screen === "game") {
+      const p = this.world.player;
+      this.state.update({ player: p.atHome ? undefined : { x: Math.round(p.pos.x), y: Math.round(p.pos.y) } });
+    }
     return this.saves.save(this.state.value);
   }
 

@@ -302,8 +302,10 @@ def prop(pid, body, foot, dx=0):
     PROPS.append((pid, shift(body, dx) if dx else body, foot))
 
 
-def hotspot(hid, name, x0, y0, x1, y1, action=None):
-    h = {"id": hid, "name": name, "rect": [x0, y0, x1, y1]}
+def hotspot(hid, name, x0, y0, x1, y1, action=None, stand=None):
+    """stand: chỗ người chơi đứng khi tương tác (mặc định ngay dưới vùng chạm)."""
+    h = {"id": hid, "name": name, "rect": [x0, y0, x1, y1],
+         "stand": list(stand) if stand else [(x0 + x1) // 2, min(1770, max(1312, y1 + 36))]}
     if action:
         h["action"] = action
     HOTSPOTS.append(h)
@@ -793,7 +795,7 @@ def build_props():
     for _ in range(6):
         b.append(circle(755 + rnd.uniform(-22, 22), 1285 - rnd.uniform(0, 30), rnd.uniform(10, 15), rnd.choice([GREEN, GREEN_L])))
     prop("cart", b, 1534, CX)
-    hotspot("cart", "Xe cà phê Góc Phố", CX + 430, 1100, CX + 790, 1535, "stall")
+    hotspot("cart", "Xe cà phê Góc Phố", CX + 430, 1100, CX + 790, 1535, "stall", stand=(CX + 662, 1475))
 
     b = [outlined([poly([(793, 1640), (815, 1400), (830, 1400), (810, 1640)], WOOD_D), poly([(925, 1640), (907, 1400), (922, 1400), (940, 1640)], WOOD_D),
                    rect(785, 1395, 155, 200, "#2F3A37", 8)], 4),
@@ -874,6 +876,12 @@ def build_props():
 
 # ---------------------------------------------------------------- xuất file
 
+SOLID = {"pole_": None, "cat": None, "toolbox": None, "dog": [CX + 735, CX + 805], "parasol": [224, 276], "street_sign": [CX + 52, CX + 76],
+         "bus_stop": [2818, 2842], "river_sign": [3128, 3152], "fruit_cart": None}
+# vật cản tĩnh trên vỉa hè (gốc cây, cột điện): [x0, y0, x1, y1]
+SOLIDS = [[CX + 25, 1300, CX + 105, 1346], [2683, 1300, 2729, 1348]] + [[dx + 100, 1690, dx + 150, 1724] for dx in POLES]
+
+
 def render_bbox(body, lw, defs=""):
     import io
     import cairosvg
@@ -923,13 +931,15 @@ def main():
                 % (bw, bh, bb[0], bb[1], bw, bh, pid, body))
         with open(os.path.join(OUT, "props", pid + ".svg"), "w", encoding="utf-8") as f:
             f.write(data)
-        props.append({"id": pid, "x": bb[0], "y": bb[1], "w": bw, "h": bh, "foot": foot, "im": im})
+        # phần chân chiếm chỗ trên vỉa hè (vật cản): [x0, x1]; None = đi xuyên được
+        solid = SOLID.get(pid, SOLID.get(pid.rstrip("0123456789"), [bb[0] + bw * 0.14, bb[0] + bw * 0.86]))
+        props.append({"id": pid, "x": bb[0], "y": bb[1], "w": bw, "h": bh, "foot": foot, "solid": solid, "im": im})
     for p in sorted(props, key=lambda p: p["foot"]):
         panorama.alpha_composite(p.pop("im"))
     panorama.save(os.path.join(HERE, "..", "..", "docs", "art", "street_panorama.png"))
     print("props", len(props), "hotspots", len(HOTSPOTS))
     with open(os.path.join(OUT, "layers.json"), "w", encoding="utf-8") as f:
-        json.dump({"width": WW, "height": H, "focusY": 1380, "layers": layers, "props": props, "hotspots": HOTSPOTS}, f, ensure_ascii=False, indent=1)
+        json.dump({"width": WW, "height": H, "focusY": 1380, "layers": layers, "props": props, "hotspots": HOTSPOTS, "solids": SOLIDS, "walk": [40, 1304, WW - 40, 1772]}, f, ensure_ascii=False, indent=1)
 
 
 if __name__ == "__main__":

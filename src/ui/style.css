@@ -263,3 +263,35 @@ body {
   }
   #rotate img { border-radius: 22px; margin-bottom: 16px; }
 }
+
+/* ---------- Phase 4: lớp điều khiển (joystick + nút tương tác) ---------- */
+#controls { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+#controls.hidden { display: none; }
+.joystick {
+  position: absolute; pointer-events: auto; touch-action: none;
+  left: calc(var(--safe-l) + 36 * var(--u)); bottom: calc(var(--safe-b) + 410 * var(--u));
+  width: calc(250 * var(--u)); height: calc(250 * var(--u)); border-radius: 50%;
+  background: rgba(255, 248, 236, 0.5); border: calc(4 * var(--u)) solid rgba(75, 46, 46, 0.45);
+  box-shadow: 0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(0, 0, 0, 0.18);
+}
+.joystick.on { background: rgba(255, 248, 236, 0.72); }
+.joystick .knob {
+  position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; border-radius: 50%;
+  background: var(--cream); border: calc(4 * var(--u)) solid var(--border); box-shadow: var(--shadow);
+}
+.joystick .ar { position: absolute; width: 0; height: 0; border: calc(11 * var(--u)) solid transparent; opacity: 0.55; }
+.joystick .ar.l { left: 5%; top: 50%; margin-top: calc(-11 * var(--u)); border-right-color: var(--ink); border-left-width: 0; }
+.joystick .ar.r { right: 5%; top: 50%; margin-top: calc(-11 * var(--u)); border-left-color: var(--ink); border-right-width: 0; }
+.joystick .ar.u { top: 5%; left: 50%; margin-left: calc(-11 * var(--u)); border-bottom-color: var(--ink); border-top-width: 0; }
+.joystick .ar.d { bottom: 5%; left: 50%; margin-left: calc(-11 * var(--u)); border-top-color: var(--ink); border-bottom-width: 0; }
+.interact {
+  position: absolute; pointer-events: auto; cursor: pointer;
+  right: calc(var(--safe-r) + 36 * var(--u)); bottom: calc(var(--safe-b) + 420 * var(--u));
+  display: flex; flex-direction: column; align-items: center; gap: calc(4 * var(--u));
+  min-width: calc(190 * var(--u)); max-width: calc(330 * var(--u)); padding: calc(16 * var(--u)) calc(22 * var(--u));
+  border-radius: calc(36 * var(--u)); background: var(--primary); color: #fff; font: inherit; font-weight: 700; font-size: calc(30 * var(--u));
+  border: calc(4 * var(--u)) solid rgba(75, 46, 46, 0.7); box-shadow: var(--shadow); line-height: 1.15; text-align: center;
+  transition: transform 80ms;
+}
+.interact:active { transform: scale(0.95); }
+.interact svg { width: calc(84 * var(--u)); height: calc(84 * var(--u)); }

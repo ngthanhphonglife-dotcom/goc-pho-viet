@@ -58,6 +58,7 @@ export function validate(raw: unknown): SaveFile | null {
   if (!isNum(s.day, 1, 100000) || !isNum(s.minuteOfDay, 0, 1439) || !isNum(s.money, -1e12, 1e12) || !isNum(s.reputation, -1e6, 1e6)) return null;
   if (!s.weather || typeof s.weather.label !== "string" || !isNum(s.weather.temperatureC, -20, 60)) return null;
   if (!Array.isArray(s.quests)) return null;
+  if (s.player !== undefined && (!s.player || !isNum(s.player.x, -1e5, 1e5) || !isNum(s.player.y, -1e5, 1e5))) return null;
   for (const q of s.quests) {
     if (!q || typeof q.id !== "string" || typeof q.title !== "string" || !isNum(q.current, 0) || !isNum(q.target, 0)) return null;
   }

@@ -69,8 +69,9 @@ test("Phase 3: nhân vật sống trên phố, chuyển động, chạm để ch
   });
   expect(p, "Không chạm được Cô Ba").not.toBeNull();
   await page.mouse.click(p!.x, p!.y);
+  // Phase 4: chủ quầy đi tới gần rồi mới chào → tua mô phỏng từng nửa giây tới khi Cô Ba phản ứng
+  for (let i = 0; i < 40 && !by(await snap(page), "coba").reacting; i++) await page.evaluate(() => (window as any).__gpv.world.step(0.5));
   await expect(page.locator(".toast")).toContainText("Cô Ba — Chủ tạp hoá");
-  await page.waitForTimeout(150);
   let coba = by(await snap(page), "coba");
   expect(coba.reacting).toBe(true);
   expect(coba.face).toBe("happy");
@@ -79,21 +80,20 @@ test("Phase 3: nhân vật sống trên phố, chuyển động, chạm để ch
   // (máy test vẽ chậm nên thời gian trong game trôi chậm hơn đồng hồ → chờ theo trạng thái)
   await expect.poll(async () => by(await snap(page), "coba").reacting, { timeout: 60_000 }).toBe(false);
 
-  // chủ quầy đứng sau xe: chạm vào vẫn mở Quầy hàng
+  // chạm xe cà phê → chủ quầy quay về sau quầy rồi mở Quầy hàng
   const q = await page.evaluate(() => {
     const w = (window as any).__gpv.world;
-    const c = w.life.get("player");
-    w.centerOn(c.wx, false);
+    w.centerOn(1700, false);
     const r = document.querySelector("#world canvas")!.getBoundingClientRect();
-    const s = w.toScreen(c.wx, c.wy - 230);
+    const s = w.toScreen(1700, 1420);
     return { x: s.x + r.left, y: s.y + r.top, covered: document.elementFromPoint(s.x + r.left, s.y + r.top)?.tagName !== "CANVAS" };
   });
-  if (!q.covered) {
-    await page.mouse.click(q.x, q.y);
-    await page.waitForTimeout(300);
-    expect(await page.evaluate(() => (window as any).__gpv.ui.placeholderTitle)).toBe("Quầy hàng");
-    await page.locator("#ui .card .x").tap();
-  }
+  expect(q.covered).toBe(false);
+  await page.mouse.click(q.x, q.y);
+  await page.evaluate(() => (window as any).__gpv.world.step(12));
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => (window as any).__gpv.ui.placeholderTitle)).toBe("Quầy hàng");
+  await page.locator("#ui .card .x").tap();
 
   // tắt chuyển động → mọi thứ đứng yên (dùng cho chế độ tiết kiệm sau này)
   await page.evaluate(() => { (window as any).__gpv.world.lifeEnabled = false; });

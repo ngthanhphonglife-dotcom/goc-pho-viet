@@ -15,7 +15,7 @@ Nguyên tắc sắp xếp: dựng **thế giới → nhân vật → điều khi
 | 1 | Mở game: Splash, Loading, Menu chính, Chơi mới/Tiếp tục, lưu tự động, Cài đặt cơ bản | 3.21 §1 | ✅ |
 | 2 | **Thế giới mở rộng + Camera:** phố dài ~3 màn hình (Chú Tư ← quầy → Cô Ba), 7 lớp parallax, kéo/lướt camera, giới hạn biên, đạo cụ (ghế nhựa, dù, cây hoa sữa, chậu cây, xe máy đỗ, xe trái cây), điểm chạm tương tác | Environment, 3.7 §2·§3·§8 | ✅ |
 | 3 | **Nhân vật & Animation:** dựng nhân vật vector có khớp (chủ quầy, Chú Tư, Cô Ba, Shipper Minh, học sinh nam/nữ, khách), bộ chuyển động Idle/Đi/Pha chế/Bán hàng/Ngồi, biểu cảm | 3.2E, 3.18 §1·§3·§10 | ✅ |
-| 4 | **Điều khiển người chơi:** joystick + chạm để đi, camera theo nhân vật, nút tương tác hiện khi lại gần NPC/vật thể, hint "Chạm để tương tác" | 3.7 §1·§5, 3.4 §1 | |
+| 4 | **Điều khiển người chơi:** joystick + chạm để đi, camera theo nhân vật, nút tương tác hiện khi lại gần NPC/vật thể, hint "Chạm để tương tác" | 3.7 §1·§5, 3.4 §1 | ✅ |
 | 5 | **Thời gian, Ngày/Đêm, Thời tiết:** đồng hồ chạy, 6 khung giờ đổi ánh sáng (sáng→đêm), nắng/nhiều mây/mưa nhẹ/mưa lớn, mưa + mặt đường ướt, đèn đường/đèn quán bật buổi tối | 3.5 §1·§2·§3·§8, 3.4 §9 | |
 | 6 | **Hội thoại & Nhiệm vụ cơ bản:** khung hội thoại có lựa chọn, bảng nhận nhiệm vụ + phần thưởng, QuestPanel theo dõi tiến độ | 3.4 §2·§3, 3.11 §4 | |
 | 7 | **Kinh doanh cà phê:** kho nguyên liệu, công thức (cà phê đen/sữa, bạc xỉu, trà tắc…), minigame pha chế theo bước + thanh thời gian | 3.8 §1–4, 3.4 §5 | |

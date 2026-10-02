@@ -26,7 +26,7 @@ const WALKERS: Walker[] = [
   { id: "minh", x: 320, y: 1772, dir: 1, speed: 150 },
 ];
 
-interface Agent {
+export interface Agent {
   c: Character;
   script?: [Anim, number][];
   step: number;
@@ -34,6 +34,8 @@ interface Agent {
   speed: number;
   /** nghỉ ở đầu phố trước khi quay lại */
   rest: number;
+  /** true = tạm ngưng kịch bản (người chơi đang điều khiển) */
+  hold?: () => boolean;
 }
 
 export class StreetLife {
@@ -66,7 +68,9 @@ export class StreetLife {
     const margin = 220;
     for (const a of this.agents) {
       const c = a.c;
-      if (a.script) {
+      if (a.script && a.hold?.()) {
+        // người chơi đang điều khiển nhân vật này
+      } else if (a.script) {
         a.left -= dt;
         if (a.left <= 0) {
           a.step = (a.step + 1) % a.script.length;
@@ -97,6 +101,15 @@ export class StreetLife {
       if (Math.abs(wx - c.wx) <= 62 * s && wy <= c.wy + 6 && wy >= top && (!best || c.wy > best.wy)) best = c;
     }
     return best;
+  }
+
+  agent(id: string): Agent | undefined {
+    return this.agents.find((a) => a.c.info.id === id);
+  }
+
+  /** Người đứng tại chỗ (trừ chủ quầy) — là vật cản trên vỉa hè. */
+  stationedSpots(): { x: number; y: number }[] {
+    return this.agents.filter((a) => a.script && a.c.info.id !== "player").map((a) => ({ x: a.c.wx, y: a.c.wy }));
   }
 
   get(id: string): Character | undefined {
