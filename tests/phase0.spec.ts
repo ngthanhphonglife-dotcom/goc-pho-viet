@@ -83,6 +83,14 @@ test("Phase 0: Master UI sắc nét, không đè, bấm được, không lỗi",
     expect(Math.min(hit.w, hit.h), `Nút ${id} quá nhỏ để chạm`).toBeGreaterThanOrEqual(24);
     await page.locator(`[data-action="${id}"]`).tap();
     await page.waitForTimeout(250);
+    if (id === "sell") {
+      // từ Phase 8: nút Bán hàng mở bảng Đơn hàng
+      const panel = page.locator('[data-name="Orders"]');
+      await expect(panel).toBeVisible();
+      await panel.locator(".x").tap();
+      await expect(panel).toBeHidden();
+      continue;
+    }
     if (id === "stall" || id === "ingredients") {
       // từ Phase 7: Quầy hàng và Nguyên liệu là bảng thật
       const panel = page.locator(`[data-name="${id === "stall" ? "Stall" : "Ingredients"}"]`);

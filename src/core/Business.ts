@@ -29,6 +29,31 @@ export class Business {
     return n <= 0 ? "out" : n <= i.low ? "low" : "ok";
   }
 
+  /** Trừ nguyên liệu cho một ly (pha theo đơn, không qua khay). */
+  consume(r: Recipe): boolean {
+    if (this.canMake(r) < 1) return false;
+    this.state.update((s) => { for (const [id, n] of Object.entries(r.needs)) s.stock![id] -= n; });
+    return true;
+  }
+
+  /** Lấy ly ngon nhất của món này trên khay. Trả về chất lượng, hoặc null nếu khay không có. */
+  takeReady(recipe: string): number | null {
+    const list = this.ready;
+    let best = -1;
+    list.forEach((c, i) => { if (c.recipe === recipe && (best < 0 || c.quality > list[best].quality)) best = i; });
+    if (best < 0) return null;
+    const q = list[best].quality;
+    this.state.update((s) => { s.ready!.splice(best, 1); });
+    return q;
+  }
+
+  /** Đặt một ly lên khay (nếu còn chỗ). */
+  addReady(recipe: string, quality: number): boolean {
+    if (this.readyFull) return false;
+    this.state.update((s) => { s.ready!.push({ recipe, quality }); });
+    return true;
+  }
+
   /** Pha xong một ly: trừ nguyên liệu, thêm vào khay. Trả về false nếu thiếu nguyên liệu hoặc khay đầy. */
   finishBrew(r: Recipe, quality: number): boolean {
     if (this.canMake(r) < 1 || this.readyFull) return false;

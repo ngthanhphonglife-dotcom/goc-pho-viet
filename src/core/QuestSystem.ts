@@ -88,6 +88,20 @@ export class QuestSystem {
     return ready;
   }
 
+  /** Cộng tiến độ cho nhiệm vụ đếm số (vd. bán cà phê). Trả về các nhiệm vụ vừa đủ. */
+  count(key: string, n = 1): QuestDef[] {
+    const ready: QuestDef[] = [];
+    this.state.update((s) => {
+      for (const q of s.quests) {
+        const d = QUESTS[q.id];
+        if (!d?.count || d.count.key !== key || q.current >= d.count.target) continue;
+        q.current = Math.min(d.count.target, q.current + n);
+        if (q.current >= d.count.target) ready.push(d);
+      }
+    });
+    return ready;
+  }
+
   /** Trao thưởng và chuyển nhiệm vụ sang "đã xong". */
   claim(id: string): void {
     const d = QUESTS[id];

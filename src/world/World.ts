@@ -4,6 +4,8 @@ import { StreetLife } from "./StreetLife";
 import { NavGrid, type Box } from "./Nav";
 import { PlayerController } from "./Player";
 import { Atmosphere, type Light } from "./Atmosphere";
+import { Customers, type Customer } from "./Customers";
+import { RECIPES } from "../data/items";
 import { loadImage, type LoadTask } from "../core/preload";
 
 /**
@@ -56,6 +58,10 @@ export class World {
   life!: StreetLife;
   nav!: NavGrid;
   atmo!: Atmosphere;
+  customers!: Customers;
+  /** Đang mở bảng/hội thoại (Boot cung cấp): khách không mất kiên nhẫn. */
+  isPaused: () => boolean = () => false;
+  private customerHandlers: ((c: Customer) => void)[] = [];
   private tickHandlers: ((dt: number) => void)[] = [];
   player!: PlayerController;
   /** Camera đang bám theo người chơi (tắt khi người chơi kéo phố để xem tự do). */
@@ -108,6 +114,7 @@ export class World {
     this.meta = await (await fetch(BASE + "layers.json")).json();
     this.charMeta = await (await fetch(CHARS + "characters.json")).json();
     const files = [...this.meta.layers.map((l) => [l.name, BASE + l.name + ".svg"]), ...this.meta.props.map((p) => ["prop:" + p.id, BASE + "props/" + p.id + ".svg"]),
+      ...RECIPES.map((r) => ["item:" + r.id, import.meta.env.BASE_URL + "art/items/" + r.icon + ".svg"]),
       ["char:faces", CHARS + this.charMeta.faces.file], ...this.charMeta.chars.map((c) => ["char:" + c.id, CHARS + c.file])];
     return files.map(([key, url]) => ({
       name: "world/" + key,
@@ -143,6 +150,7 @@ export class World {
     const me = this.life.agent("player")!;
     this.player = new PlayerController(me.c, this.nav, { x: me.c.wx, y: me.c.wy });
     me.hold = () => !this.player.idleAtHome;
+    this.customers = new Customers(this.charMeta.chars, this.charMeta.rig, this.actors, this.nav, this.meta.width);
     this.layout(true);
     window.addEventListener("resize", () => this.scheduleLayout());
     window.visualViewport?.addEventListener("resize", () => this.scheduleLayout());
@@ -238,6 +246,7 @@ export class World {
         this.updateNearby();
       }
       this.life.update(dt);
+      this.customers.update(dt, !this.interactive || this.isPaused());
       moved = true;
     }
     return moved;
@@ -283,6 +292,17 @@ export class World {
     if (this.player.atHome) this.centerHome();
     else this.centerOn(this.player.c.wx, false);
     this.dirty = true;
+  }
+
+  onCustomer(fn: (c: Customer) => void): void {
+    this.customerHandlers.push(fn);
+  }
+
+  /** Chủ quầy đi về sau quầy rồi gọi cb (không có chuyển động / đã ở quầy thì gọi ngay). */
+  goHome(cb: () => void): void {
+    if (!this.lifeEnabled || this.player.atHome) { cb(); return; }
+    this.follow = true;
+    this.player.goTo(this.player.home.x, this.player.home.y, () => { this.player.c.dir = 1; cb(); });
   }
 
   onNearby(fn: (n: Nearby | null) => void): void {
@@ -428,6 +448,12 @@ export class World {
       this.vel = 0;
       const p = local(e);
       const w = this.toWorld(p.x, p.y);
+      const cu = this.customers.at(w.x, w.y);
+      if (cu) {
+        this.ring = { x: w.x, y: w.y, t: 0 };
+        for (const fn of this.customerHandlers) fn(cu);
+        return;
+      }
       const c = this.life.characterAt(w.x, w.y);
       const h = c ? null : this.hotspotAt(w.x, w.y);
       const [, wy0, , wy1] = this.meta.walk;
@@ -577,6 +603,13 @@ export class World {
     const tex = new Map<string, CharTextures>();
     for (const c of this.charMeta.chars) tex.set(c.id, { parts: cut("char:" + c.id, c.w, c.h, c.parts), faces, faceCells: f.parts, rs });
     this.life.setTextures(tex);
+    const items = new Map<string, Texture>();
+    for (const r of RECIPES) {
+      const im = this.images.get("item:" + r.id)!;
+      const px = Math.max(64, Math.ceil(80 * rs));
+      items.set(r.id, this.makeTexture("item:" + r.id, px, px, (ctx) => ctx.drawImage(im, 0, 0, px, px)));
+    }
+    this.customers.setTextures(tex, items, rs);
     this.atmo.rebuild(rs);
     this.dirty = true;
   }

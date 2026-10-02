@@ -17,7 +17,12 @@ import type { Character } from "../world/Character";
 import type { Hotspot } from "../world/World";
 import { Business } from "../core/Business";
 import { BrewPanel, IngredientsPanel, StallPanel } from "../screens/StallPanels";
-import { QUALITY, type Recipe } from "../data/items";
+import { QUALITY, RECIPES, type Recipe } from "../data/items";
+import { OrdersPanel } from "../screens/OrdersPanel";
+import { LOST_REPUTATION, customerRate, settle } from "../core/Sales";
+import { formatMoney } from "../core/GameState";
+import type { CustomerType } from "../world/Customers";
+import { TYPES } from "../world/Customers";
 import { World } from "../world/World";
 import type { ActionId } from "../core/actions";
 import { VERSION } from "../version";
@@ -49,6 +54,8 @@ export class Boot {
   ingredientsPanel!: IngredientsPanel;
   stallPanel!: StallPanel;
   brewPanel!: BrewPanel;
+  ordersPanel!: OrdersPanel;
+  private badge!: HTMLElement;
   private talking = false;
   private abortTalk = false;
   ui!: MasterUI;
@@ -136,6 +143,10 @@ export class Boot {
         this.settingsPanel.show(() => void this.backToMenu());
         return true;
       }
+      if (id === "sell") {
+        this.openOrders();
+        return true;
+      }
       if (id === "ingredients") {
         this.ingredientsPanel.show();
         return true;
@@ -157,6 +168,38 @@ export class Boot {
 
     // Phase 2: chạm điểm tương tác trên phố
     this.world.onHotspot((h) => void this.visit(h));
+
+    // Phase 8: khách hàng + đơn hàng
+    const cs = this.world.customers;
+    this.ordersPanel = new OrdersPanel(this.hosts.app, cs, this.biz, {
+      ready: (uid) => this.serveReady(uid),
+      brew: (uid) => void this.brewFor(uid),
+      dismiss: (uid) => { if (cs.dismiss(uid)) this.ui.toast("Đã báo khách hết món."); this.ordersPanel.render(); },
+    });
+    this.world.isPaused = () => this.fader.busy || !!document.querySelector(".overlay.open, .dialogue.open");
+    cs.rate = () => customerRate(this.state.value.minuteOfDay, this.time.kind, this.state.value.reputation);
+    cs.pick = (type) => this.pickRecipe(type);
+    cs.onLost = () => {
+      this.state.update((s) => { s.reputation = Math.max(0, s.reputation - LOST_REPUTATION); this.today(s).lost++; });
+      this.ui.toast("Một khách bỏ đi vì chờ lâu…");
+    };
+    const sell = this.hosts.ui.querySelector<HTMLElement>('[data-action="sell"]')!;
+    this.badge = document.createElement("span");
+    this.badge.className = "sell-badge";
+    this.badge.hidden = true;
+    sell.appendChild(this.badge);
+    cs.onChange = () => {
+      const n = cs.queue.length;
+      this.badge.hidden = n === 0;
+      this.badge.textContent = String(n);
+      if (this.ordersPanel.isOpen) this.ordersPanel.render();
+    };
+    this.world.onCustomer((c) => {
+      if (c.state === "leaving") return;
+      if (cs.front === c) this.openOrders();
+      else this.ui.toast(`${TYPES[c.type].name} đang chờ tới lượt`);
+    });
+    this.time.onNewDay(() => { cs.clear(); this.state.patchQuiet({ today: undefined }); });
 
     // Phase 7: kho, thực đơn, pha chế
     this.ingredientsPanel = new IngredientsPanel(this.hosts.app, this.biz, () => this.ui.invoke("shop"));
@@ -262,6 +305,84 @@ export class Boot {
     if (r.fromBackup) this.ui.toast("Đã khôi phục từ bản lưu dự phòng");
   }
 
+  // ---------------------------------------------------------------- bán hàng (Phase 8)
+
+  private today(s: GameStateData) {
+    return (s.today ??= { cups: 0, revenue: 0, tips: 0, happy: 0, okay: 0, lost: 0 });
+  }
+
+  /** Khách chọn món: sở thích loại khách × thời tiết, chỉ trong các món đã mở. */
+  pickRecipe(type: CustomerType): string {
+    const kind = this.time.kind;
+    const hot = kind === "sunny" && this.state.value.weather.temperatureC >= 31;
+    const rain = kind === "lightRain" || kind === "heavyRain";
+    const open = RECIPES.filter((r) => !r.locked);
+    const w = open.map((r) => (TYPES[type].likes[r.id] ?? 1) * (rain && r.id !== "tratac" ? 1.5 : 1) * (hot && r.id === "tratac" ? 1.6 : 1));
+    let x = Math.random() * w.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < open.length; i++) { x -= w[i]; if (x <= 0) return open[i].id; }
+    return open[0].id;
+  }
+
+  /** Mở bảng Đơn hàng (đang ở xa thì đi về quầy trước). */
+  openOrders(): void {
+    if (this.screen !== "game") return;
+    if (!this.world.player.atHome && this.world.lifeEnabled) this.ui.toast("Về quầy để bán hàng…");
+    this.world.goHome(() => { if (this.screen === "game") this.ordersPanel.show(); });
+  }
+
+  /** Giao ly cho khách uid với chất lượng q: nhận tiền, tip, uy tín, tính nhiệm vụ. */
+  private async finishSale(uid: number, r: Recipe, q: number): Promise<void> {
+    const cs = this.world.customers;
+    const front = cs.front;
+    if (!front || front.uid !== uid) {
+      // khách đã bỏ đi trong lúc pha → để ly lên khay
+      this.ui.toast(this.biz.addReady(r.id, q) ? "Khách đi mất rồi — ly để lên khay." : "Khách đi mất rồi, khay cũng đầy…");
+      return;
+    }
+    const sale = settle(r, q, front.patience / front.max);
+    cs.serve(uid, sale.mood);
+    this.state.update((s) => {
+      s.money += sale.price + sale.tip;
+      s.reputation += sale.reputation;
+      const t = this.today(s);
+      t.cups++; t.revenue += sale.price; t.tips += sale.tip;
+      if (sale.mood === "happy") t.happy++; else t.okay++;
+    });
+    this.settings.haptic(20);
+    this.ui.toast(`+${formatMoney(sale.price)}${sale.tip ? ` (tip +${formatMoney(sale.tip)})` : ""} · ${QUALITY[q]}`);
+    this.saveNow();
+    if (r.id === "den" || r.id === "sua") {
+      const ready = this.quests.count("sell-coffee");
+      if (ready.length) { this.ordersPanel.close(); await this.reward(ready); }
+    }
+  }
+
+  serveReady(uid: number): void {
+    const front = this.world.customers.front;
+    if (!front || front.uid !== uid) return;
+    const q = this.biz.takeReady(front.recipe);
+    if (q === null) return;
+    void this.finishSale(uid, this.biz.recipe(front.recipe), q).then(() => this.ordersPanel.render());
+  }
+
+  async brewFor(uid: number): Promise<void> {
+    const front = this.world.customers.front;
+    if (!front || front.uid !== uid) return;
+    const r = this.biz.recipe(front.recipe);
+    if (this.biz.canMake(r) < 1) return;
+    this.ordersPanel.close();
+    const me = this.world.player.c;
+    me.play("brew");
+    const q = await this.brewPanel.show(r);
+    me.play("idle");
+    if (this.abortTalk || this.screen !== "game") return;
+    if (q !== null && this.biz.consume(r)) {
+      me.play("serve");
+      await this.finishSale(uid, r, q);
+    }
+    if (this.screen === "game" && !document.querySelector(".overlay.open") && this.world.customers.queue.length) this.ordersPanel.show();
+  }
+
   /** Pha một ly (minigame). Xong thì trừ nguyên liệu, đặt ly lên khay rồi quay lại thực đơn. */
   async brew(r: Recipe): Promise<void> {
     const me = this.world.player.c;
@@ -336,6 +457,8 @@ export class Boot {
     this.abortTalk = true;
     this.dialogue.close();
     this.brewPanel.close();
+    this.ordersPanel.close();
+    this.world.customers.clear();
     this.saveNow();
     window.clearInterval(this.autosaveTimer);
     await this.fader.run(() => this.showMenu());

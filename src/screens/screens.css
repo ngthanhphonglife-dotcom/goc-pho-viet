@@ -195,3 +195,21 @@
 .brew-verdict { margin: calc(26 * var(--u)) 0 0; text-align: center; font-weight: 700; font-size: calc(34 * var(--u)); color: var(--sub); min-height: calc(48 * var(--u)); }
 .brew-verdict[data-pts="2"] { color: #2f7d3a; }
 .brew-verdict[data-pts="0"] { color: var(--primary); }
+
+/* ---------- Phase 8: đơn hàng ---------- */
+.ord-count { margin: 0 0 calc(14 * var(--u)); font-size: calc(30 * var(--u)); color: var(--sub); text-align: center; }
+.ord-list { display: grid; gap: calc(12 * var(--u)); max-height: calc(1050 * var(--u)); overflow-y: auto; }
+.ord-row { display: flex; flex-wrap: wrap; align-items: center; gap: calc(14 * var(--u)); padding: calc(12 * var(--u)) calc(16 * var(--u)); background: #fffaf1; border-radius: calc(24 * var(--u)); border: calc(3 * var(--u)) solid rgba(75, 46, 46, 0.2); }
+.ord-row.front { border-color: var(--primary); background: #fff4ee; }
+.ord-row.coming { opacity: 0.7; }
+.ord-face { width: calc(96 * var(--u)); height: calc(96 * var(--u)); border-radius: 50%; border: calc(4 * var(--u)) solid var(--border); background: #fff3df; flex: none; }
+.ord-info { flex: 1; min-width: 0; text-align: left; }
+.ord-head { display: flex; justify-content: space-between; gap: calc(10 * var(--u)); font-size: calc(30 * var(--u)); }
+.ord-price { color: var(--primary); font-weight: 700; }
+.ord-drink { display: flex; align-items: center; gap: calc(8 * var(--u)); font-size: calc(28 * var(--u)); color: var(--ink); }
+.ord-drink img { width: calc(56 * var(--u)); height: calc(56 * var(--u)); }
+.ord-bar { height: calc(14 * var(--u)); margin-top: calc(4 * var(--u)); border-radius: calc(7 * var(--u)); background: rgba(107, 112, 92, 0.25); overflow: hidden; }
+.ord-bar i { display: block; height: 100%; background: linear-gradient(90deg, #e9b93a, var(--green)); }
+.ord-actions { flex-basis: 100%; display: flex; gap: calc(12 * var(--u)); }
+.modal .ord-actions .btn { flex: 1; min-height: calc(100 * var(--u)); padding: calc(8 * var(--u)) calc(10 * var(--u)); font-size: calc(28 * var(--u)); line-height: 1.15; }
+.sell-badge { position: absolute; top: 0; right: 4%; min-width: calc(58 * var(--u)); height: calc(58 * var(--u)); padding: 0 calc(12 * var(--u)); border-radius: calc(29 * var(--u)); background: #f2c14e; color: var(--ink); border: calc(4 * var(--u)) solid var(--ink); font-weight: 700; font-size: calc(32 * var(--u)); display: grid; place-items: center; pointer-events: none; }
