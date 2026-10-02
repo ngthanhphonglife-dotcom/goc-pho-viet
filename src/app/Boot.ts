@@ -6,6 +6,7 @@ import { ICONS, UI_ART } from "../screens/dom";
 import { Fader, LoadingScreen, MainMenu, NewGamePanel, SettingsPanel, SplashScreen } from "../screens/screens";
 import { MasterUI, fitTexts } from "../ui/MasterUI";
 import { World } from "../world/World";
+import type { ActionId } from "../core/actions";
 import { VERSION } from "../version";
 
 const ICON_NAMES = ["icon_bag", "icon_calendar", "icon_check", "icon_decor", "icon_ingredients", "icon_map", "icon_money", "icon_quest",
@@ -111,6 +112,12 @@ export class Boot {
       return false;
     });
 
+    // Phase 2: chạm điểm tương tác trên phố
+    this.world.onHotspot((h) => {
+      if (h.action) this.ui.invoke(h.action as ActionId);
+      else this.ui.toast(h.name);
+    });
+
     this.menu = new MainMenu(screens, {
       newGame: () => this.newGamePanel.show(this.saves.hasSave() && !this.corruptSave, () => void this.startNewGame()),
       continueGame: () => void this.continueGame(),
@@ -136,6 +143,8 @@ export class Boot {
     this.menu.el.hidden = false;
     this.hosts.ui.classList.add("hidden");
     this.screen = "menu";
+    this.world.interactive = false;
+    this.world.centerHome();
   }
 
   // ---------------------------------------------------------------- game
@@ -147,6 +156,8 @@ export class Boot {
       this.hosts.ui.classList.remove("hidden");
       fitTexts(this.ui.root);
       this.screen = "game";
+      this.world.centerHome();
+      this.world.interactive = true;
       window.clearInterval(this.autosaveTimer);
       this.autosaveTimer = window.setInterval(() => this.saveNow(), AUTOSAVE_MS);
     });
@@ -157,6 +168,7 @@ export class Boot {
     this.saves.save(data); // lưu ngay khi bắt đầu ván
     this.corruptSave = false;
     await this.enterGame(data);
+    this.ui.toast("Kéo sang trái / phải để dạo phố Hoa Sữa");
   }
 
   async continueGame(): Promise<void> {

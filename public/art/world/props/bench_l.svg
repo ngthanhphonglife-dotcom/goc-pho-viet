@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="158" viewBox="720 1498 240 158">
+<title>bench_l — Góc Phố Việt (original vector art)</title>
+<ellipse cx="840.0" cy="1640.0" rx="105.0" ry="9.0" fill="#000000" opacity="0.14"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="749.0" y="1578.0" width="12.0" height="62.0" rx="0.0" fill="#4B2E2E"/>
+<rect x="919.0" y="1578.0" width="12.0" height="62.0" rx="0.0" fill="#4B2E2E"/>
+<rect x="735.0" y="1508.0" width="210.0" height="18.0" rx="5.0" fill="#4B2E2E"/>
+<rect x="735.0" y="1534.0" width="210.0" height="18.0" rx="5.0" fill="#4B2E2E"/>
+<rect x="749.0" y="1508.0" width="10.0" height="76.0" rx="0.0" fill="#4B2E2E"/>
+<rect x="921.0" y="1508.0" width="10.0" height="76.0" rx="0.0" fill="#4B2E2E"/>
+<rect x="729.0" y="1568.0" width="222.0" height="20.0" rx="6.0" fill="#4B2E2E"/>
+</g>
+<rect x="749.0" y="1578.0" width="12.0" height="62.0" rx="0.0" fill="#3E3A3A"/>
+<rect x="919.0" y="1578.0" width="12.0" height="62.0" rx="0.0" fill="#3E3A3A"/>
+<rect x="735.0" y="1508.0" width="210.0" height="18.0" rx="5.0" fill="#C98E55"/>
+<rect x="735.0" y="1534.0" width="210.0" height="18.0" rx="5.0" fill="#C98E55"/>
+<rect x="749.0" y="1508.0" width="10.0" height="76.0" rx="0.0" fill="#3E3A3A"/>
+<rect x="921.0" y="1508.0" width="10.0" height="76.0" rx="0.0" fill="#3E3A3A"/>
+<rect x="729.0" y="1568.0" width="222.0" height="20.0" rx="6.0" fill="#E3B575"/>
+<line x1="741.0" y1="1578.0" x2="939.0" y2="1578.0" stroke="#9A6234" stroke-width="3.0" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="270" height="212" viewBox="848 1326 270 212">
+<title>bike_blue — Góc Phố Việt (original vector art)</title>
+<ellipse cx="980.0" cy="1520.0" rx="125.0" ry="12.0" fill="#000000" opacity="0.16"/>
+<line x1="1000.0" y1="1480.0" x2="1020.0" y2="1516.0" stroke="#3E3A3A" stroke-width="6.0" stroke-linecap="round"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="1060.0" cy="1486.0" r="34.0" fill="#4B2E2E"/>
+<circle cx="898.0" cy="1486.0" r="34.0" fill="#4B2E2E"/>
+</g>
+<circle cx="1060.0" cy="1486.0" r="34.0" fill="#2E2B2B"/>
+<circle cx="898.0" cy="1486.0" r="34.0" fill="#2E2B2B"/>
+<circle cx="1060.0" cy="1486.0" r="15.0" fill="#BDB8B0"/>
+<circle cx="1060.0" cy="1486.0" r="5.0" fill="#3E3A3A"/>
+<circle cx="898.0" cy="1486.0" r="15.0" fill="#BDB8B0"/>
+<circle cx="898.0" cy="1486.0" r="5.0" fill="#3E3A3A"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="1025.0,1458.0 970.0,1458.0 970.0,1484.0 1025.0,1484.0" fill="#4B2E2E"/>
+</g>
+<polygon points="1025.0,1458.0 970.0,1458.0 970.0,1484.0 1025.0,1484.0" fill="#8E8F90"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="1102.0,1436.0 1080.0,1420.0 980.0,1426.0 940.0,1450.0 928.0,1396.0 906.0,1398.0 888.0,1476.0 950.0,1480.0 992.0,1462.0 1046.0,1470.0 1096.0,1458.0" fill="#4B2E2E"/>
+</g>
+<polygon points="1102.0,1436.0 1080.0,1420.0 980.0,1426.0 940.0,1450.0 928.0,1396.0 906.0,1398.0 888.0,1476.0 950.0,1480.0 992.0,1462.0 1046.0,1470.0 1096.0,1458.0" fill="#3F7DB5"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<polygon points="1088.0,1408.0 990.0,1412.0 976.0,1426.0 1080.0,1424.0" fill="#4B2E2E"/>
+</g>
+<polygon points="1088.0,1408.0 990.0,1412.0 976.0,1426.0 1080.0,1424.0" fill="#3B2A28"/>
+<polygon points="1084.0,1432.0 1050.0,1430.0 1050.0,1448.0 1090.0,1450.0" fill="#FFFFFF" opacity="0.25"/>
+<line x1="918.0" y1="1398.0" x2="928.0" y2="1362.0" stroke="#3E3A3A" stroke-width="7.0" stroke-linecap="round"/>
+<line x1="946.0" y1="1360.0" x2="910.0" y2="1364.0" stroke="#3E3A3A" stroke-width="7.0" stroke-linecap="round"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="944.0" cy="1344.0" r="9.0" fill="#4B2E2E"/>
+</g>
+<circle cx="944.0" cy="1344.0" r="9.0" fill="#C9CACA"/>
+<line x1="940.0" y1="1360.0" x2="943.0" y2="1350.0" stroke="#3E3A3A" stroke-width="3.0" stroke-linecap="round"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="900.0" cy="1408.0" r="11.0" fill="#4B2E2E"/>
+</g>
+<circle cx="900.0" cy="1408.0" r="11.0" fill="#FFF2B0"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="1096.0" y="1440.0" width="14.0" height="10.0" rx="3.0" fill="#4B2E2E"/>
+</g>
+<rect x="1096.0" y="1440.0" width="14.0" height="10.0" rx="3.0" fill="#D9463B"/>
+</svg>

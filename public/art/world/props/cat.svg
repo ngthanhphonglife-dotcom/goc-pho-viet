@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="80" viewBox="796 1504 128 80">
+<title>cat — Góc Phố Việt (original vector art)</title>
+<ellipse cx="860.0" cy="1570.0" rx="56.0" ry="8.0" fill="#000000" opacity="0.14"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<ellipse cx="860.0" cy="1548.0" rx="50.0" ry="24.0" fill="#4B2E2E"/>
+<circle cx="896.0" cy="1546.0" r="19.0" fill="#4B2E2E"/>
+<polygon points="882.0,1534.0 886.0,1514.0 898.0,1528.0" fill="#4B2E2E"/>
+<polygon points="900.0,1528.0 912.0,1514.0 914.0,1536.0" fill="#4B2E2E"/>
+</g>
+<ellipse cx="860.0" cy="1548.0" rx="50.0" ry="24.0" fill="#F0A254"/>
+<circle cx="896.0" cy="1546.0" r="19.0" fill="#F0A254"/>
+<polygon points="882.0,1534.0 886.0,1514.0 898.0,1528.0" fill="#F0A254"/>
+<polygon points="900.0,1528.0 912.0,1514.0 914.0,1536.0" fill="#F0A254"/>
+<path d="M814,1552 C794,1566 840,1572 866,1564" fill="none" stroke="#4B2E2E" stroke-width="13.0" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M814,1552 C794,1566 840,1572 866,1564" fill="none" stroke="#F0A254" stroke-width="8.0" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M840,1528 q4,8 0,16" fill="none" stroke="#D67F32" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M856,1528 q4,8 0,16" fill="none" stroke="#D67F32" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M872,1528 q4,8 0,16" fill="none" stroke="#D67F32" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M888,1546 q4,4 8,0 M900,1546 q4,4 8,0" fill="none" stroke="#4B2E2E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="248" height="170" viewBox="2306 1246 248 170">
+<title>bicycle — Góc Phố Việt (original vector art)</title>
+<ellipse cx="2430.0" cy="1400.0" rx="110.0" ry="10.0" fill="#000000" opacity="0.14"/>
+<circle cx="2360.0" cy="1356.0" r="44.0" fill="none" stroke="#3E3A3A" stroke-width="7"/>
+<circle cx="2360.0" cy="1356.0" r="37.0" fill="none" stroke="#BDB8B0" stroke-width="2"/>
+<circle cx="2360.0" cy="1356.0" r="5.0" fill="#3E3A3A"/>
+<circle cx="2500.0" cy="1356.0" r="44.0" fill="none" stroke="#3E3A3A" stroke-width="7"/>
+<circle cx="2500.0" cy="1356.0" r="37.0" fill="none" stroke="#BDB8B0" stroke-width="2"/>
+<circle cx="2500.0" cy="1356.0" r="5.0" fill="#3E3A3A"/>
+<path d="M2360,1356 L2400,1290 L2470,1290 L2425,1356 Z M2470,1290 L2500,1356" fill="none" stroke="#2F9C8F" stroke-width="8.0" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="2400.0" y1="1290.0" x2="2394.0" y2="1272.0" stroke="#3E3A3A" stroke-width="6.0" stroke-linecap="round"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="4.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="2372.0" y="1262.0" width="44.0" height="12.0" rx="5.0" fill="#4B2E2E"/>
+</g>
+<rect x="2372.0" y="1262.0" width="44.0" height="12.0" rx="5.0" fill="#3B2A28"/>
+<line x1="2470.0" y1="1290.0" x2="2464.0" y2="1258.0" stroke="#3E3A3A" stroke-width="6.0" stroke-linecap="round"/>
+<line x1="2450.0" y1="1256.0" x2="2480.0" y2="1260.0" stroke="#3E3A3A" stroke-width="6.0" stroke-linecap="round"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="2474.0" y="1268.0" width="46.0" height="34.0" rx="4.0" fill="#4B2E2E"/>
+</g>
+<rect x="2474.0" y="1268.0" width="46.0" height="34.0" rx="4.0" fill="#E3B575"/>
+<line x1="2484.0" y1="1270.0" x2="2484.0" y2="1300.0" stroke="#9A6234" stroke-width="2.0" stroke-linecap="round"/>
+<line x1="2496.0" y1="1270.0" x2="2496.0" y2="1300.0" stroke="#9A6234" stroke-width="2.0" stroke-linecap="round"/>
+<line x1="2508.0" y1="1270.0" x2="2508.0" y2="1300.0" stroke="#9A6234" stroke-width="2.0" stroke-linecap="round"/>
+</svg>

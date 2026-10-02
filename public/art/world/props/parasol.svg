@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="492" viewBox="40 1114 420 492">
+<title>parasol — Góc Phố Việt (original vector art)</title>
+<ellipse cx="250.0" cy="1590.0" rx="46.0" ry="10.0" fill="#000000" opacity="0.16"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="224.0" y="1574.0" width="52.0" height="16.0" rx="5.0" fill="#4B2E2E"/>
+</g>
+<rect x="224.0" y="1574.0" width="52.0" height="16.0" rx="5.0" fill="#8E8A82"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<rect x="244.0" y="1230.0" width="12.0" height="348.0" rx="0.0" fill="#4B2E2E"/>
+</g>
+<rect x="244.0" y="1230.0" width="12.0" height="348.0" rx="0.0" fill="#9A6234"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="8.0" stroke-linejoin="round" stroke-linecap="round">
+<path d="M50,1260 Q140,1150 250,1136 Q360,1150 450,1260 Z" fill="#4B2E2E"/>
+</g>
+<path d="M50,1260 Q140,1150 250,1136 Q360,1150 450,1260 Z" fill="#E8756A"/>
+<path d="M250,1136 Q190,1160 150,1260 L218,1260 Z" fill="#FFF3E0"/>
+<path d="M250,1136 Q310,1160 350,1260 L282,1260 Z" fill="#FFF3E0"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="75.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+<circle cx="125.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+<circle cx="175.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+<circle cx="225.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+<circle cx="275.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+<circle cx="325.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+<circle cx="375.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+<circle cx="425.0" cy="1262.0" r="25.0" fill="#4B2E2E"/>
+</g>
+<circle cx="75.0" cy="1262.0" r="25.0" fill="#E8756A"/>
+<circle cx="125.0" cy="1262.0" r="25.0" fill="#FFF3E0"/>
+<circle cx="175.0" cy="1262.0" r="25.0" fill="#E8756A"/>
+<circle cx="225.0" cy="1262.0" r="25.0" fill="#FFF3E0"/>
+<circle cx="275.0" cy="1262.0" r="25.0" fill="#E8756A"/>
+<circle cx="325.0" cy="1262.0" r="25.0" fill="#FFF3E0"/>
+<circle cx="375.0" cy="1262.0" r="25.0" fill="#E8756A"/>
+<circle cx="425.0" cy="1262.0" r="25.0" fill="#FFF3E0"/>
+<line x1="50.0" y1="1260.0" x2="450.0" y2="1260.0" stroke="#4B2E2E" stroke-width="4.0" stroke-linecap="round"/>
+<g fill="#4B2E2E" stroke="#4B2E2E" stroke-width="6.0" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="250.0" cy="1132.0" r="9.0" fill="#4B2E2E"/>
+</g>
+<circle cx="250.0" cy="1132.0" r="9.0" fill="#9A6234"/>
+</svg>

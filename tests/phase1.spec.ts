@@ -201,7 +201,7 @@ test.describe("không service worker", () => {
   test.use({ serviceWorkers: "block" });
   test("Phase 1: lỗi mạng khi tải → Thử lại", async ({ page }) => {
   let fail = true;
-  await page.route("**/art/world/30_shops.svg", (r) => (fail ? r.abort() : r.continue()));
+  await page.route("**/art/world/main.svg", (r) => (fail ? r.abort() : r.continue()));
   await page.addInitScript(() => localStorage.clear());
   await page.goto("./");
   const err = page.locator(".load-error");
