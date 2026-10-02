@@ -83,6 +83,14 @@ test("Phase 0: Master UI sắc nét, không đè, bấm được, không lỗi",
     expect(Math.min(hit.w, hit.h), `Nút ${id} quá nhỏ để chạm`).toBeGreaterThanOrEqual(24);
     await page.locator(`[data-action="${id}"]`).tap();
     await page.waitForTimeout(250);
+    if (id === "quests") {
+      // từ Phase 6 nút Nhiệm vụ mở Sổ nhiệm vụ
+      const panel = page.locator('[data-name="QuestLog"]');
+      await expect(panel).toBeVisible();
+      await panel.locator(".x").tap();
+      await expect(panel).toBeHidden();
+      continue;
+    }
     if (id === "weather") {
       // từ Phase 5 ô thời tiết mở bảng Dự báo hôm nay
       const panel = page.locator('[data-name="WeatherForecast"]');

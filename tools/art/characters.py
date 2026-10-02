@@ -316,6 +316,11 @@ def main():
         with open(os.path.join(OUT, c["id"] + ".svg"), "w", encoding="utf-8") as f:
             f.write(svg)
         meta["chars"].append({"id": c["id"], "name": c["name"], "role": c["role"], "file": c["id"] + ".svg", "w": W, "h": H, "scale": c.get("scale", 1), "parts": cells})
+        # chân dung cho khung hội thoại (đầu + vai)
+        port = ('<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="-140 -335 280 280">\n<title>%s — Góc Phố Việt (original vector art)</title>\n'
+                '<circle cx="0" cy="-195" r="134" fill="#FFF3DF"/>\n%s\n</svg>\n') % (c["name"], standing(c, parts, "normal").split("\n", 1)[1])
+        with open(os.path.join(OUT, "portrait_" + c["id"] + ".svg"), "w", encoding="utf-8") as f:
+            f.write(port)
         face = ["normal", "happy", "talk", "surprised"][i % 4]
         sheet.append(standing(c, parts, face, 130 + i * 230, 360))
         print("ok", c["id"], W, H, list(cells))

@@ -456,7 +456,7 @@ export class World {
     window.addEventListener("keydown", (e) => {
       const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
       if (!KEYS[k] || !this.interactive) return;
-      if ((e.target as HTMLElement | null)?.closest?.("input, textarea, select") || document.querySelector(".overlay:not([hidden])")) return;
+      if ((e.target as HTMLElement | null)?.closest?.("input, textarea, select") || document.querySelector(".overlay:not([hidden]), .dialogue:not([hidden])")) return;
       e.preventDefault();
       this.keysDown.add(k);
       sync();

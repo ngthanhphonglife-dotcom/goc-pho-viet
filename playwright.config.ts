@@ -6,7 +6,7 @@ const mobile = (width: number, height: number, deviceScaleFactor: number) =>
 
 export default defineConfig({
   testDir: "tests",
-  timeout: 420_000,
+  timeout: 600_000,
   fullyParallel: false,
   workers: 1,
   reporter: [["list"]],

@@ -30,6 +30,10 @@ export interface GameStateData {
   money: number;
   reputation: number;
   quests: Quest[];
+  /** Nhiệm vụ đã xong (Phase 6). */
+  completed?: string[];
+  /** Các việc đã làm của từng nhiệm vụ đang nhận: { questId: ["talk:coba", …] }. */
+  questFlags?: Record<string, string[]>;
 }
 
 const WEEKDAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];

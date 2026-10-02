@@ -71,12 +71,14 @@ test("Phase 3: nhân vật sống trên phố, chuyển động, chạm để ch
   await page.mouse.click(p!.x, p!.y);
   // Phase 4: chủ quầy đi tới gần rồi mới chào → tua mô phỏng từng nửa giây tới khi Cô Ba phản ứng
   for (let i = 0; i < 40 && !by(await snap(page), "coba").reacting; i++) await page.evaluate(() => (window as any).__gpv.world.step(0.5));
-  await expect(page.locator(".toast")).toContainText("Cô Ba — Chủ tạp hoá");
+  // Phase 6: chào xong thì mở khung hội thoại
+  expect(await page.evaluate(() => (window as any).__gpv.dialogue.state.speaker)).toBe("Cô Ba");
   let coba = by(await snap(page), "coba");
   expect(coba.reacting).toBe(true);
   expect(coba.face).toBe("happy");
   expect(coba.pose.armF).toBeLessThan(-2);
   expect(await page.evaluate(() => (window as any).__gpv.ui.placeholderOpen), "Chạm nhân vật không được mở bảng của tiệm").toBe(false);
+  await page.evaluate(() => (window as any).__gpv.dialogue.close());
   // (máy test vẽ chậm nên thời gian trong game trôi chậm hơn đồng hồ → chờ theo trạng thái)
   await expect.poll(async () => by(await snap(page), "coba").reacting, { timeout: 60_000 }).toBe(false);
 

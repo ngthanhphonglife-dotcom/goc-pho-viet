@@ -68,7 +68,11 @@ export class StreetLife {
     const margin = 220;
     for (const a of this.agents) {
       const c = a.c;
-      if (a.script && a.hold?.()) {
+      if (c.talkMode) {
+        // đang trò chuyện với người chơi: đứng lại, ngưng kịch bản
+        if (!a.script) c.play("idle");
+        else if (c.anim === "wave" || c.anim === "talk" || c.anim === "serve" || c.anim === "brew") c.play("idle");
+      } else if (a.script && a.hold?.()) {
         // người chơi đang điều khiển nhân vật này
       } else if (a.script) {
         a.left -= dt;

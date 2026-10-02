@@ -13,6 +13,8 @@ const hook = {
   get ui() { return boot.ui; },
   get world() { return boot.world; },
   get time() { return boot.time; },
+  get dialogue() { return boot.dialogue; },
+  get quests() { return boot.quests; },
   get screen() { return boot.screen; },
   get loadingHistory() { return boot.loading?.history ?? []; },
   ready: false,

@@ -85,7 +85,8 @@ test("Phase 4: chạm để đi, tìm đường, tương tác khi tới nơi", a
   await step(page, 0.3);
   expect(await W(page, "w.life.get('coba').reacting > 0"), "Chưa tới gần mà đã chào").toBe(false);
   for (let i = 0; i < 40 && !(await W(page, "w.life.get('coba').reacting > 0")); i++) await step(page, 0.5);
-  await expect(page.locator(".toast")).toContainText("Cô Ba");
+  expect(await page.evaluate(() => (window as any).__gpv.dialogue.state.speaker)).toBe("Cô Ba");
+  await page.evaluate(() => (window as any).__gpv.dialogue.close());
   m = await me(page);
   expect(Math.hypot(m.x - coba.x, m.y - coba.y)).toBeLessThan(170);
   expect(m.dir, "Chủ quầy phải quay mặt về Cô Ba").toBe(coba.x > m.x ? 1 : -1);
@@ -97,6 +98,7 @@ test("Phase 4: chạm để đi, tìm đường, tương tác khi tới nơi", a
   await btn.tap();
   await step(page, 0.2);
   expect(await W(page, "w.life.get('coba').reacting > 0")).toBe(true);
+  await page.evaluate(() => (window as any).__gpv.dialogue.close());
 
   // chạm xe cà phê → vòng ra sau quầy rồi mới mở Quầy hàng
   const cart = await screenOf(page, 1700, 1420);

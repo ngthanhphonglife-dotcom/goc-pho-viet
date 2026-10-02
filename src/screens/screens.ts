@@ -210,7 +210,14 @@ export abstract class Modal {
     requestAnimationFrame(() => this.el.classList.add("open"));
   }
 
+  /** Gọi khi bảng bị đóng bằng nút X / Esc / chạm nền. */
+  protected onClose: (() => void) | null = null;
+
   close(): void {
+    if (this.el.hidden) return;
+    const cb = this.onClose;
+    this.onClose = null;
+    cb?.();
     if (this.el.hidden) return;
     document.removeEventListener("keydown", this.keyHandler);
     this.el.classList.remove("open");

@@ -9,6 +9,12 @@ import { Controls } from "../ui/Controls";
 import { TimeSystem } from "../core/TimeSystem";
 import { weekdayOf } from "../core/GameState";
 import { WeatherPanel } from "../screens/WeatherPanel";
+import { QuestSystem, type QuestDef } from "../core/QuestSystem";
+import { Dialogue } from "../ui/Dialogue";
+import { dialogueFor } from "../data/dialogues";
+import { QuestDonePanel, QuestLogPanel, QuestOfferPanel } from "../screens/QuestPanels";
+import type { Character } from "../world/Character";
+import type { Hotspot } from "../world/World";
 import { World } from "../world/World";
 import type { ActionId } from "../core/actions";
 import { VERSION } from "../version";
@@ -31,6 +37,13 @@ export class Boot {
   readonly world = new World();
   readonly time = new TimeSystem(this.state);
   weatherPanel!: WeatherPanel;
+  readonly quests = new QuestSystem(this.state);
+  dialogue!: Dialogue;
+  questOffer!: QuestOfferPanel;
+  questDone!: QuestDonePanel;
+  questLog!: QuestLogPanel;
+  private talking = false;
+  private abortTalk = false;
   ui!: MasterUI;
   controls!: Controls;
   menu!: MainMenu;
@@ -116,6 +129,10 @@ export class Boot {
         this.settingsPanel.show(() => void this.backToMenu());
         return true;
       }
+      if (id === "quests") {
+        this.questLog.show();
+        return true;
+      }
       if (id === "weather") {
         this.weatherPanel.show(this.state.value, this.time.kind);
         return true;
@@ -124,15 +141,18 @@ export class Boot {
     });
 
     // Phase 2: chạm điểm tương tác trên phố
-    this.world.onHotspot((h) => {
-      if (h.action) this.ui.invoke(h.action as ActionId);
-      else this.ui.toast(h.name);
-    });
+    this.world.onHotspot((h) => void this.visit(h));
+
+    // Phase 6: hội thoại + nhiệm vụ
+    this.dialogue = new Dialogue(this.hosts.app, import.meta.env.BASE_URL + "art/chars/");
+    this.questOffer = new QuestOfferPanel(this.hosts.app);
+    this.questDone = new QuestDonePanel(this.hosts.app);
+    this.questLog = new QuestLogPanel(this.hosts.app, this.quests, (id) => this.state.value.quests.find((q) => q.id === id)?.current ?? 0);
 
     // Phase 5: đồng hồ chạy khi đang trong game và không mở bảng nào; ánh sáng + thời tiết theo trạng thái
     this.weatherPanel = new WeatherPanel(this.hosts.app);
     this.world.onTick((dt) => {
-      if (this.screen !== "game" || !this.world.lifeEnabled || this.fader.busy || document.querySelector(".overlay.open")) return;
+      if (this.screen !== "game" || !this.world.lifeEnabled || this.fader.busy || document.querySelector(".overlay.open, .dialogue.open")) return;
       this.time.update(dt);
     });
     this.state.subscribe((s) => { if (this.screen === "game") this.world.atmo.set(s.minuteOfDay, this.time.kind); });
@@ -149,10 +169,7 @@ export class Boot {
     this.world.onNearby((n) => this.controls.setInteract(n ? n.name : null));
 
     // Phase 3: chạm nhân vật → chào
-    this.world.onCharacter((c) => {
-      c.react();
-      this.ui.toast(`${c.info.name} — ${c.info.role}`);
-    });
+    this.world.onCharacter((c) => void this.talk(c));
 
     this.menu = new MainMenu(screens, {
       newGame: () => this.newGamePanel.show(this.saves.hasSave() && !this.corruptSave, () => void this.startNewGame()),
@@ -223,6 +240,54 @@ export class Boot {
     if (r.fromBackup) this.ui.toast("Đã khôi phục từ bản lưu dự phòng");
   }
 
+  // ---------------------------------------------------------------- hội thoại & nhiệm vụ (Phase 6)
+
+  /** Trao thưởng lần lượt cho các nhiệm vụ vừa hoàn thành. */
+  private async reward(ready: QuestDef[]): Promise<void> {
+    for (const d of ready) {
+      if (!this.quests.isActive(d.id)) continue;
+      await this.questDone.show(d);
+      this.quests.claim(d.id);
+      this.saveNow();
+    }
+  }
+
+  /** Nói chuyện với nhân vật c (chủ quầy đã đứng gần). */
+  async talk(c: Character): Promise<void> {
+    if (this.talking || this.screen !== "game") return;
+    this.talking = true;
+    this.abortTalk = false;
+    this.controls.reset();
+    c.react(1.2);
+    c.talkMode = "listen";
+    this.dialogue.onSpeaking = (sp) => { c.talkMode = sp ? "speak" : "listen"; };
+    const s = this.state.value;
+    const effects = await this.dialogue.run({ id: c.info.id, name: c.info.name }, dialogueFor(c.info.id, this.quests, s.day * 31 + s.minuteOfDay));
+    c.talkMode = null;
+    if (this.abortTalk || this.screen !== "game") { this.talking = false; return; } // rời game giữa chừng → không tính
+    const ready = this.quests.event("talk", c.info.id);
+    for (const e of effects) if (e.type === "complete" && this.quests.isActive(e.quest) && !ready.some((d) => d.id === e.quest)) ready.push(this.quests.def(e.quest));
+    await this.reward(ready);
+    for (const e of effects) {
+      if (e.type === "offer" && this.quests.isNew(e.quest)) {
+        if (await this.questOffer.show(this.quests.def(e.quest))) {
+          this.quests.accept(e.quest);
+          this.ui.toast("Đã nhận nhiệm vụ: " + this.quests.def(e.quest).title);
+          this.saveNow();
+        }
+      } else if (e.type === "action") this.ui.invoke(e.id as ActionId);
+    }
+    this.talking = false;
+  }
+
+  /** Tới một điểm trên phố. */
+  async visit(h: Hotspot): Promise<void> {
+    if (this.screen !== "game") return;
+    await this.reward(this.quests.event("visit", h.id));
+    if (h.action) this.ui.invoke(h.action as ActionId);
+    else this.ui.toast(h.name);
+  }
+
   saveNow(): boolean {
     if (this.screen === "game") {
       const p = this.world.player;
@@ -232,6 +297,8 @@ export class Boot {
   }
 
   async backToMenu(): Promise<void> {
+    this.abortTalk = true;
+    this.dialogue.close();
     this.saveNow();
     window.clearInterval(this.autosaveTimer);
     await this.fader.run(() => this.showMenu());

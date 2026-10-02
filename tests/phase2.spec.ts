@@ -138,7 +138,7 @@ test("Phase 2: chạm điểm tương tác, kéo không kích hoạt, UI không 
   const open = () => page.evaluate(() => ({ open: (window as any).__gpv.ui.placeholderOpen, title: (window as any).__gpv.ui.placeholderTitle }));
 
   // chạm có hành động → mở đúng bảng
-  for (const [id, title] of [["cart", "Quầy hàng"], ["board", "Nhiệm vụ"], ["river", "Bản đồ khu phố"]]) {
+  for (const [id, title] of [["cart", "Quầy hàng"], ["river", "Bản đồ khu phố"]]) {
     const p = await aim(page, id);
     await page.mouse.click(p.x, p.y);
     await page.waitForTimeout(250);

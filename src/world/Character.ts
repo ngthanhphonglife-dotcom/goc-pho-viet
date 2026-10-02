@@ -23,6 +23,8 @@ export class Character extends Container {
   anim: Anim = "idle";
   expression: Expression = "normal";
   tappable = true;
+  /** Đang trò chuyện với người chơi: "speak" = đang nói (động tác nói), "listen" = đứng nghe. null = bình thường. */
+  talkMode: "speak" | "listen" | null = null;
   /** Thời gian còn lại của phản ứng khi được chạm (vẫy tay, vui). */
   reacting = 0;
   /** Góc hiện tại của các khớp (rad) — cho test. */
@@ -184,6 +186,8 @@ export class Character extends Container {
     } else if (anim === "talk") {
       armF = -0.55 + 0.25 * Math.sin(t * 4.2);
     }
+    const speaking = this.talkMode === "speak";
+    if (speaking && anim !== "fix") armF = (seated ? -0.9 : -0.55) + 0.25 * Math.sin(t * 4.2);
     if (anim === "wave" || reacting) {
       armF = -2.65 + 0.35 * Math.sin(t * 11);
       if (!seated && anim !== "walk") lean = -0.03;
@@ -210,7 +214,7 @@ export class Character extends Container {
     // mặt
     let face: string = this.expression;
     if (reacting) face = "happy";
-    else if (anim === "talk") face = Math.floor(t / 0.18) % 2 ? "talk" : "normal";
+    else if (speaking || (anim === "talk" && !this.talkMode)) face = Math.floor(t / 0.18) % 2 ? "talk" : "normal";
     else if (anim === "serve" || anim === "wave") face = "happy";
     if (this.blink > 0 && face === "normal") face = "blink";
     this.setFace(face);
