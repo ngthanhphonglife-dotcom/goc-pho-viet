@@ -262,3 +262,8 @@
 .modal .end-day .btn { width: 100%; min-height: calc(90 * var(--u)); font-size: calc(30 * var(--u)); }
 [data-sum="history"] .sum-bars { justify-content: center; }
 [data-sum="history"] .sum-bar { max-width: calc(110 * var(--u)); }
+
+/* Cài đặt: chọn giọng nói */
+.seg { flex: 1; display: flex; gap: calc(8 * var(--u)); }
+.seg-btn { flex: 1; min-height: calc(84 * var(--u)); padding: 0 calc(6 * var(--u)); border-radius: calc(20 * var(--u)); border: calc(3 * var(--u)) solid var(--border); background: #fff; color: var(--ink); font: inherit; font-weight: 700; font-size: calc(28 * var(--u)); cursor: pointer; }
+.seg-btn.on { background: var(--green); color: #fff; border-color: #4f8443; }

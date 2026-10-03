@@ -34,6 +34,9 @@ export class Sfx {
   /** Nhật ký các âm đã phát — cho test. */
   readonly log: string[] = [];
 
+  /** AudioContext dùng chung cho nhạc nền và giọng nhân vật (null khi chưa được phép phát). */
+  get context(): AudioContext | null { return this.ctx; }
+
   /** Trình duyệt chỉ cho phát âm sau thao tác đầu tiên của người chơi → gọi trong sự kiện chạm. */
   unlock(): void {
     try {

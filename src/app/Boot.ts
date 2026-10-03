@@ -22,6 +22,9 @@ import { OrdersPanel } from "../screens/OrdersPanel";
 import { ShopPanel } from "../screens/ShopPanel";
 import { SHOP_CLOSE, SHOP_OPEN } from "../data/items";
 import { sfx } from "../core/Sfx";
+import { music } from "../core/Music";
+import { voice } from "../core/Voice";
+import { isNight } from "../core/weather";
 import { HISTORY_MAX, ensureToday, summarize } from "../core/DayStats";
 import { DAY_END } from "../core/TimeSystem";
 import { DaySummaryPanel } from "../screens/DaySummaryPanel";
@@ -90,7 +93,11 @@ export class Boot {
 
     // rung nhẹ khi bấm bất kỳ nút nào (nếu bật trong Cài đặt)
     sfx.volume = () => this.settings.value.sfx / 100;
-    const unlock = () => sfx.unlock();
+    music.volume = () => this.settings.value.music / 100;
+    voice.volume = () => this.settings.value.sfx / 100;
+    // chọn "Tiếng Việt" mà máy không có giọng đọc tiếng Việt → tự dùng giọng líu lo
+    voice.mode = () => (this.settings.value.voice === "tts" && !voice.ttsAvailable ? "babble" : this.settings.value.voice);
+    const unlock = () => { sfx.unlock(); music.start(); voice.prime(); };
     document.addEventListener("pointerdown", unlock, true);
     document.addEventListener("keydown", unlock, true);
     document.addEventListener("click", (e) => { if ((e.target as HTMLElement).closest?.(".btn, .dlg-choice, .interact")) { this.settings.haptic(); sfx.play("tap"); } }, true);
@@ -217,7 +224,12 @@ export class Boot {
     cs.onChange = () => {
       const n = cs.queue.length;
       const f = cs.front?.uid ?? 0;
-      if (f && f !== lastFront) sfx.play("arrive"); // khách mới tới trước quầy
+      if (f && f !== lastFront) {
+        // khách mới tới trước quầy: chuông + gọi món bằng giọng của mình
+        sfx.play("arrive");
+        const c = cs.front!;
+        voice.say(c.look, `Cho ${c.type === "student" ? "em" : "tôi"} một ly ${this.biz.recipe(c.recipe).name} nha!`);
+      }
       lastFront = f;
       this.badge.hidden = n === 0;
       this.badge.textContent = String(n);
@@ -246,6 +258,9 @@ export class Boot {
     this.weatherPanel = new WeatherPanel(this.hosts.app);
     this.world.onTick((dt) => {
       sfx.setRain(this.screen === "game" ? this.world.atmo.rain : 0);
+      // không khí nhạc theo buổi và thời tiết
+      const m = this.state.value.minuteOfDay;
+      music.mood = this.screen !== "game" ? "day" : this.world.atmo.rain > 0.3 ? "rain" : isNight(m) ? "night" : m >= 17 * 60 ? "evening" : "day";
       if (this.screen !== "game" || !this.world.lifeEnabled || this.fader.busy || document.querySelector(".overlay.open, .dialogue.open")) return;
       this.time.update(dt);
     });

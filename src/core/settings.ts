@@ -7,9 +7,11 @@ export interface Settings {
   /** 0–100 */
   sfx: number;
   vibration: boolean;
+  /** Giọng nhân vật: nói tiếng Việt bằng giọng đọc của máy / líu lo theo dấu thanh / tắt. */
+  voice: "babble" | "tts" | "off";
 }
 
-export const DEFAULT_SETTINGS: Settings = { music: 80, sfx: 80, vibration: true };
+export const DEFAULT_SETTINGS: Settings = { music: 70, sfx: 80, vibration: true, voice: "tts" }; // mặc định nói tiếng Việt bằng giọng đọc của máy; máy không có thì tự dùng "líu lo"
 const KEY = "gpv.settings";
 
 function clamp(v: unknown, d: number): number {
@@ -28,6 +30,7 @@ export class SettingsService {
       music: clamp(raw.music, DEFAULT_SETTINGS.music),
       sfx: clamp(raw.sfx, DEFAULT_SETTINGS.sfx),
       vibration: typeof raw.vibration === "boolean" ? raw.vibration : DEFAULT_SETTINGS.vibration,
+      voice: raw.voice === "tts" || raw.voice === "off" || raw.voice === "babble" ? raw.voice : DEFAULT_SETTINGS.voice,
     };
   }
 
@@ -40,6 +43,7 @@ export class SettingsService {
       music: clamp(patch.music ?? this.data.music, this.data.music),
       sfx: clamp(patch.sfx ?? this.data.sfx, this.data.sfx),
       vibration: patch.vibration ?? this.data.vibration,
+      voice: patch.voice ?? this.data.voice,
     };
     try { this.store.write(KEY, JSON.stringify(this.data)); } catch (e) { console.warn("[Settings] Không lưu được", e); }
     for (const fn of this.listeners) fn(this.data);

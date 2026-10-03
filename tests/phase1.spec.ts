@@ -137,7 +137,7 @@ test("Phase 1: cài đặt lưu lại, về menu từ game", async ({ page }, in
   await expect(panel).toBeHidden();
 
   await reloadKeep(page);
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("gpv.settings")!))).toEqual({ music: 40, sfx: 65, vibration: false });
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("gpv.settings")!))).toMatchObject({ music: 40, sfx: 65, vibration: false });
   await page.locator('[data-menu="settings"]').tap();
   await expect(panel.locator('[data-setting="music"]')).toHaveValue("40");
   await expect(panel.locator('[data-setting="vibration"]')).not.toBeChecked();

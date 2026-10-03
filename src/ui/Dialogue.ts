@@ -1,5 +1,6 @@
 import type { Choice, Effect, Script } from "../data/dialogues";
 import { sfx } from "../core/Sfx";
+import { voice } from "../core/Voice";
 
 /**
  * Khung hội thoại (Phase 6): chân dung + tên, chữ chạy từng ký tự, lựa chọn trả lời.
@@ -78,11 +79,21 @@ export class Dialogue {
     this.hint.hidden = true;
     if (n.effects) this.effects.push(...n.effects);
     this.onSpeaking(!me);
+    voice.hush();
+    voice.speak(me ? "player" : this.speaker.id, n.text); // chế độ giọng máy: đọc nguyên câu
     window.clearInterval(this.timer);
+    // chữ chạy theo thời gian thật (máy chậm vẫn đúng tốc độ, không bị ì)
+    const t0 = performance.now();
     this.timer = window.setInterval(() => {
-      this.shown = Math.min(n.text.length, this.shown + 1);
+      const target = Math.min(n.text.length, Math.max(this.shown + 1, Math.floor(((performance.now() - t0) / 1000) * CPS)));
+      for (let i = this.shown; i < target; i++) {
+        // lồng tiếng: tới đầu mỗi từ thì phát một âm tiết theo giọng người đang nói
+        if (voice.mode() === "babble") {
+          if (i === 0 || n.text[i - 1] === " ") voice.syllable(me ? "player" : this.speaker.id, n.text.slice(i).split(" ")[0]);
+        } else if (voice.mode() === "off" && i % 3 === 0 && n.text[i] !== " ") sfx.play("blip");
+      }
+      this.shown = target;
       this.textEl.textContent = n.text.slice(0, this.shown);
-      if (this.shown % 3 === 1 && n.text[this.shown - 1] !== " ") sfx.play("blip");
       if (this.shown >= n.text.length) this.finishTyping();
     }, 1000 / CPS);
   }
@@ -128,6 +139,7 @@ export class Dialogue {
   close(): void {
     if (!this.open) return;
     window.clearInterval(this.timer);
+    voice.hush();
     this.onSpeaking(false);
     this.el.classList.remove("open");
     this.el.hidden = true;

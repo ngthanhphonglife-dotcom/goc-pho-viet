@@ -2,6 +2,7 @@ import { formatClock, formatMoney, weekdayOf, newGameState, type GameStateData }
 import type { SettingsService } from "../core/settings";
 import { ICONS, UI_ART, button, el, img, nextFrame, wait } from "./dom";
 import { sfx } from "../core/Sfx";
+import { voice } from "../core/Voice";
 
 export const TAGLINE = "Những câu chuyện nhỏ từ góc phố thân quen…";
 
@@ -267,6 +268,8 @@ export class NewGamePanel extends Modal {
 
 export class SettingsPanel extends Modal {
   private toMenu: HTMLButtonElement;
+  private voiceNote!: HTMLElement;
+  private repaintVoice: () => void = () => {};
   private onMenu: (() => void) | null = null;
 
   constructor(host: HTMLElement, settings: SettingsService) {
@@ -294,7 +297,32 @@ export class SettingsPanel extends Modal {
     sw.dataset.setting = "vibration";
     settings.subscribe((s) => { sw.checked = s.vibration; });
     sw.addEventListener("change", () => { settings.set({ vibration: sw.checked }); settings.haptic(30); });
-    el("p", "note", this.body, "Hiệu ứng: tiếng bấm, tiền, pha chế, khách, mưa. Nhạc nền sẽ có ở phase sau.");
+    // giọng nhân vật
+    const vr = el("div", "set-row", this.body);
+    el("span", "set-label", vr, "Giọng nói");
+    const seg = el("div", "seg", vr);
+    const opts: ["babble" | "tts" | "off", string][] = [["tts", "Tiếng Việt"], ["babble", "Líu lo"], ["off", "Tắt"]];
+    const NOTE_OK = "\"Tiếng Việt\": nhân vật đọc lời thoại bằng giọng đọc tiếng Việt của máy, mỗi người một cao độ. \"Líu lo\": giọng do game tự tạo, lên xuống theo dấu thanh.";
+    const NOTE_NO = "Máy này không có giọng đọc tiếng Việt nên đang dùng \"Líu lo\". Cài giọng tiếng Việt trong phần Chuyển văn bản thành giọng nói của máy để nghe nhân vật nói thật.";
+    const btns = opts.map(([v, label]) => {
+      const b = el("button", "seg-btn", seg, label);
+      b.type = "button";
+      b.dataset.voice = v;
+      b.addEventListener("click", () => {
+        settings.set({ voice: v });
+        if (v !== "off") voice.say("coba", "Chào con, hôm nay bán đắt nghen!");
+      });
+      return b;
+    });
+    // nút sáng theo giọng đang thật sự dùng (chọn Tiếng Việt mà máy không có giọng → Líu lo)
+    const paint = () => {
+      const eff = voice.mode();
+      btns.forEach((b) => b.classList.toggle("on", b.dataset.voice === eff));
+      this.voiceNote.textContent = settings.value.voice === "tts" && !voice.ttsAvailable ? NOTE_NO : NOTE_OK;
+    };
+    this.voiceNote = el("p", "note", this.body, NOTE_OK);
+    settings.subscribe(paint);
+    this.repaintVoice = paint;
     const actions = el("div", "modal-actions", this.body);
     this.toMenu = button("", actions, "Về Menu", () => { this.close(); this.onMenu?.(); });
     this.toMenu.dataset.panel = "to-menu";
@@ -305,6 +333,7 @@ export class SettingsPanel extends Modal {
   show(onMenu: (() => void) | null): void {
     this.onMenu = onMenu;
     this.toMenu.hidden = !onMenu;
+    this.repaintVoice(); // danh sách giọng của máy nạp chậm → kiểm tra lại mỗi lần mở
     this.open();
   }
 }

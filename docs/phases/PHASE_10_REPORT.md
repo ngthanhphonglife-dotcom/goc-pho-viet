@@ -22,3 +22,13 @@ Bán 4 ly (2 khung giờ sáng, trưa, tối) + 1 khách bỏ đi + mua 1 bịch
 
 ## Phạm vi kiểm tra lần này
 Máy test chạy chậm nên không chạy đủ cả bộ trên 5 màn hình: Phase 10, Phase 7 và hai bài liên quan tới chuyển ngày (Phase 5 "đồng hồ chạy…", Phase 8 "hàng chờ…") chạy trên cả 5 màn hình; các bài còn lại của Phase 0–9 chạy trên iPhone 15. Tất cả đều đạt. Một bài Phase 8 phải sửa phép so sánh số liệu ngày (giờ có thêm mục theo món/theo giờ) rồi chạy lại mới đạt.
+
+## Cập nhật 0.10.1 — nhạc nền chill + lồng tiếng nhân vật
+- **Nhạc nền lo-fi** soạn và phát trực tiếp bằng Web Audio (không dùng file nhạc): vòng 8 hợp âm jazz nhẹ, đàn phím ấm, bass, trống nhẹ, giai điệu ngũ cung ngẫu hứng, tiếng lách tách đĩa than. Đổi không khí theo buổi: ban ngày tươi (76 nhịp/phút), chiều tối dịu hơn, đêm chậm và trầm, trời mưa bớt trống. Âm lượng theo thanh **Âm nhạc**; bắt đầu sau lần chạm đầu tiên, tạm dừng khi ẩn app.
+- **Lồng tiếng** — mục **Giọng nói** trong Cài đặt có 3 lựa chọn:
+  - **Tiếng Việt** (mặc định): nhân vật đọc nguyên câu thoại bằng giọng đọc tiếng Việt có sẵn của máy; mỗi nhân vật một cao độ + tốc độ (Chú Tư trầm chậm, Cô Ba ấm, Mai/Lan cao, Shipper nhanh…). Khách tới quầy cũng gọi món thành lời ("Cho em một ly Trà tắc nha!").
+  - **Líu lo**: giọng do game tự tạo — mỗi chữ một âm tiết, cao độ lên xuống theo đúng dấu thanh (ngang, sắc, huyền, hỏi, ngã, nặng), âm sắc theo nguyên âm. Máy không có giọng đọc tiếng Việt thì tự dùng kiểu này và có ghi chú trong Cài đặt.
+  - **Tắt**: chỉ còn tiếng chữ chạy.
+- Không thu âm giọng người thật; chất lượng "Tiếng Việt" phụ thuộc giọng đọc của từng máy.
+- Chữ trong hội thoại chạy theo thời gian thật (máy chậm không bị ì).
+- Kiểm tra: bài `audio.spec.ts` đạt trên 5 màn hình (nhạc lên lịch nốt, tắt khi âm lượng 0, đổi không khí theo buổi/mưa; dấu thanh đúng 6 loại; mỗi nhân vật một giọng; mỗi chữ một âm tiết; khách gọi món; chế độ Tiếng Việt đọc đúng câu, đúng nhân vật, đúng cao độ — giả lập giọng máy vì máy test không có giọng tiếng Việt); Phase 1, 6, 9 đạt trên iPhone 15. Máy test không có loa nên chưa nghe thử bằng tai.
