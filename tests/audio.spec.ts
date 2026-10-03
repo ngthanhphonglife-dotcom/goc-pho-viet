@@ -37,6 +37,24 @@ test("Âm thanh: nhạc nền theo buổi, giọng nhân vật theo dấu thanh,
   expect(await mood(14 * 60, "heavyRain")).toBe("rain");
   await mood(9 * 60, "sunny");
 
+  // --- lồng tiếng tạm tắt: hội thoại chỉ có tiếng "tách" khi chữ chạy, Cài đặt không có mục Giọng nói ---
+  if (!(await G(page, "g.voiceEnabled"))) {
+    await G(page, `(() => { g.voice.log.length = 0; g.sfx.log.length = 0; w.interact({ kind: "char", c: w.life.get("mai"), name: "" }); for (let i = 0; i < 60 && !g.dialogue.state.open; i++) w.step(0.5); })()`);
+    await expect.poll(async () => (await G(page, "g.sfx.log.filter((x) => x === 'blip').length")) as number, { timeout: 30_000 }).toBeGreaterThan(2);
+    expect(await G(page, "g.voice.log.length")).toBe(0);
+    await G(page, "g.dialogue.close()");
+    await G(page, `(() => { const c = w.customers.spawn("student", "tratac", false); c.patience = c.max = 999; for (let i = 0; i < 200 && c.state !== "waiting"; i++) w.step(0.25); })()`);
+    expect(await G(page, "g.voice.log.length")).toBe(0);
+    await G(page, "w.customers.clear()");
+    await page.locator('[data-action="settings"]').tap();
+    const sp = page.locator('[data-name="SettingsPanel"]');
+    await expect(sp).toBeVisible();
+    await expect(sp.locator(".seg-btn").first()).toBeHidden();
+    await expect(sp.getByText("Giọng nói", { exact: true })).toBeHidden();
+    await page.screenshot({ path: `docs/screens/settings_voice_${info.project.name.replace(/[^\w]+/g, "_")}.png` });
+    expect(errors, errors.join("\n")).toEqual([]);
+    return;
+  }
   // --- giọng: cao độ theo đúng dấu thanh của từng chữ, mỗi nhân vật một giọng ---
   // --- mặc định "Tiếng Việt": máy không có giọng đọc → phát file giọng nói có sẵn, KHÔNG líu lo ---
   if (!(await G(page, "g.voice.ttsAvailable"))) {

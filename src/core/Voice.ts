@@ -8,6 +8,9 @@ import { VOICE_CLIPS } from "../data/voiceClips";
  *    (public/voice, sinh bởi tools/voice/gen.py) — nên máy nào cũng nghe được tiếng nói, không rơi về líu lo.
  *  - "off": tắt.
  */
+/** Lồng tiếng đang TẠM TẮT (giọng máy nghe chưa thật). Bật lại: đổi thành true — mọi thứ khác giữ nguyên. */
+export const VOICE_ENABLED = false;
+
 export type VoiceMode = "tts" | "off";
 export interface VoiceProfile { f0: number; type: OscillatorType; speed: number; ttsPitch: number; ttsRate: number }
 

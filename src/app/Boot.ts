@@ -23,7 +23,7 @@ import { ShopPanel } from "../screens/ShopPanel";
 import { SHOP_CLOSE, SHOP_OPEN } from "../data/items";
 import { sfx } from "../core/Sfx";
 import { music } from "../core/Music";
-import { voice } from "../core/Voice";
+import { voice, VOICE_ENABLED } from "../core/Voice";
 import { isNight } from "../core/weather";
 import { HISTORY_MAX, ensureToday, summarize } from "../core/DayStats";
 import { DAY_END } from "../core/TimeSystem";
@@ -96,7 +96,7 @@ export class Boot {
     music.volume = () => this.settings.value.music / 100;
     voice.volume = () => this.settings.value.sfx / 100;
     // chọn "Tiếng Việt" mà máy không có giọng đọc tiếng Việt → tự dùng giọng líu lo
-    voice.mode = () => this.settings.value.voice; // "Tiếng Việt" luôn là tiếng nói thật (giọng máy hoặc file có sẵn), không tự rơi về líu lo
+    voice.mode = () => (VOICE_ENABLED ? this.settings.value.voice : "off"); // "Tiếng Việt" luôn là tiếng nói thật (giọng máy hoặc file có sẵn), không tự rơi về líu lo
     const unlock = () => { sfx.unlock(); music.start(); voice.prime(); };
     document.addEventListener("pointerdown", unlock, true);
     document.addEventListener("keydown", unlock, true);

@@ -2,7 +2,7 @@ import { formatClock, formatMoney, weekdayOf, newGameState, type GameStateData }
 import type { SettingsService } from "../core/settings";
 import { ICONS, UI_ART, button, el, img, nextFrame, wait } from "./dom";
 import { sfx } from "../core/Sfx";
-import { voice } from "../core/Voice";
+import { voice, VOICE_ENABLED } from "../core/Voice";
 
 export const TAGLINE = "Những câu chuyện nhỏ từ góc phố thân quen…";
 
@@ -320,6 +320,7 @@ export class SettingsPanel extends Modal {
       this.voiceNote.textContent = settings.value.voice === "tts" && !voice.ttsAvailable ? NOTE_NO : NOTE_OK;
     };
     this.voiceNote = el("p", "note", this.body, NOTE_OK);
+    if (!VOICE_ENABLED) { vr.hidden = true; this.voiceNote.hidden = true; } // lồng tiếng tạm tắt
     settings.subscribe(paint);
     this.repaintVoice = paint;
     const actions = el("div", "modal-actions", this.body);

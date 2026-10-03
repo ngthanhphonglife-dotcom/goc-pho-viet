@@ -3,7 +3,7 @@ import "./screens/screens.css";
 import { Boot } from "./app/Boot";
 import { sfx } from "./core/Sfx";
 import { music } from "./core/Music";
-import { clipKey, voice } from "./core/Voice";
+import { clipKey, voice, VOICE_ENABLED } from "./core/Voice";
 import { dialogueFor } from "./data/dialogues";
 import { DEMO_STATE } from "./core/GameState";
 
@@ -21,6 +21,7 @@ const hook = {
   music,
   voice,
   clipKey,
+  voiceEnabled: VOICE_ENABLED,
   dialogueFor,
   get dialogue() { return boot.dialogue; },
   get quests() { return boot.quests; },
