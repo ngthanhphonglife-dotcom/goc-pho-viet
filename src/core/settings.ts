@@ -8,10 +8,10 @@ export interface Settings {
   sfx: number;
   vibration: boolean;
   /** Giọng nhân vật: nói tiếng Việt bằng giọng đọc của máy / líu lo theo dấu thanh / tắt. */
-  voice: "babble" | "tts" | "off";
+  voice: "tts" | "off";
 }
 
-export const DEFAULT_SETTINGS: Settings = { music: 70, sfx: 80, vibration: true, voice: "tts" }; // mặc định nói tiếng Việt bằng giọng đọc của máy; máy không có thì tự dùng "líu lo"
+export const DEFAULT_SETTINGS: Settings = { music: 70, sfx: 80, vibration: true, voice: "tts" }; // mặc định nói tiếng Việt bằng giọng đọc của máy; máy không có thì dùng file giọng nói có sẵn
 const KEY = "gpv.settings";
 
 function clamp(v: unknown, d: number): number {
@@ -30,7 +30,7 @@ export class SettingsService {
       music: clamp(raw.music, DEFAULT_SETTINGS.music),
       sfx: clamp(raw.sfx, DEFAULT_SETTINGS.sfx),
       vibration: typeof raw.vibration === "boolean" ? raw.vibration : DEFAULT_SETTINGS.vibration,
-      voice: raw.voice === "tts" || raw.voice === "off" || raw.voice === "babble" ? raw.voice : DEFAULT_SETTINGS.voice,
+      voice: raw.voice === "off" ? "off" : "tts" // bản cũ lưu "babble" (líu lo, đã bỏ) → Tiếng Việt,
     };
   }
 

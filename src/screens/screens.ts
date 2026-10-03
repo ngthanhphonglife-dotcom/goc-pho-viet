@@ -301,8 +301,8 @@ export class SettingsPanel extends Modal {
     const vr = el("div", "set-row", this.body);
     el("span", "set-label", vr, "Giọng nói");
     const seg = el("div", "seg", vr);
-    const opts: ["babble" | "tts" | "off", string][] = [["tts", "Tiếng Việt"], ["babble", "Líu lo"], ["off", "Tắt"]];
-    const NOTE_OK = "\"Tiếng Việt\": nhân vật nói lời thoại bằng tiếng Việt, mỗi người một giọng (dùng giọng đọc tiếng Việt của máy). \"Líu lo\": tiếng ê a vui tai do game tự tạo.";
+    const opts: ["tts" | "off", string][] = [["tts", "Tiếng Việt"], ["off", "Tắt"]];
+    const NOTE_OK = "\"Tiếng Việt\": nhân vật nói lời thoại bằng tiếng Việt, mỗi người một giọng (dùng giọng đọc tiếng Việt của máy).";
     const NOTE_NO = "\"Tiếng Việt\": nhân vật nói lời thoại bằng tiếng Việt, mỗi người một giọng (giọng có sẵn trong game). Máy cài thêm giọng đọc tiếng Việt thì giọng sẽ tự nhiên hơn.";
     const btns = opts.map(([v, label]) => {
       const b = el("button", "seg-btn", seg, label);

@@ -3,14 +3,12 @@ import { VOICE_CLIPS } from "../data/voiceClips";
 
 /**
  * Lồng tiếng nhân vật (tổng hợp, không thu âm người thật):
- *  - "babble": mỗi chữ thành một âm tiết ngắn, cao độ lên xuống theo ĐÚNG DẤU THANH tiếng Việt của chữ đó,
- *    âm sắc theo nguyên âm chính; mỗi nhân vật có giọng (cao độ, độ dày, tốc độ) riêng.
  *  - "tts" (mặc định): NÓI TIẾNG VIỆT THẬT. Máy có giọng đọc tiếng Việt → dùng giọng máy (tự nhiên hơn),
  *    chỉnh cao độ/tốc độ theo nhân vật. Máy không có → phát file giọng nói đã tạo sẵn trong game
  *    (public/voice, sinh bởi tools/voice/gen.py) — nên máy nào cũng nghe được tiếng nói, không rơi về líu lo.
  *  - "off": tắt.
  */
-export type VoiceMode = "babble" | "tts" | "off";
+export type VoiceMode = "tts" | "off";
 export interface VoiceProfile { f0: number; type: OscillatorType; speed: number; ttsPitch: number; ttsRate: number }
 
 const P = (f0: number, type: OscillatorType, speed: number, ttsPitch: number, ttsRate: number): VoiceProfile => ({ f0, type, speed, ttsPitch, ttsRate });
@@ -30,32 +28,6 @@ export const VOICES: Record<string, VoiceProfile> = {
 };
 const DEFAULT = P(200, "triangle", 1, 1, 1);
 
-// đường cao độ theo dấu thanh: [thời điểm 0–1, hệ số nhân với cao độ gốc]
-const TONES: Record<string, [number, number][]> = {
-  ngang: [[0, 1], [1, 1]],
-  sac: [[0, 1], [1, 1.38]],
-  huyen: [[0, 0.95], [1, 0.74]],
-  hoi: [[0, 0.95], [0.5, 0.74], [1, 1.1]],
-  nga: [[0, 1], [0.45, 0.86], [1, 1.42]],
-  nang: [[0, 0.9], [1, 0.64]],
-};
-const MARKS: Record<string, string> = { "́": "sac", "̀": "huyen", "̉": "hoi", "̃": "nga", "̣": "nang" };
-// formant thứ nhất theo nguyên âm chính
-const FORMANT: Record<string, number> = { a: 820, e: 540, i: 320, y: 320, o: 520, u: 360 };
-
-/** Phân tích một chữ: dấu thanh + nguyên âm chính. Trả về null nếu không có chữ cái. */
-export function analyze(word: string): { tone: string; formant: number } | null {
-  const d = word.toLowerCase().normalize("NFD");
-  let tone = "ngang", vowel = "";
-  for (const ch of d) {
-    if (MARKS[ch]) tone = MARKS[ch];
-    else if (!vowel && FORMANT[ch]) vowel = ch;
-    else if (FORMANT[ch] && (ch === "a" || ch === "o" || ch === "e")) vowel = ch; // ưu tiên nguyên âm mở trong vần ghép
-  }
-  if (!/[a-zđ]/.test(d)) return null;
-  return { tone, formant: FORMANT[vowel] ?? 500 };
-}
-
 /** Mã file giọng nói của một câu (FNV-1a 32 bit trên "<id>|<câu>") — khớp tools/voice/gen.py. */
 export function clipKey(id: string, text: string): string {
   const s = id + "|" + text;
@@ -71,9 +43,9 @@ export class Voice {
   private current: AudioBufferSourceNode | null = null;
   private token = 0;
 
-  mode: () => VoiceMode = () => "babble";
+  mode: () => VoiceMode = () => "tts";
   volume: () => number = () => 0.8;
-  /** Nhật ký: "babble:chutu:sac", "tts:coba", … — cho test. */
+  /** Nhật ký: "clip:chutu", "tts:coba", … — cho test. */
   readonly log: string[] = [];
   private viVoice: SpeechSynthesisVoice | null = null;
 
@@ -87,46 +59,8 @@ export class Voice {
 
   profile(id: string): VoiceProfile { return VOICES[id] ?? DEFAULT; }
 
-  /** Một âm tiết (gọi khi chữ chạy tới đầu mỗi từ). Chỉ dùng ở chế độ babble. */
-  syllable(id: string, word: string, when = 0): void {
-    if (this.mode() !== "babble") return;
-    const a = analyze(word);
-    if (!a) return;
-    const p = this.profile(id);
-    this.log.push(`babble:${id}:${a.tone}`);
-    if (this.log.length > 300) this.log.shift();
-    const ctx = sfx.context;
-    const v = this.volume();
-    if (!ctx || ctx.state !== "running" || v <= 0) return;
-    const t0 = ctx.currentTime + 0.01 + when;
-    const dur = (a.tone === "nang" ? 0.09 : 0.14) / p.speed;
-    const o = ctx.createOscillator();
-    o.type = p.type;
-    for (const [k, mult] of TONES[a.tone]) {
-      if (k === 0) o.frequency.setValueAtTime(p.f0 * mult, t0);
-      else o.frequency.linearRampToValueAtTime(p.f0 * mult, t0 + dur * k);
-    }
-    const f = ctx.createBiquadFilter();
-    f.type = "bandpass";
-    f.frequency.value = a.formant;
-    f.Q.value = 2.2;
-    const g = ctx.createGain();
-    const peak = v * (p.type === "sine" ? 0.5 : p.type === "triangle" ? 0.42 : 0.2);
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(peak, t0 + 0.015);
-    g.gain.setValueAtTime(peak, t0 + dur * 0.6);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    o.connect(f).connect(g).connect(ctx.destination);
-    o.start(t0);
-    o.stop(t0 + dur + 0.03);
-  }
-
   /** Nói cả câu ngay (không gắn với chữ chạy) — dùng cho khách gọi món. */
-  say(id: string, text: string): void {
-    if (this.mode() === "tts") { this.speak(id, text); return; }
-    const p = this.profile(id);
-    text.split(/\s+/).slice(0, 12).forEach((w, i) => this.syllable(id, w, (i * 0.15) / p.speed));
-  }
+  say(id: string, text: string): void { this.speak(id, text); }
 
   /** Câu này có file giọng nói sẵn trong game không. */
   hasClip(id: string, text: string): boolean { return clipKey(id, text) in VOICE_CLIPS; }

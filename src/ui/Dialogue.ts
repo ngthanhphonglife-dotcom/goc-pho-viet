@@ -87,10 +87,7 @@ export class Dialogue {
     this.timer = window.setInterval(() => {
       const target = Math.min(n.text.length, Math.max(this.shown + 1, Math.floor(((performance.now() - t0) / 1000) * CPS)));
       for (let i = this.shown; i < target; i++) {
-        // lồng tiếng: tới đầu mỗi từ thì phát một âm tiết theo giọng người đang nói
-        if (voice.mode() === "babble") {
-          if (i === 0 || n.text[i - 1] === " ") voice.syllable(me ? "player" : this.speaker.id, n.text.slice(i).split(" ")[0]);
-        } else if (voice.mode() === "off" && i % 3 === 0 && n.text[i] !== " ") sfx.play("blip");
+        if (voice.mode() === "off" && i % 3 === 0 && n.text[i] !== " ") sfx.play("blip");
       }
       this.shown = target;
       this.textEl.textContent = n.text.slice(0, this.shown);

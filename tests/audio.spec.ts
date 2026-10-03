@@ -70,36 +70,16 @@ test("Âm thanh: nhạc nền theo buổi, giọng nhân vật theo dấu thanh,
   });
   expect(missing, missing.join("\n")).toEqual([]);
 
-  await G(page, "b.settings.set({ voice: 'babble' })");
-  await G(page, "(g.voice.log.length = 0, g.voice.say('chutu', 'ma má mà mả mã mạ'))");
-  expect(await G(page, "g.voice.log.slice()")).toEqual(["ngang", "sac", "huyen", "hoi", "nga", "nang"].map((t) => "babble:chutu:" + t));
   const pv = await G(page, "[g.voice.profile('chutu'), g.voice.profile('coba'), g.voice.profile('lan'), g.voice.profile('kh_ship1')]");
-  expect(pv[0].f0).toBeLessThan(pv[1].f0);   // Chú Tư trầm hơn Cô Ba
-  expect(pv[1].f0).toBeLessThan(pv[2].f0);   // Cô Ba trầm hơn Lan
-  expect(pv[3].speed).toBeGreaterThan(pv[0].speed); // shipper nói nhanh hơn Chú Tư
-  expect(new Set(pv.map((p: any) => p.f0 + p.type)).size).toBe(4);
-
-  // --- hội thoại: chữ chạy tới đâu, nhân vật "nói" tới đó ---
-  await G(page, `(() => { g.voice.log.length = 0; w.interact({ kind: "char", c: w.life.get("mai"), name: "" }); for (let i = 0; i < 60 && !g.dialogue.state.open; i++) w.step(0.5); })()`);
-  await expect.poll(async () => (await G(page, "g.voice.log.filter((x) => x.startsWith('babble:mai')).length")) as number, { timeout: 30_000 }).toBeGreaterThan(5);
-  const words = (await G(page, "g.dialogue.state.text")).split(" ").length;
-  await expect.poll(async () => (await G(page, "g.dialogue.state.typing")) as boolean, { timeout: 60_000 }).toBe(false);
-  expect(await G(page, "g.voice.log.filter((x) => x.startsWith('babble:mai')).length")).toBe(words); // mỗi chữ một âm tiết
-  await G(page, "g.dialogue.close()");
-
-  // --- khách tới quầy gọi món bằng giọng của mình ---
-  await G(page, `(() => { g.voice.log.length = 0; const c = w.customers.spawn("student", "tratac", false); c.patience = c.max = 999; for (let i = 0; i < 200 && c.state !== "waiting"; i++) w.step(0.25); })()`);
-  const said: string[] = await G(page, "g.voice.log.slice()");
-  expect(said.length).toBeGreaterThan(4);
-  expect(said.every((x) => x.startsWith("babble:kh_hs")), said.join(",")).toBe(true);
-  await G(page, "w.customers.clear()");
-
+  expect(pv[0].ttsPitch).toBeLessThan(pv[1].ttsPitch);   // Chú Tư trầm hơn Cô Ba
+  expect(pv[1].ttsPitch).toBeLessThan(pv[2].ttsPitch);   // Cô Ba trầm hơn Lan
+  expect(pv[3].ttsRate).toBeGreaterThan(pv[0].ttsRate);  // shipper nói nhanh hơn Chú Tư
   await G(page, "b.settings.set({ voice: 'tts' })");
 
   // --- Cài đặt › Giọng nói ---
   await page.locator('[data-action="settings"]').tap();
   const panel = page.locator('[data-name="SettingsPanel"]');
-  await expect(panel.locator(".seg-btn")).toHaveCount(3);
+  await expect(panel.locator(".seg-btn")).toHaveCount(2);
   const card = (await panel.locator(".card").boundingBox())!;
   expect(card.y + card.height, "Bảng cài đặt tràn màn hình").toBeLessThanOrEqual(page.viewportSize()!.height + 0.5);
   await page.screenshot({ path: `docs/screens/settings_voice_${info.project.name.replace(/[^\w]+/g, "_")}.png` });
@@ -109,8 +89,8 @@ test("Âm thanh: nhạc nền theo buổi, giọng nhân vật theo dấu thanh,
   expect(await G(page, "g.voice.mode()")).toBe("tts"); // không tự rơi về líu lo
   await expect(panel.locator('.seg-btn[data-voice="tts"]')).toHaveClass(/on/);
   if (!tts) await expect(panel).toContainText("giọng có sẵn trong game");
-  await panel.locator('.seg-btn[data-voice="babble"]').tap();
-  expect(await G(page, "[b.settings.value.voice, g.voice.mode()]")).toEqual(["babble", "babble"]);
+  await expect(panel.locator('.seg-btn[data-voice="babble"]')).toHaveCount(0); // đã bỏ líu lo
+  await expect(panel).not.toContainText("Líu lo");
   // tắt giọng → không còn âm tiết, chữ chạy kêu "blip" như cũ
   await panel.locator('.seg-btn[data-voice="off"]').tap();
   await expect(panel.locator('.seg-btn[data-voice="off"]')).toHaveClass(/on/);
