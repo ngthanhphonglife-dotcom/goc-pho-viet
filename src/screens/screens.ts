@@ -302,8 +302,8 @@ export class SettingsPanel extends Modal {
     el("span", "set-label", vr, "Giọng nói");
     const seg = el("div", "seg", vr);
     const opts: ["babble" | "tts" | "off", string][] = [["tts", "Tiếng Việt"], ["babble", "Líu lo"], ["off", "Tắt"]];
-    const NOTE_OK = "\"Tiếng Việt\": nhân vật đọc lời thoại bằng giọng đọc tiếng Việt của máy, mỗi người một cao độ. \"Líu lo\": giọng do game tự tạo, lên xuống theo dấu thanh.";
-    const NOTE_NO = "Máy này không có giọng đọc tiếng Việt nên đang dùng \"Líu lo\". Cài giọng tiếng Việt trong phần Chuyển văn bản thành giọng nói của máy để nghe nhân vật nói thật.";
+    const NOTE_OK = "\"Tiếng Việt\": nhân vật nói lời thoại bằng tiếng Việt, mỗi người một giọng (dùng giọng đọc tiếng Việt của máy). \"Líu lo\": tiếng ê a vui tai do game tự tạo.";
+    const NOTE_NO = "\"Tiếng Việt\": nhân vật nói lời thoại bằng tiếng Việt, mỗi người một giọng (giọng có sẵn trong game). Máy cài thêm giọng đọc tiếng Việt thì giọng sẽ tự nhiên hơn.";
     const btns = opts.map(([v, label]) => {
       const b = el("button", "seg-btn", seg, label);
       b.type = "button";
@@ -314,7 +314,6 @@ export class SettingsPanel extends Modal {
       });
       return b;
     });
-    // nút sáng theo giọng đang thật sự dùng (chọn Tiếng Việt mà máy không có giọng → Líu lo)
     const paint = () => {
       const eff = voice.mode();
       btns.forEach((b) => b.classList.toggle("on", b.dataset.voice === eff));

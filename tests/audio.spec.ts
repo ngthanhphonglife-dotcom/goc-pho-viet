@@ -38,6 +38,39 @@ test("Âm thanh: nhạc nền theo buổi, giọng nhân vật theo dấu thanh,
   await mood(9 * 60, "sunny");
 
   // --- giọng: cao độ theo đúng dấu thanh của từng chữ, mỗi nhân vật một giọng ---
+  // --- mặc định "Tiếng Việt": máy không có giọng đọc → phát file giọng nói có sẵn, KHÔNG líu lo ---
+  if (!(await G(page, "g.voice.ttsAvailable"))) {
+    await G(page, `(() => { g.voice.log.length = 0; w.interact({ kind: "char", c: w.life.get("mai"), name: "" }); for (let i = 0; i < 60 && !g.dialogue.state.open; i++) w.step(0.5); })()`);
+    await expect.poll(async () => (await G(page, "g.dialogue.state.typing")) as boolean, { timeout: 60_000 }).toBe(false);
+    expect(await G(page, "g.voice.log.slice()")).toEqual(["clip:mai"]);
+    await G(page, "g.dialogue.close()");
+    await G(page, `(() => { g.voice.log.length = 0; const c = w.customers.spawn("student", "tratac", false); c.patience = c.max = 999; for (let i = 0; i < 200 && c.state !== "waiting"; i++) w.step(0.25); })()`);
+    expect((await G(page, "g.voice.log.slice()")).join()).toMatch(/^clip:kh_hs[12]$/);
+    await G(page, "w.customers.clear()");
+    // file giọng nói tải được và giải mã được, dài đúng một câu nói
+    const clip = await page.evaluate(async () => {
+      const g = (window as any).__gpv;
+      const r = await fetch(g.voice.base + g.clipKey("chutu", "Sao rồi con, chịu đi chào bà con trong phố chưa?") + ".mp3");
+      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+      const buf = await (g.sfx.context ?? new Ctx()).decodeAudioData(await r.arrayBuffer());
+      return { ok: r.ok, dur: buf.duration };
+    });
+    expect(clip.ok).toBe(true);
+    expect(clip.dur).toBeGreaterThan(1.5);
+    expect(clip.dur).toBeLessThan(8);
+  }
+  // mọi câu thoại trong game đều có file giọng nói
+  const missing = await page.evaluate(() => {
+    const g = (window as any).__gpv, q = g.boot.quests, out: string[] = [];
+    for (const id of ["chutu", "coba", "mai", "hoang", "lan", "nam", "minh"]) for (let seed = 0; seed < 6; seed++) {
+      const sc = g.dialogueFor(id, q, seed);
+      for (const n of Object.values(sc.nodes) as any[]) { const who = n.who === "me" ? "player" : id; if (!g.voice.hasClip(who, n.text)) out.push(who + "|" + n.text); }
+    }
+    return out;
+  });
+  expect(missing, missing.join("\n")).toEqual([]);
+
+  await G(page, "b.settings.set({ voice: 'babble' })");
   await G(page, "(g.voice.log.length = 0, g.voice.say('chutu', 'ma má mà mả mã mạ'))");
   expect(await G(page, "g.voice.log.slice()")).toEqual(["ngang", "sac", "huyen", "hoi", "nga", "nang"].map((t) => "babble:chutu:" + t));
   const pv = await G(page, "[g.voice.profile('chutu'), g.voice.profile('coba'), g.voice.profile('lan'), g.voice.profile('kh_ship1')]");
@@ -61,6 +94,8 @@ test("Âm thanh: nhạc nền theo buổi, giọng nhân vật theo dấu thanh,
   expect(said.every((x) => x.startsWith("babble:kh_hs")), said.join(",")).toBe(true);
   await G(page, "w.customers.clear()");
 
+  await G(page, "b.settings.set({ voice: 'tts' })");
+
   // --- Cài đặt › Giọng nói ---
   await page.locator('[data-action="settings"]').tap();
   const panel = page.locator('[data-name="SettingsPanel"]');
@@ -71,9 +106,9 @@ test("Âm thanh: nhạc nền theo buổi, giọng nhân vật theo dấu thanh,
   // mặc định là "Tiếng Việt" (giọng đọc của máy); máy không có giọng tiếng Việt thì tự dùng "Líu lo" và có ghi chú
   const tts = await G(page, "g.voice.ttsAvailable");
   expect(await G(page, "b.settings.value.voice")).toBe("tts");
-  expect(await G(page, "g.voice.mode()")).toBe(tts ? "tts" : "babble");
-  await expect(panel.locator(`.seg-btn[data-voice="${tts ? "tts" : "babble"}"]`)).toHaveClass(/on/);
-  if (!tts) await expect(panel).toContainText("không có giọng đọc tiếng Việt");
+  expect(await G(page, "g.voice.mode()")).toBe("tts"); // không tự rơi về líu lo
+  await expect(panel.locator('.seg-btn[data-voice="tts"]')).toHaveClass(/on/);
+  if (!tts) await expect(panel).toContainText("giọng có sẵn trong game");
   await panel.locator('.seg-btn[data-voice="babble"]').tap();
   expect(await G(page, "[b.settings.value.voice, g.voice.mode()]")).toEqual(["babble", "babble"]);
   // tắt giọng → không còn âm tiết, chữ chạy kêu "blip" như cũ
