@@ -13,7 +13,7 @@ interface Walker { id: string; x: number; y: number; dir: 1 | -1; speed: number 
 
 const STATIONED: Stationed[] = [
   // chủ quầy đứng sau xe cà phê (chạm vào thì tính là chạm xe cà phê)
-  { id: "player", x: CX + 662, y: 1475, dir: 1, tappable: false, script: [["idle", 4], ["brew", 3.2], ["idle", 2], ["serve", 1.6]] },
+  { id: "player", x: CX + 662, y: 1415, dir: 1, tappable: false, script: [["idle", 4], ["brew", 3.2], ["idle", 2], ["serve", 1.6]] },
   { id: "chutu", x: CX + 185, y: 1432, dir: 1, script: [["fix", 6], ["sit", 2.2]] },
   { id: "coba", x: CX + 960, y: 1325, dir: -1, script: [["idle", 5], ["wave", 1.6], ["idle", 4], ["talk", 2.2]] },
   { id: "mai", x: CX + 470, y: 1641, dir: 1, script: [["sit", 6], ["talk", 2]] },
@@ -100,7 +100,7 @@ export class StreetLife {
     let best: Character | null = null;
     for (const { c } of this.agents) {
       if (!c.tappable) continue;
-      const s = c.info.scale;
+      const s = c.size;
       const top = c.wy - (c.anim === "sit" || c.anim === "fix" ? 270 : 315) * s;
       if (Math.abs(wx - c.wx) <= 62 * s && wy <= c.wy + 6 && wy >= top && (!best || c.wy > best.wy)) best = c;
     }

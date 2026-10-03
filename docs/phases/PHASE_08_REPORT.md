@@ -17,3 +17,10 @@ Khách tới đúng chỗ trước quầy, có bong bóng · bảng Đơn hàng 
 - Nhân vật khá to nên hàng 6 người đứng sát nhau và che xe cà phê; sẽ cân lại kích thước/khoảng cách ở Phase 24 (polish).
 - Khách dùng chung hình với 4 người đi bộ của Phase 3 (chưa có hình riêng cho từng loại khách).
 - Phase tiếp theo: **Phase 9 — Tạp hoá Cô Ba** (mua nguyên liệu).
+
+## Cập nhật 0.8.1 — cân lại kích thước và khoảng cách
+- Nhân vật thu nhỏ còn 78% (người lớn ~245 đơn vị, học sinh ~220) để không che xe cà phê và hàng quán.
+- Hàng chờ giãn ra: mỗi chỗ cách nhau 110 đơn vị (trước là 95), lùi xuống gần mép vỉa hè.
+- Chủ quầy đứng lùi vào sau quầy (y 1415) để mặt lộ rõ giữa các hũ trên quầy.
+- Khi nói chuyện: đứng cách người đang đứng 105, cách người đang ngồi 140 đơn vị.
+- Kiểm tra lại: Phase 3, 4, 6, 8 trên cả 5 màn hình (37 bài) + Phase 0, 1, 2, 5, 7 trên iPhone 15 (13 bài) — đều đạt.

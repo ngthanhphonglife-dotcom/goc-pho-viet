@@ -13,8 +13,13 @@ export interface CharTextures { parts: Record<string, Texture>; faces: Record<st
 export type Anim = "idle" | "walk" | "brew" | "serve" | "sit" | "fix" | "wave" | "talk";
 export type Expression = "normal" | "happy" | "surprised" | "talk";
 
+/** Tỉ lệ chung của nhân vật so với phố (cân lại sau Phase 8: nhỏ hơn để không che xe cà phê). */
+export const CHAR_SCALE = 0.78;
+
 export class Character extends Container {
   readonly info: CharInfo;
+  /** Tỉ lệ thật trên phố (học sinh nhỏ hơn người lớn). */
+  get size(): number { return this.info.scale * CHAR_SCALE; }
   /** Vị trí chân trên phố (đơn vị thiết kế). */
   wx = 0;
   wy = 0;
@@ -101,7 +106,7 @@ export class Character extends Container {
     }
     this.face.scale.set(inv);
     this.setFace("normal");
-    this.scale.set(tex.rs * this.info.scale);
+    this.scale.set(tex.rs * this.size);
     this.place();
   }
 

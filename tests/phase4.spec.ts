@@ -6,7 +6,7 @@ import { boot, enterDemo, type Safe } from "./helpers";
 const W = (page: Page, fn: string) => page.evaluate(`(() => { const w = window.__gpv.world; return ${fn}; })()`) as Promise<any>;
 const me = (page: Page) => W(page, "({ ...w.player.pos, moving: w.player.moving, anim: w.player.c.anim, dir: w.player.c.dir, home: w.player.atHome })");
 const step = (page: Page, s: number) => W(page, `w.step(${s})`);
-const HOME = { x: 1742, y: 1475 };
+const HOME = { x: 1742, y: 1415 };
 
 /** Toạ độ trang của một điểm trên phố (đã đưa vào giữa màn hình, kiểm tra không bị UI che). */
 async function screenOf(page: Page, wx: number, wy: number, center = true) {
@@ -170,7 +170,7 @@ test("Phase 4: joystick, bàn phím, vật cản, biên phố, lưu vị trí", 
   expect((await me(page)).y).toBeLessThan(b.y - 40);
 
   // tìm đường: từ trước xe cà phê ra sau quầy phải đi vòng, không điểm nào nằm trong vật cản
-  const path = await W(page, "w.nav.findPath({ x: 1742, y: 1620 }, { x: 1742, y: 1475 })");
+  const path = await W(page, "w.nav.findPath({ x: 1742, y: 1620 }, { x: 1742, y: 1415 })");
   expect(path.length).toBeGreaterThan(1);
   for (const p of path) expect(await W(page, `w.nav.blocked(${p.x}, ${p.y})`)).toBe(false);
 

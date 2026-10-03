@@ -1,0 +1,17 @@
+import { chromium } from "@playwright/test";
+const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium", args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader"] });
+const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+const logs = [];
+p.on("pageerror", e => logs.push("pageerror: " + e.message));
+await p.goto("http://localhost:4173/goc-pho-viet/");
+await p.waitForFunction(() => window.__gpv?.ready, null, { timeout: 90000 });
+await p.evaluate(() => { window.__gpv.world.customers.autoSpawn = false; return window.__gpv.demo(); });
+await p.waitForFunction(() => window.__gpv.screen === "game"); await p.waitForTimeout(500);
+await p.evaluate(() => window.__gpv.world.step(3)); await p.waitForTimeout(300);
+await p.screenshot({ path: "/tmp/size-0.png" });
+await p.evaluate(() => { const w = window.__gpv.world, cs = w.customers; for (let i = 0; i < 6; i++) { const c = cs.spawn(["office", "student", "shipper", "casual"][i % 4], ["sua", "tratac", "den"][i % 3], i % 2 === 0); c.patience = c.max = 999; } w.step(45); });
+await p.waitForTimeout(400); await p.screenshot({ path: "/tmp/size-1.png" });
+await p.evaluate(() => { const w = window.__gpv.world; w.customers.clear(); w.interact({ kind: "char", c: w.life.get("chutu"), name: "" }); for (let i = 0; i < 60 && !window.__gpv.dialogue.state.open; i++) w.step(0.5); window.__gpv.dialogue.advance(); });
+await p.waitForTimeout(500); await p.screenshot({ path: "/tmp/size-2.png" });
+console.log(logs.join("\n"));
+await b.close();

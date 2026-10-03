@@ -797,7 +797,7 @@ def build_props():
     for _ in range(6):
         b.append(circle(755 + rnd.uniform(-22, 22), 1285 - rnd.uniform(0, 30), rnd.uniform(10, 15), rnd.choice([GREEN, GREEN_L])))
     prop("cart", b, 1534, CX)
-    hotspot("cart", "Xe cà phê Góc Phố", CX + 430, 1100, CX + 790, 1535, "stall", stand=(CX + 662, 1475))
+    hotspot("cart", "Xe cà phê Góc Phố", CX + 430, 1100, CX + 790, 1535, "stall", stand=(CX + 662, 1415))
 
     b = [outlined([poly([(793, 1640), (815, 1400), (830, 1400), (810, 1640)], WOOD_D), poly([(925, 1640), (907, 1400), (922, 1400), (940, 1640)], WOOD_D),
                    rect(785, 1395, 155, 200, "#2F3A37", 8)], 4),

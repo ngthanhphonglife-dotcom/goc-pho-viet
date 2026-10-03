@@ -16,7 +16,7 @@ export const TYPES: Record<CustomerType, { name: string; looks: string[]; patien
 export const QUEUE_MAX = 6;
 const CX = 1080;
 /** Chỗ đứng: 0 = trước quầy (đang gọi món), 1–5 = hàng chờ phía trước bảng menu. */
-const SLOTS: Pt[] = [{ x: CX + 640, y: 1592 }, { x: CX + 705, y: 1724 }, { x: CX + 800, y: 1730 }, { x: CX + 895, y: 1724 }, { x: CX + 990, y: 1730 }, { x: CX + 1085, y: 1724 }];
+const SLOTS: Pt[] = [{ x: CX + 640, y: 1592 }, { x: CX + 720, y: 1736 }, { x: CX + 830, y: 1744 }, { x: CX + 940, y: 1736 }, { x: CX + 1050, y: 1744 }, { x: CX + 1160, y: 1736 }];
 
 export interface Customer {
   uid: number;
@@ -141,8 +141,8 @@ export class Customers {
   at(wx: number, wy: number): Customer | null {
     let best: Customer | null = null;
     for (const cu of this.list) {
-      const s = cu.c.info.scale;
-      if (Math.abs(wx - cu.c.wx) <= 62 * s && wy <= cu.c.wy + 6 && wy >= cu.c.wy - 400 * s && (!best || cu.c.wy > best.c.wy)) best = cu;
+      const s = cu.c.size;
+      if (Math.abs(wx - cu.c.wx) <= 62 * s && wy <= cu.c.wy + 6 && wy >= cu.c.wy - 440 * s && (!best || cu.c.wy > best.c.wy)) best = cu;
     }
     return best;
   }
@@ -232,7 +232,7 @@ export class Customers {
     const b = cu.bubble;
     b.visible = cu.mood ? cu.moodT > 0 : cu.state === "waiting";
     if (!b.visible) return;
-    b.position.set(cu.c.wx * this.rs, (cu.c.wy - 322 * cu.c.info.scale) * this.rs);
+    b.position.set(cu.c.wx * this.rs, (cu.c.wy - 322 * cu.c.size) * this.rs);
     const bar = b.getChildByLabel("bar") as Graphics | null;
     if (bar) {
       const k = Math.max(0, cu.patience / cu.max);

@@ -353,8 +353,9 @@ export class World {
     let x: number, y: number;
     if (n.kind === "char") {
       const side = this.player.c.wx >= n.c.wx ? 1 : -1;
-      const a = this.nav.free({ x: n.c.wx + side * 125, y: n.c.wy + 10 });
-      const b = this.nav.free({ x: n.c.wx - side * 125, y: n.c.wy + 10 });
+      const gap = n.c.anim === "sit" || n.c.anim === "fix" ? 140 : 105; // người đang ngồi chiếm chỗ rộng hơn
+      const a = this.nav.free({ x: n.c.wx + side * gap, y: n.c.wy + 10 });
+      const b = this.nav.free({ x: n.c.wx - side * gap, y: n.c.wy + 10 });
       const far = (q: { x: number; y: number }) => Math.hypot(q.x - n.c.wx, q.y - n.c.wy);
       ({ x, y } = far(a) <= far(b) + 40 ? a : b);
     } else [x, y] = n.h.stand;
