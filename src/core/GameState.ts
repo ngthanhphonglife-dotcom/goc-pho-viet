@@ -1,3 +1,4 @@
+import type { DayRecord, DayStats } from "./DayStats";
 // Trạng thái game hiển thị trên Master UI. Phase 0 dùng dữ liệu mẫu đúng ảnh Master;
 // các phase sau (lịch, thời tiết, kinh tế, nhiệm vụ) sẽ cập nhật qua update().
 
@@ -39,7 +40,9 @@ export interface GameStateData {
   /** Khay ly pha sẵn: món + chất lượng 1–3. */
   ready?: { recipe: string; quality: number }[];
   /** Số liệu bán hàng trong ngày (Phase 8). */
-  today?: { cups: number; revenue: number; tips: number; happy: number; okay: number; lost: number; cost?: number };
+  today?: DayStats;
+  /** Kết quả các ngày đã qua (tối đa 7 ngày gần nhất). */
+  history?: DayRecord[];
 }
 
 const WEEKDAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];

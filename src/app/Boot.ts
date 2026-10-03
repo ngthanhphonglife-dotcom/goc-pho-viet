@@ -22,6 +22,9 @@ import { OrdersPanel } from "../screens/OrdersPanel";
 import { ShopPanel } from "../screens/ShopPanel";
 import { SHOP_CLOSE, SHOP_OPEN } from "../data/items";
 import { sfx } from "../core/Sfx";
+import { HISTORY_MAX, ensureToday, summarize } from "../core/DayStats";
+import { DAY_END } from "../core/TimeSystem";
+import { DaySummaryPanel } from "../screens/DaySummaryPanel";
 import { LOST_REPUTATION, customerRate, settle } from "../core/Sales";
 import { formatMoney } from "../core/GameState";
 import type { CustomerType } from "../world/Customers";
@@ -59,6 +62,8 @@ export class Boot {
   brewPanel!: BrewPanel;
   ordersPanel!: OrdersPanel;
   shopPanel!: ShopPanel;
+  summaryPanel!: DaySummaryPanel;
+  private summarizing = false;
   private badge!: HTMLElement;
   private talking = false;
   private abortTalk = false;
@@ -199,7 +204,7 @@ export class Boot {
     cs.rate = () => customerRate(this.state.value.minuteOfDay, this.time.kind, this.state.value.reputation);
     cs.pick = (type) => this.pickRecipe(type);
     cs.onLost = () => {
-      this.state.update((s) => { s.reputation = Math.max(0, s.reputation - LOST_REPUTATION); this.today(s).lost++; });
+      this.state.update((s) => { this.today(s).lost++; s.reputation = Math.max(0, s.reputation - LOST_REPUTATION); }); // ghi số liệu trước để nhớ uy tín đầu ngày
       this.ui.toast("Một khách bỏ đi vì chờ lâu…");
       sfx.play("lost");
     };
@@ -223,11 +228,12 @@ export class Boot {
       if (cs.front === c) this.openOrders();
       else this.ui.toast(`${TYPES[c.type].name} đang chờ tới lượt`);
     });
-    this.time.onNewDay(() => { cs.clear(); this.state.patchQuiet({ today: undefined }); });
+    this.summaryPanel = new DaySummaryPanel(this.hosts.app);
+    this.time.onDayEnd(() => void this.daySummary(false));
 
     // Phase 7: kho, thực đơn, pha chế
     this.ingredientsPanel = new IngredientsPanel(this.hosts.app, this.biz, () => this.ui.invoke("shop"));
-    this.stallPanel = new StallPanel(this.hosts.app, this.biz, (r) => void this.brew(r));
+    this.stallPanel = new StallPanel(this.hosts.app, this.biz, (r) => void this.brew(r), () => void this.daySummary(true));
     this.brewPanel = new BrewPanel(this.hosts.app);
 
     // Phase 6: hội thoại + nhiệm vụ
@@ -303,6 +309,8 @@ export class Boot {
       this.screen = "game";
       this.biz.ensure();
       this.abortTalk = false;
+      this.time.ended = false;
+      this.summarizing = false;
       this.time.forced = null;
       this.world.atmo.set(data.minuteOfDay, data.weather.kind ?? "sunny", true);
       this.world.placePlayer(data.player);
@@ -310,6 +318,9 @@ export class Boot {
       this.hosts.controls.classList.remove("hidden");
       window.clearInterval(this.autosaveTimer);
       this.autosaveTimer = window.setInterval(() => this.saveNow(), AUTOSAVE_MS);
+    }).then(() => {
+      // save dừng ở 23:59 (thoát khi đang xem tổng kết) → hiện lại bảng tổng kết
+      if (this.screen === "game" && this.state.value.minuteOfDay >= DAY_END - 1) this.time.endDay();
     });
   }
 
@@ -334,7 +345,34 @@ export class Boot {
   // ---------------------------------------------------------------- bán hàng (Phase 8)
 
   private today(s: GameStateData) {
-    return (s.today ??= { cups: 0, revenue: 0, tips: 0, happy: 0, okay: 0, lost: 0 });
+    return ensureToday(s);
+  }
+
+  // ---------------------------------------------------------------- kết thúc ngày (Phase 10)
+
+  /**
+   * Hiện bảng Tổng kết ngày. early = người chơi tự kết thúc sớm (có nút "Bán tiếp").
+   * "Sang ngày mới": ghi lịch sử, xoá số liệu ngày, dọn khách, chuyển ngày.
+   */
+  async daySummary(early: boolean): Promise<void> {
+    if (this.summarizing || this.screen !== "game") return;
+    this.summarizing = true;
+    this.controls.reset();
+    for (const p of [this.ordersPanel, this.stallPanel, this.ingredientsPanel, this.shopPanel, this.weatherPanel, this.questLog]) p.close();
+    this.ui.closePlaceholder();
+    this.saveNow();
+    const choice = await this.summaryPanel.show(this.state.value, early);
+    this.summarizing = false;
+    if (this.abortTalk || this.screen !== "game") return; // về menu khi bảng đang mở → vào lại sẽ hiện lại
+    if (choice === "stay") { if (!early) this.time.endDay(); return; }
+    const rec = summarize(this.state.value);
+    this.state.patchQuiet({
+      history: [...(this.state.value.history ?? []), { day: rec.day, revenue: rec.revenue, tips: rec.tips, cost: rec.cost, profit: rec.profit, cups: rec.cups }].slice(-HISTORY_MAX),
+      today: undefined,
+    });
+    this.world.customers.clear();
+    this.time.ended = false;
+    this.time.startNewDay();
   }
 
   /** Khách chọn món: sở thích loại khách × thời tiết, chỉ trong các món đã mở. */
@@ -388,10 +426,13 @@ export class Boot {
     const sale = settle(r, q, front.patience / front.max);
     cs.serve(uid, sale.mood);
     this.state.update((s) => {
+      const t = this.today(s); // tạo số liệu ngày trước khi cộng uy tín (để nhớ uy tín đầu ngày)
       s.money += sale.price + sale.tip;
       s.reputation += sale.reputation;
-      const t = this.today(s);
       t.cups++; t.revenue += sale.price; t.tips += sale.tip;
+      (t.byRecipe ??= {})[r.id] = (t.byRecipe[r.id] ?? 0) + 1;
+      const hour = Math.min(17, Math.max(0, Math.floor(s.minuteOfDay / 60) - 6));
+      (t.byHour ??= [])[hour] = (t.byHour[hour] ?? 0) + 1;
       if (sale.mood === "happy") t.happy++; else t.okay++;
     });
     this.settings.haptic(20);
@@ -509,6 +550,7 @@ export class Boot {
     this.brewPanel.close();
     this.ordersPanel.close();
     this.shopPanel.close();
+    this.summaryPanel.close();
     this.world.customers.clear();
     this.saveNow();
     window.clearInterval(this.autosaveTimer);

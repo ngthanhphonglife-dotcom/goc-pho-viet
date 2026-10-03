@@ -68,7 +68,7 @@ test("Phase 8: khách tới, gọi món, pha ngay / giao ly sẵn, tiền + uy t
   await hitAll(page, 0.5);
   expect(await G(page, "[s.money, s.reputation]")).toEqual([1_000_000 + 25_000 + 3_000 + 1_000, 2]);
   expect(await G(page, "[s.stock.beans, s.stock.condensed, s.stock.cup, s.ready.length]")).toEqual([480, 370, 49, 0]);
-  expect(await G(page, "s.today")).toEqual({ cups: 1, revenue: 25_000, tips: 4_000, happy: 1, okay: 0, lost: 0 });
+  expect(await G(page, "s.today")).toMatchObject({ cups: 1, revenue: 25_000, tips: 4_000, happy: 1, okay: 0, lost: 0 });
   await expect(page.locator('[data-name="QuestPanel"]')).toContainText("1/20");
   await expect(page.locator('[data-name="MoneyPanel"]')).toContainText("1.029.000đ");
   const gone = (await G(page, "cs.snapshot()"))[0];
@@ -207,6 +207,8 @@ test("Phase 8: hàng chờ, hết kiên nhẫn, hết món, về quầy, tần s
 
   // --- sang ngày mới: dọn hàng khách, số liệu ngày về 0 ---
   await G(page, "(cs.autoSpawn = false, g.time.set(s.day, 23 * 60 + 58), w.step(3))");
+  await expect(page.locator('[data-name="DaySummary"]')).toBeVisible(); // Phase 10: hết ngày hiện bảng tổng kết trước
+  await page.locator('[data-name="DaySummary"] [data-panel="next"]').tap();
   expect((await G(page, "cs.snapshot()")).length).toBe(0);
   expect(await G(page, "s.today")).toBeUndefined();
   await page.waitForTimeout(1200);

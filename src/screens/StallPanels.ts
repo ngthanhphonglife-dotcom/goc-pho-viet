@@ -32,7 +32,7 @@ export class IngredientsPanel extends Modal {
 
 /** Thực đơn + khay ly pha sẵn. */
 export class StallPanel extends Modal {
-  constructor(host: HTMLElement, private biz: Business, private brew: (r: Recipe) => void) { super(host, "Quầy hàng", "Stall"); }
+  constructor(host: HTMLElement, private biz: Business, private brew: (r: Recipe) => void, private endDay: () => void = () => {}) { super(host, "Quầy hàng", "Stall"); }
 
   show(): void {
     this.body.replaceChildren();
@@ -64,6 +64,8 @@ export class StallPanel extends Modal {
     }
     if (this.biz.readyFull) el("p", "note", this.body, "Khay đã đầy. Bán bớt rồi pha tiếp nhé (bán hàng có ở phase sau).");
     else if (!this.biz.ready.length) el("p", "note", this.body, "Pha sẵn vài ly để khách tới là có ngay.");
+    const end = el("div", "end-day", this.body);
+    button("", end, "Đóng quầy, xem tổng kết ngày", () => { this.close(); this.endDay(); }).dataset.panel = "end-day";
     this.open();
   }
 }

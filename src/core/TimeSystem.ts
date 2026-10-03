@@ -23,8 +23,17 @@ export class TimeSystem {
     return this.forced ?? forecast(s.day)[slotOf(s.minuteOfDay)];
   }
 
+  /** Hết ngày (24:00): đồng hồ dừng chờ người chơi xem tổng kết rồi gọi startNewDay(). */
+  ended = false;
+  private dayEndHandlers: (() => void)[] = [];
+
+  onDayEnd(fn: () => void): void {
+    this.dayEndHandlers.push(fn);
+  }
+
   /** Trôi dt giây thật. */
   update(dt: number): void {
+    if (this.ended) return;
     this.acc += dt;
     if (this.acc < SECONDS_PER_MINUTE) return;
     const mins = Math.floor(this.acc / SECONDS_PER_MINUTE);
@@ -32,14 +41,32 @@ export class TimeSystem {
     this.advance(mins);
   }
 
-  /** Trôi thêm `minutes` phút game. */
+  /** Trôi thêm `minutes` phút game; chạm 24:00 thì dừng ở 23:59 và báo hết ngày. */
   advance(minutes: number): void {
+    if (this.ended) return;
     const s = this.state.value;
-    let day = s.day, m = s.minuteOfDay + minutes, rolled = false;
-    while (m >= DAY_END) { m = DAY_START + (m - DAY_END); day++; rolled = true; }
-    if (rolled) this.forced = null;
-    this.set(day, m);
-    if (rolled) for (const fn of this.newDayHandlers) fn(day);
+    const m = s.minuteOfDay + minutes;
+    if (m >= DAY_END) { this.endDay(); return; }
+    this.set(s.day, m);
+  }
+
+  /** Kết thúc ngày ngay bây giờ. */
+  endDay(): void {
+    if (this.ended) return;
+    this.set(this.state.value.day, DAY_END - 1);
+    this.ended = true;
+    this.acc = 0;
+    for (const fn of this.dayEndHandlers) fn();
+  }
+
+  /** Sang ngày mới 06:00. */
+  startNewDay(): void {
+    const day = this.state.value.day + 1;
+    this.ended = false;
+    this.forced = null;
+    this.acc = 0;
+    this.set(day, DAY_START);
+    for (const fn of this.newDayHandlers) fn(day);
   }
 
   /** Đặt ngày giờ và cập nhật thời tiết theo dự báo. */

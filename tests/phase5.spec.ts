@@ -62,6 +62,8 @@ test("Phase 5: đồng hồ chạy, ánh sáng theo giờ, đèn đêm, sang ng�
   // 24:00 → ngày mới 06:00, có lưu
   const day = await G(page, "s.day");
   await G(page, "(t.set(s.day, 23 * 60 + 57), w.step(4))");
+  await expect(page.locator('[data-name="DaySummary"]')).toBeVisible(); // Phase 10: hết ngày hiện bảng tổng kết trước
+  await page.locator('[data-name="DaySummary"] [data-panel="next"]').tap();
   expect(await G(page, "s.day")).toBe(day + 1);
   expect(await G(page, "s.minuteOfDay")).toBeLessThan(6 * 60 + 5);
   await expect(page.locator('[data-name="CalendarPanel"]')).toContainText("Ngày " + (day + 1));

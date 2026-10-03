@@ -232,3 +232,33 @@
 .shop-total { flex: 1; font-size: calc(38 * var(--u)); text-align: left; }
 .shop-total.over { color: var(--primary); }
 .modal .shop-foot .btn { flex: none; min-width: calc(340 * var(--u)); }
+
+/* ---------- Phase 10: tổng kết ngày ---------- */
+.sum-money { display: grid; gap: calc(4 * var(--u)); padding: calc(14 * var(--u)) calc(22 * var(--u)); background: #fff; border-radius: calc(22 * var(--u)); border: calc(3 * var(--u)) solid rgba(75, 46, 46, 0.18); }
+.sum-line { display: flex; justify-content: space-between; font-size: calc(32 * var(--u)); }
+.sum-line span { color: var(--sub); }
+.sum-line.cost strong { color: var(--primary); }
+.sum-line.profit { margin-top: calc(6 * var(--u)); padding-top: calc(8 * var(--u)); border-top: calc(3 * var(--u)) dashed rgba(75, 46, 46, 0.25); font-size: calc(40 * var(--u)); }
+.sum-line.profit span { color: var(--ink); font-weight: 700; }
+.sum-line.profit.pos strong { color: #2f7d3a; }
+.sum-line.profit.neg strong { color: var(--primary); }
+.sum-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(10 * var(--u)); margin-top: calc(14 * var(--u)); }
+.sum-tile { display: flex; flex-direction: column; align-items: center; padding: calc(10 * var(--u)) calc(4 * var(--u)); background: #fffaf1; border-radius: calc(20 * var(--u)); border: calc(3 * var(--u)) solid rgba(75, 46, 46, 0.2); }
+.sum-tile strong { font-size: calc(44 * var(--u)); color: var(--ink); }
+.sum-tile span { font-size: calc(22 * var(--u)); color: var(--sub); text-align: center; line-height: 1.15; }
+.sum-best { display: flex; align-items: center; gap: calc(8 * var(--u)); margin-top: calc(12 * var(--u)); font-size: calc(28 * var(--u)); color: var(--sub); }
+.sum-best img { width: calc(64 * var(--u)); height: calc(64 * var(--u)); }
+.sum-best strong { color: var(--ink); }
+.sum-chart { margin-top: calc(14 * var(--u)); }
+.sum-chart-title { display: block; font-size: calc(24 * var(--u)); color: var(--sub); text-align: left; }
+.sum-bars { display: flex; align-items: flex-end; gap: calc(6 * var(--u)); height: calc(150 * var(--u)); padding-bottom: calc(30 * var(--u)); border-bottom: calc(3 * var(--u)) solid rgba(75, 46, 46, 0.25); }
+.sum-bar { position: relative; flex: 1; height: 100%; display: flex; align-items: flex-end; }
+.sum-bar i { display: block; width: 100%; border-radius: calc(6 * var(--u)) calc(6 * var(--u)) 0 0; background: #e2a23a; }
+.sum-bar i.neg { background: var(--primary); }
+.sum-bar span { position: absolute; left: 50%; bottom: calc(-30 * var(--u)); transform: translateX(-50%); font-size: calc(20 * var(--u)); color: var(--sub); white-space: nowrap; }
+[data-sum="history"] .sum-bar i { background: #79a867; }
+[data-sum="history"] .sum-bar i.neg { background: var(--primary); }
+.end-day { margin-top: calc(14 * var(--u)); }
+.modal .end-day .btn { width: 100%; min-height: calc(90 * var(--u)); font-size: calc(30 * var(--u)); }
+[data-sum="history"] .sum-bars { justify-content: center; }
+[data-sum="history"] .sum-bar { max-width: calc(110 * var(--u)); }

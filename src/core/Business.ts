@@ -1,5 +1,6 @@
 import { INGREDIENTS, PACKS, READY_MAX, RECIPES, packPrice, type Recipe } from "../data/items";
 import type { GameState } from "./GameState";
+import { ensureToday } from "./DayStats";
 
 /** Kho nguyên liệu + khay ly pha sẵn (Phase 7). */
 export class Business {
@@ -43,7 +44,7 @@ export class Business {
     this.state.update((s) => {
       s.money -= total;
       for (const p of PACKS) s.stock![p.id] = (s.stock![p.id] ?? 0) + (cart[p.id] ?? 0) * p.amount;
-      const t = (s.today ??= { cups: 0, revenue: 0, tips: 0, happy: 0, okay: 0, lost: 0 });
+      const t = ensureToday(s);
       t.cost = (t.cost ?? 0) + total;
     });
     return total;
