@@ -8,10 +8,10 @@ import type { NavGrid, Pt } from "./Nav";
  */
 export type CustomerType = "office" | "student" | "shipper" | "casual";
 export const TYPES: Record<CustomerType, { name: string; looks: string[]; patience: number; speed: number; likes: Record<string, number> }> = {
-  office: { name: "Khách văn phòng", looks: ["hoang"], patience: 40, speed: 125, likes: { den: 3, sua: 3, tratac: 1 } },
-  student: { name: "Học sinh", looks: ["lan", "nam"], patience: 55, speed: 105, likes: { den: 0.5, sua: 2, tratac: 4 } },
-  shipper: { name: "Shipper", looks: ["minh"], patience: 30, speed: 150, likes: { den: 3, sua: 3, tratac: 1 } },
-  casual: { name: "Khách ghé quán", looks: ["mai"], patience: 60, speed: 110, likes: { den: 2, sua: 2, tratac: 2 } },
+  office: { name: "Khách văn phòng", looks: ["kh_vp1", "kh_vp2"], patience: 40, speed: 125, likes: { den: 3, sua: 3, tratac: 1 } },
+  student: { name: "Học sinh", looks: ["kh_hs1", "kh_hs2"], patience: 55, speed: 105, likes: { den: 0.5, sua: 2, tratac: 4 } },
+  shipper: { name: "Shipper", looks: ["kh_ship1", "kh_ship2"], patience: 30, speed: 150, likes: { den: 3, sua: 3, tratac: 1 } },
+  casual: { name: "Khách ghé quán", looks: ["kh_dl1", "kh_dl2", "kh_dl3"], patience: 60, speed: 110, likes: { den: 2, sua: 2, tratac: 2 } },
 };
 export const QUEUE_MAX = 6;
 const CX = 1080;

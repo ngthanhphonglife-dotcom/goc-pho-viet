@@ -142,6 +142,7 @@ test("Phase 6: hội thoại, nhận và hoàn thành nhiệm vụ, sổ nhiệm
   await page.reload();
   await page.waitForFunction(() => (window as any).__gpv?.ready === true, null, { timeout: 60_000 });
   errors.length = 0;
+  await page.evaluate(() => { (window as any).__gpv.world.customers.autoSpawn = false; }); // tải lại trang thì khách tự đến bật lại → tắt để uy tín không bị trừ ngẫu nhiên
   await page.locator('[data-menu="continue"]').tap();
   await page.waitForFunction(() => (window as any).__gpv.screen === "game");
   await page.waitForTimeout(400);

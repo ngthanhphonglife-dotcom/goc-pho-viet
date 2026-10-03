@@ -213,3 +213,22 @@
 .ord-actions { flex-basis: 100%; display: flex; gap: calc(12 * var(--u)); }
 .modal .ord-actions .btn { flex: 1; min-height: calc(100 * var(--u)); padding: calc(8 * var(--u)) calc(10 * var(--u)); font-size: calc(28 * var(--u)); line-height: 1.15; }
 .sell-badge { position: absolute; top: 0; right: 4%; min-width: calc(58 * var(--u)); height: calc(58 * var(--u)); padding: 0 calc(12 * var(--u)); border-radius: calc(29 * var(--u)); background: #f2c14e; color: var(--ink); border: calc(4 * var(--u)) solid var(--ink); font-weight: 700; font-size: calc(32 * var(--u)); display: grid; place-items: center; pointer-events: none; }
+
+/* ---------- Phase 9: tạp hoá ---------- */
+.shop-money { margin: 0 0 calc(12 * var(--u)); font-size: calc(30 * var(--u)); font-weight: 700; color: var(--ink); text-align: center; }
+.shop-list { display: grid; gap: calc(10 * var(--u)); max-height: calc(1000 * var(--u)); overflow-y: auto; }
+.shop-row { display: flex; align-items: center; gap: calc(12 * var(--u)); padding: calc(8 * var(--u)) calc(14 * var(--u)); background: #fffaf1; border-radius: calc(22 * var(--u)); border: calc(3 * var(--u)) solid rgba(75, 46, 46, 0.2); }
+.shop-icon { width: calc(96 * var(--u)); height: calc(96 * var(--u)); flex: none; }
+.shop-info { flex: 1; min-width: 0; display: flex; flex-direction: column; text-align: left; font-size: calc(30 * var(--u)); line-height: 1.2; }
+.shop-have { font-size: calc(22 * var(--u)); color: var(--sub); }
+.shop-have.low { color: #b96a10; font-weight: 700; }
+.shop-price { font-weight: 700; color: var(--ink); font-size: calc(28 * var(--u)); }
+.shop-price.up { color: var(--primary); }
+.shop-price.down { color: #2f7d3a; }
+.shop-qty { display: flex; align-items: center; gap: calc(6 * var(--u)); flex: none; }
+.shop-qty output { min-width: calc(56 * var(--u)); text-align: center; font-weight: 700; font-size: calc(36 * var(--u)); }
+.modal .shop-qty .btn { min-height: 0; width: calc(96 * var(--u)); height: calc(96 * var(--u)); padding: 0; font-size: calc(48 * var(--u)); border-radius: calc(24 * var(--u)); }
+.shop-foot { display: flex; align-items: center; gap: calc(20 * var(--u)); margin-top: calc(18 * var(--u)); }
+.shop-total { flex: 1; font-size: calc(38 * var(--u)); text-align: left; }
+.shop-total.over { color: var(--primary); }
+.modal .shop-foot .btn { flex: none; min-width: calc(340 * var(--u)); }

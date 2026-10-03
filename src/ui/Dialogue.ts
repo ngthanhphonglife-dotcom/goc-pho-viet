@@ -1,4 +1,5 @@
 import type { Choice, Effect, Script } from "../data/dialogues";
+import { sfx } from "../core/Sfx";
 
 /**
  * Khung hội thoại (Phase 6): chân dung + tên, chữ chạy từng ký tự, lựa chọn trả lời.
@@ -81,6 +82,7 @@ export class Dialogue {
     this.timer = window.setInterval(() => {
       this.shown = Math.min(n.text.length, this.shown + 1);
       this.textEl.textContent = n.text.slice(0, this.shown);
+      if (this.shown % 3 === 1 && n.text[this.shown - 1] !== " ") sfx.play("blip");
       if (this.shown >= n.text.length) this.finishTyping();
     }, 1000 / CPS);
   }

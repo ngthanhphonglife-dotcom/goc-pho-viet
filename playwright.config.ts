@@ -6,7 +6,8 @@ const mobile = (width: number, height: number, deviceScaleFactor: number) =>
 
 export default defineConfig({
   testDir: "tests",
-  timeout: 600_000,
+  timeout: 900_000,
+  expect: { timeout: 20_000 }, // máy test vẽ bằng GPU giả lập rất chậm → cho các phép chờ dư thời gian
   fullyParallel: false,
   workers: 1,
   reporter: [["list"]],

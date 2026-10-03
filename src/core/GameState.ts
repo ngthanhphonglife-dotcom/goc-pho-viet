@@ -39,7 +39,7 @@ export interface GameStateData {
   /** Khay ly pha sẵn: món + chất lượng 1–3. */
   ready?: { recipe: string; quality: number }[];
   /** Số liệu bán hàng trong ngày (Phase 8). */
-  today?: { cups: number; revenue: number; tips: number; happy: number; okay: number; lost: number };
+  today?: { cups: number; revenue: number; tips: number; happy: number; okay: number; lost: number; cost?: number };
 }
 
 const WEEKDAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];

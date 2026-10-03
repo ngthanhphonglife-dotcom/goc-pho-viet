@@ -135,9 +135,9 @@ test("Phase 7: kho, thực đơn, pha chế, khay pha sẵn", async ({ page }, i
   // nút đi mua → bảng Cửa hàng (Phase 9)
   await inv.locator('[data-panel="shop"]').tap();
   await expect(inv).toBeHidden();
-  await page.waitForTimeout(300);
-  expect(await page.evaluate(() => (window as any).__gpv.ui.placeholderTitle)).toBe("Cửa hàng Cô Ba");
-  await page.locator("#ui .card .x").tap();
+  await expect(page.locator('[data-name="Shop"]')).toBeVisible(); // Phase 9: bảng mua hàng thật
+  await page.locator('[data-name="Shop"] .x').tap();
+  await expect(page.locator('[data-name="Shop"]')).toBeHidden();
 
   // --- lưu → mở lại ---
   await G(page, "biz.finishBrew(biz.recipe('den'), 2)");

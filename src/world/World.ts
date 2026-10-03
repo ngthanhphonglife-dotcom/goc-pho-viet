@@ -305,6 +305,14 @@ export class World {
     this.player.goTo(this.player.home.x, this.player.home.y, () => { this.player.c.dir = 1; cb(); });
   }
 
+  /** Chủ quầy đi tới chỗ đứng của một điểm trên phố rồi gọi cb (không có chuyển động / đã ở đó thì gọi ngay). */
+  walkToHotspot(id: string, cb: () => void): void {
+    const h = this.meta.hotspots.find((x) => x.id === id);
+    if (!h || !this.lifeEnabled || Math.hypot(h.stand[0] - this.player.c.wx, h.stand[1] - this.player.c.wy) < 110) { cb(); return; }
+    this.follow = true;
+    this.player.goTo(h.stand[0], h.stand[1], () => { this.player.faceTo((h.rect[0] + h.rect[2]) / 2); cb(); });
+  }
+
   onNearby(fn: (n: Nearby | null) => void): void {
     this.nearbyHandlers.push(fn);
   }

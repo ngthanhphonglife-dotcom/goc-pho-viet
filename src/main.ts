@@ -1,6 +1,7 @@
 import "./ui/style.css";
 import "./screens/screens.css";
 import { Boot } from "./app/Boot";
+import { sfx } from "./core/Sfx";
 import { DEMO_STATE } from "./core/GameState";
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -13,6 +14,7 @@ const hook = {
   get ui() { return boot.ui; },
   get world() { return boot.world; },
   get time() { return boot.time; },
+  sfx,
   get dialogue() { return boot.dialogue; },
   get quests() { return boot.quests; },
   get screen() { return boot.screen; },

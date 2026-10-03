@@ -1,6 +1,7 @@
 import { formatClock, formatMoney, weekdayOf, newGameState, type GameStateData } from "../core/GameState";
 import type { SettingsService } from "../core/settings";
 import { ICONS, UI_ART, button, el, img, nextFrame, wait } from "./dom";
+import { sfx } from "../core/Sfx";
 
 export const TAGLINE = "Những câu chuyện nhỏ từ góc phố thân quen…";
 
@@ -205,6 +206,7 @@ export abstract class Modal {
   }
 
   open(): void {
+    if (this.el.hidden) sfx.play("open");
     this.el.hidden = false;
     document.addEventListener("keydown", this.keyHandler);
     requestAnimationFrame(() => this.el.classList.add("open"));
@@ -220,6 +222,7 @@ export abstract class Modal {
     cb?.();
     if (this.el.hidden) return;
     document.removeEventListener("keydown", this.keyHandler);
+    if (this.el.classList.contains("open")) sfx.play("close");
     this.el.classList.remove("open");
     setTimeout(() => { if (!this.el.classList.contains("open")) this.el.hidden = true; }, 180);
   }
@@ -291,7 +294,7 @@ export class SettingsPanel extends Modal {
     sw.dataset.setting = "vibration";
     settings.subscribe((s) => { sw.checked = s.vibration; });
     sw.addEventListener("change", () => { settings.set({ vibration: sw.checked }); settings.haptic(30); });
-    el("p", "note", this.body, "Âm thanh sẽ có ở phase sau; các mức chỉnh đã được lưu sẵn.");
+    el("p", "note", this.body, "Hiệu ứng: tiếng bấm, tiền, pha chế, khách, mưa. Nhạc nền sẽ có ở phase sau.");
     const actions = el("div", "modal-actions", this.body);
     this.toMenu = button("", actions, "Về Menu", () => { this.close(); this.onMenu?.(); });
     this.toMenu.dataset.panel = "to-menu";

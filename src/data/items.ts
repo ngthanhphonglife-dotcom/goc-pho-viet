@@ -33,3 +33,28 @@ export const RECIPES: Recipe[] = [
 
 export const QUALITY = ["", "Tạm được", "Ngon", "Tuyệt hảo"] as const;
 export const READY_MAX = 6;
+
+/** Gói bán ở Tạp hoá Cô Ba (Phase 9): mỗi gói thêm `amount` đơn vị vào kho với giá gốc `price`. */
+export interface Pack { id: string; label: string; amount: number; price: number }
+export const PACKS: Pack[] = [
+  { id: "beans", label: "Gói 500 g", amount: 500, price: 60_000 },
+  { id: "condensed", label: "Hộp 380 ml", amount: 380, price: 25_000 },
+  { id: "milk", label: "Hộp 1 lít", amount: 1000, price: 28_000 },
+  { id: "sugar", label: "Gói 1 kg", amount: 1000, price: 20_000 },
+  { id: "ice", label: "Bịch 40 viên", amount: 40, price: 10_000 },
+  { id: "tea", label: "Gói 100 g", amount: 100, price: 30_000 },
+  { id: "kumquat", label: "Bịch 20 quả", amount: 20, price: 15_000 },
+  { id: "cup", label: "Lốc 50 cái", amount: 50, price: 25_000 },
+];
+export const SHOP_OPEN = 6 * 60;
+export const SHOP_CLOSE = 21 * 60;
+
+/** Giá một gói trong ngày: lệch tối đa ±15% giá gốc, cố định theo số ngày, làm tròn 500đ. Ngày 1 = giá gốc. */
+export function packPrice(p: Pack, day: number): number {
+  if (day <= 1) return p.price;
+  let t = (day * 2654435761 + p.id.charCodeAt(0) * 97 + p.id.length * 7919) | 0;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  const r = ((t ^ (t >>> 14)) >>> 0) / 4294967296; // 0–1
+  return Math.max(500, Math.round((p.price * (0.85 + r * 0.3)) / 500) * 500);
+}

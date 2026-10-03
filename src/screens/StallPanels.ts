@@ -3,6 +3,7 @@ import { formatMoney } from "../core/GameState";
 import { INGREDIENTS, QUALITY, READY_MAX, RECIPES, type Recipe } from "../data/items";
 import { button, el, img } from "./dom";
 import { Modal } from "./screens";
+import { sfx } from "../core/Sfx";
 
 const ITEMS = import.meta.env.BASE_URL + "art/items/";
 const ing = (id: string) => INGREDIENTS.find((i) => i.id === id)!;
@@ -140,6 +141,7 @@ export class BrewPanel extends Modal {
     const d = Math.abs(this.pos - 0.5);
     const pts = d <= 0.09 ? 2 : d <= 0.24 ? 1 : 0;
     this.score += pts;
+    sfx.play(pts === 2 ? "perfect" : pts === 1 ? "good" : "miss");
     this.verdict.textContent = pts === 2 ? "Chuẩn luôn!" : pts === 1 ? "Được đó." : "Hơi lệch tay…";
     this.verdict.dataset.pts = String(pts);
     this.step++;
@@ -149,6 +151,7 @@ export class BrewPanel extends Modal {
       const ratio = this.score / (this.recipe.steps.length * 2);
       const q = ratio >= 0.75 ? 3 : ratio >= 0.4 ? 2 : 1;
       this.verdict.textContent = `${this.recipe.name}: ${QUALITY[q]}!`;
+      sfx.play("done");
       window.setTimeout(() => this.finish(q), this.debugPos !== null ? 0 : 650);
     }
   }

@@ -19,6 +19,9 @@ import { Business } from "../core/Business";
 import { BrewPanel, IngredientsPanel, StallPanel } from "../screens/StallPanels";
 import { QUALITY, RECIPES, type Recipe } from "../data/items";
 import { OrdersPanel } from "../screens/OrdersPanel";
+import { ShopPanel } from "../screens/ShopPanel";
+import { SHOP_CLOSE, SHOP_OPEN } from "../data/items";
+import { sfx } from "../core/Sfx";
 import { LOST_REPUTATION, customerRate, settle } from "../core/Sales";
 import { formatMoney } from "../core/GameState";
 import type { CustomerType } from "../world/Customers";
@@ -55,6 +58,7 @@ export class Boot {
   stallPanel!: StallPanel;
   brewPanel!: BrewPanel;
   ordersPanel!: OrdersPanel;
+  shopPanel!: ShopPanel;
   private badge!: HTMLElement;
   private talking = false;
   private abortTalk = false;
@@ -80,7 +84,11 @@ export class Boot {
     const splashDone = splash.play().then(() => { this.screen = "loading"; });
 
     // rung nhẹ khi bấm bất kỳ nút nào (nếu bật trong Cài đặt)
-    document.addEventListener("click", (e) => { if ((e.target as HTMLElement).closest?.(".btn")) this.settings.haptic(); }, true);
+    sfx.volume = () => this.settings.value.sfx / 100;
+    const unlock = () => sfx.unlock();
+    document.addEventListener("pointerdown", unlock, true);
+    document.addEventListener("keydown", unlock, true);
+    document.addEventListener("click", (e) => { if ((e.target as HTMLElement).closest?.(".btn, .dlg-choice, .interact")) { this.settings.haptic(); sfx.play("tap"); } }, true);
 
     await this.world.init(this.hosts.world);
     await this.loadWithRetry();
@@ -143,6 +151,10 @@ export class Boot {
         this.settingsPanel.show(() => void this.backToMenu());
         return true;
       }
+      if (id === "shop" || id === "addMoney") {
+        this.openShop();
+        return true;
+      }
       if (id === "sell") {
         this.openOrders();
         return true;
@@ -169,6 +181,13 @@ export class Boot {
     // Phase 2: chạm điểm tương tác trên phố
     this.world.onHotspot((h) => void this.visit(h));
 
+    // Phase 9: tạp hoá Cô Ba
+    this.shopPanel = new ShopPanel(this.hosts.app, this.state, this.biz, (total) => {
+      sfx.play("buy");
+      this.ui.toast(`Đã mua hàng: −${formatMoney(total)}`);
+      this.saveNow();
+    });
+
     // Phase 8: khách hàng + đơn hàng
     const cs = this.world.customers;
     this.ordersPanel = new OrdersPanel(this.hosts.app, cs, this.biz, {
@@ -182,14 +201,19 @@ export class Boot {
     cs.onLost = () => {
       this.state.update((s) => { s.reputation = Math.max(0, s.reputation - LOST_REPUTATION); this.today(s).lost++; });
       this.ui.toast("Một khách bỏ đi vì chờ lâu…");
+      sfx.play("lost");
     };
     const sell = this.hosts.ui.querySelector<HTMLElement>('[data-action="sell"]')!;
     this.badge = document.createElement("span");
     this.badge.className = "sell-badge";
     this.badge.hidden = true;
     sell.appendChild(this.badge);
+    let lastFront = 0;
     cs.onChange = () => {
       const n = cs.queue.length;
+      const f = cs.front?.uid ?? 0;
+      if (f && f !== lastFront) sfx.play("arrive"); // khách mới tới trước quầy
+      lastFront = f;
       this.badge.hidden = n === 0;
       this.badge.textContent = String(n);
       if (this.ordersPanel.isOpen) this.ordersPanel.render();
@@ -215,11 +239,13 @@ export class Boot {
     // Phase 5: đồng hồ chạy khi đang trong game và không mở bảng nào; ánh sáng + thời tiết theo trạng thái
     this.weatherPanel = new WeatherPanel(this.hosts.app);
     this.world.onTick((dt) => {
+      sfx.setRain(this.screen === "game" ? this.world.atmo.rain : 0);
       if (this.screen !== "game" || !this.world.lifeEnabled || this.fader.busy || document.querySelector(".overlay.open, .dialogue.open")) return;
       this.time.update(dt);
     });
     this.state.subscribe((s) => { if (this.screen === "game") this.world.atmo.set(s.minuteOfDay, this.time.kind); });
     this.time.onNewDay((day) => {
+      sfx.play("newday");
       this.world.placePlayer();
       this.saveNow();
       void this.fader.run(() => {}).then(() => this.ui.toast(`Ngày ${day} · ${weekdayOf(day)} — chào buổi sáng!`));
@@ -323,6 +349,26 @@ export class Boot {
     return open[0].id;
   }
 
+  /** Tiệm Cô Ba mở 06:00–21:00. */
+  get shopIsOpen(): boolean {
+    const m = this.state.value.minuteOfDay;
+    return m >= SHOP_OPEN && m < SHOP_CLOSE;
+  }
+
+  /** Mở bảng mua hàng ngay (chủ quầy đang đứng ở tiệm). */
+  showShop(): void {
+    if (this.screen !== "game") return;
+    if (!this.shopIsOpen) { sfx.play("error"); this.ui.toast("Tạp hoá Cô Ba đóng cửa rồi (mở 06:00–21:00)."); return; }
+    this.shopPanel.show();
+  }
+
+  /** Đi tới tiệm Cô Ba rồi mở bảng mua hàng. */
+  openShop(): void {
+    if (this.screen !== "game") return;
+    if (!this.shopIsOpen) { this.showShop(); return; }
+    this.world.walkToHotspot("coba", () => this.showShop());
+  }
+
   /** Mở bảng Đơn hàng (đang ở xa thì đi về quầy trước). */
   openOrders(): void {
     if (this.screen !== "game") return;
@@ -349,6 +395,7 @@ export class Boot {
       if (sale.mood === "happy") t.happy++; else t.okay++;
     });
     this.settings.haptic(20);
+    sfx.play("coin");
     this.ui.toast(`+${formatMoney(sale.price)}${sale.tip ? ` (tip +${formatMoney(sale.tip)})` : ""} · ${QUALITY[q]}`);
     this.saveNow();
     if (r.id === "den" || r.id === "sua") {
@@ -403,6 +450,7 @@ export class Boot {
   private async reward(ready: QuestDef[]): Promise<void> {
     for (const d of ready) {
       if (!this.quests.isActive(d.id)) continue;
+      sfx.play("quest");
       await this.questDone.show(d);
       this.quests.claim(d.id);
       this.saveNow();
@@ -432,7 +480,8 @@ export class Boot {
           this.ui.toast("Đã nhận nhiệm vụ: " + this.quests.def(e.quest).title);
           this.saveNow();
         }
-      } else if (e.type === "action") this.ui.invoke(e.id as ActionId);
+      } else if (e.type === "action" && e.id === "shop") this.showShop();
+      else if (e.type === "action") this.ui.invoke(e.id as ActionId);
     }
     this.talking = false;
   }
@@ -441,7 +490,8 @@ export class Boot {
   async visit(h: Hotspot): Promise<void> {
     if (this.screen !== "game") return;
     await this.reward(this.quests.event("visit", h.id));
-    if (h.action) this.ui.invoke(h.action as ActionId);
+    if (h.action === "shop") this.showShop(); // đã đứng ở tiệm
+    else if (h.action) this.ui.invoke(h.action as ActionId);
     else this.ui.toast(h.name);
   }
 
@@ -458,6 +508,7 @@ export class Boot {
     this.dialogue.close();
     this.brewPanel.close();
     this.ordersPanel.close();
+    this.shopPanel.close();
     this.world.customers.clear();
     this.saveNow();
     window.clearInterval(this.autosaveTimer);

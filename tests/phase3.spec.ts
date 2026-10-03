@@ -19,7 +19,7 @@ test("Phase 3: nhân vật sống trên phố, chuyển động, chạm để ch
     expect(c.face.length, `${c.id} chưa có mặt`).toBeGreaterThan(0);
   }
   const tex = await page.evaluate(() => (window as any).__gpv.world.stats.textures);
-  expect(tex.filter((t: any) => t.name.startsWith("char:")).length).toBe(9);
+  expect(tex.filter((t: any) => t.name.startsWith("char:")).length).toBe(18); // 8 nhân vật + 9 khách + bộ mặt
   for (const t of tex) expect(Math.max(t.width, t.height)).toBeLessThanOrEqual(4096);
 
   // sau một lúc: người đi bộ đã di chuyển đúng hướng, người đứng không trôi, khớp đổi góc

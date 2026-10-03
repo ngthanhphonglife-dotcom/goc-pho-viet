@@ -85,7 +85,7 @@ def head_coba(c):
 
 
 def head_minh(c):
-    g, gd = "#2FA35A", "#23804A"
+    g, gd = c.get("gear", "#2FA35A"), c.get("gear_d", "#23804A")
     helm = outlined([path("M-60,-64 Q-66,-134 4,-134 Q70,-134 67,-82 L67,-76 L-60,-64 Z", g), path("M40,-92 L86,-84 Q92,-76 84,-74 L44,-78 Z", "#2E2B2B")], 3)
     return j(outlined([path("M-54,-66 Q-56,-40 -44,-28 L-40,-62 Z", c["hair"])], 3), head_base(c["skin"]), helm, stroke("M-58,-70 L66,-82", gd, 5),
              outlined([circle(-6, -104, 15, "#FFFFFF")], 2), circle(-6, -104, 7, g), stroke("M-34,-66 Q-30,-20 2,-10", "#2E2B2B", 4))
@@ -110,6 +110,76 @@ def head_woman(c):
 
 def head_man(c):
     return j(head_base(c["skin"]), outlined([dome(c["hair"], -60, -90, -126, -4)], 3))
+
+
+# ----- kiểu đầu riêng cho khách (Phase 8.2) -----
+
+def head_part(c):
+    """Nam tóc rẽ ngôi."""
+    h = c["hair"]
+    return j(head_base(c["skin"]), outlined([path("M-57,-62 Q-64,-128 6,-128 Q64,-126 63,-84 Q40,-104 6,-100 Q-24,-98 -40,-78 Q-46,-70 -45,-58 Z", h)], 3), stroke("M-6,-124 Q-2,-108 8,-100", "#55504E", 3))
+
+
+def head_bob(c):
+    """Nữ tóc bob ngang cằm."""
+    h = c["hair"]
+    back = outlined([path("M-60,-84 Q-70,-30 -52,-14 L-28,-14 L-30,-62 Z", h), path("M44,-84 Q70,-50 58,-16 L44,-18 Z", h)], 3)
+    return j(back, head_base(c["skin"]), outlined([dome(h, -46, -84, -128, 10)], 3), outlined([rect(20, -116, 26, 9, "#F2C14E", 4)], 2))
+
+
+def head_spiky(c):
+    h = c["hair"]
+    spikes = "M-56,-62 L-62,-104 L-40,-96 L-34,-134 L-12,-108 L4,-140 L22,-108 L44,-130 L46,-98 L66,-100 L62,-78 Q30,-94 -10,-88 Q-40,-84 -45,-60 Z"
+    return j(head_base(c["skin"]), outlined([path(spikes, h)], 3))
+
+
+def head_pigtails(c):
+    h = c["hair"]
+    tails = outlined([circle(-66, -84, 22, h), circle(66, -92, 19, h)], 3)
+    return j(tails, head_base(c["skin"]), outlined([dome(h, -54, -84, -126, 6)], 3), outlined([circle(-50, -96, 8, "#F2C14E"), circle(52, -100, 7, "#F2C14E")], 2))
+
+
+def head_hat(c):
+    """Khách du lịch đội nón rộng vành."""
+    h = c["hair"]
+    back = outlined([path("M-58,-76 Q-74,-24 -50,0 Q-36,6 -30,-8 L-30,-60 Z", h)], 3)
+    hat = outlined([ellipse(4, -92, 96, 20, "#E9CF8F"), path("M-44,-94 Q-46,-140 4,-140 Q54,-140 52,-94 Z", "#F2DDA6")], 3)
+    return j(back, head_base(c["skin"]), hat, stroke("M-44,-100 Q4,-90 52,-100", "#C8362E", 7))
+
+
+def head_grey(c):
+    """Chú lớn tuổi tóc hoa râm, không mũ."""
+    wr = j(stroke("M-22,-72 q6,-3 12,0", "#C98F68", 2.5), stroke("M28,-72 q6,-3 12,0", "#C98F68", 2.5))
+    return j(head_base(c["skin"]), wr, outlined([path("M-57,-58 Q-66,-124 4,-124 Q66,-124 63,-86 Q50,-100 30,-100 Q0,-104 -24,-94 Q-44,-84 -45,-56 Z", c["hair"])], 3))
+
+
+def head_bun(c):
+    """Cô lớn tuổi búi tóc."""
+    h = c["hair"]
+    return j(outlined([circle(-30, -128, 24, h)], 3), outlined([path("M-56,-70 Q-60,-36 -44,-24 L-38,-62 Z", h)], 3), head_base(c["skin"]), outlined([dome(h, -52, -88, -124, 0)], 3),
+             circle(-52, -40, 5, "#F2C14E", 'stroke="%s" stroke-width="2"' % O))
+
+
+def t_blazer(c):
+    return j(poly([(-14, -98), (0, -66), (14, -98)], "#FFFFFF", 'stroke="%s" stroke-width="2.5" stroke-linejoin="round"' % O), line(0, -66, 0, 0, "#1E2A44", 3),
+             circle(6, -46, 3.5, "#D9B45A"), circle(6, -24, 3.5, "#D9B45A"))
+
+
+def t_polo(c):
+    return j(collar("#FFFFFF"), line(0, -80, 0, -52, "#2C5E3A", 3), rect(-34, -40, 68, 8, "#FFFFFF", 'opacity="0.55"'))
+
+
+def t_tourist(c):
+    return j(stroke("M-30,-96 L22,-30", "#3B2A28", 6), stroke("M-14,-98 Q0,-84 14,-98", "#1F7F78", 3), outlined([rect(4, -44, 34, 26, "#3B3A40", 6)], 2.5), circle(21, -31, 8, "#9CC3CF", 'stroke="%s" stroke-width="2.5"' % O))
+
+
+def camera(c):
+    return j(outlined([rect(-22, 4, 44, 32, "#3B3A40", 6), rect(-8, -4, 18, 10, "#3B3A40", 3)], 2.5), circle(0, 20, 10, "#9CC3CF", 'stroke="%s" stroke-width="2.5"' % O))
+
+
+def basket(c):
+    return j(stroke("M-18,14 Q0,-14 18,14", "#9A6234", 5), outlined([path("M-26,12 L26,12 L20,50 L-20,50 Z", "#D9A860")], 3), stroke("M-24,26 L24,26 M-22,38 L22,38", "#9A6234", 2.5),
+             circle(-8, 10, 8, "#6FA35A"), circle(8, 8, 8, "#E25B45"))
 
 
 def glasses():
@@ -158,7 +228,7 @@ def t_coba(c):
 
 
 def t_minh(c):
-    return j(line(4, -98, 4, 2, "#FFFFFF", 4), rect(-36, -44, 72, 9, "#FFFFFF", 'opacity="0.9"'), outlined([circle(-18, -68, 9, "#FFFFFF")], 2), circle(-18, -68, 4, "#2FA35A"))
+    return j(line(4, -98, 4, 2, "#FFFFFF", 4), rect(-36, -44, 72, 9, "#FFFFFF", 'opacity="0.9"'), outlined([circle(-18, -68, 9, "#FFFFFF")], 2), circle(-18, -68, 4, c.get("gear", "#2FA35A")))
 
 
 def t_tie(col):
@@ -210,8 +280,9 @@ def backpack(col, dark):
 
 
 def delivery_box(c):
-    return j(outlined([rect(-104, -112, 76, 96, "#2FA35A", 10)], 3), outlined([rect(-104, -112, 76, 20, "#23804A", 8)], 2.5),
-             outlined([circle(-66, -56, 17, "#FFFFFF")], 2), circle(-66, -56, 8, "#2FA35A"))
+    g, gd = c.get("gear", "#2FA35A"), c.get("gear_d", "#23804A")
+    return j(outlined([rect(-104, -112, 76, 96, g, 10)], 3), outlined([rect(-104, -112, 76, 20, gd, 8)], 2.5),
+             outlined([circle(-66, -56, 17, "#FFFFFF")], 2), circle(-66, -56, 8, g))
 
 
 def tote(c):
@@ -242,6 +313,23 @@ CHARS = [
     dict(id="mai", name="Mai", role="Khách ghé quán", skin=SKIN, hair="#7A5238", top="#E99AA0", sleeve="short", pants="#55607A", shoes="#F6F1E6", head=head_woman, torso=t_woman, hand=tote),
     dict(id="hoang", name="Anh Hoàng", role="Nhân viên văn phòng", skin=SKIN, hair="#2E2B2B", top="#FFFFFF", sleeve="long", pants="#3B3F4A", shoes="#2E2B2B", head=head_man, torso=t_tie("#3F7DB5"),
          glasses=True, hand=briefcase),
+]
+
+# Khách hàng: hình riêng cho từng loại (không trùng với hàng xóm có tên)
+CHARS += [
+    dict(id="kh_vp1", name="Khách văn phòng", role="Khách", skin=SKIN, hair="#2E2B2B", top="#BFD9EE", sleeve="long", pants="#3B3F4A", shoes="#2E2B2B", head=head_part, torso=t_tie("#C8362E"), hand=briefcase),
+    dict(id="kh_vp2", name="Khách văn phòng", role="Khách", skin=SKIN, hair="#4A3328", top="#2B3A5E", sleeve="long", pants="#55607A", skirt="#55607A", shoes="#2E2B2B", head=head_bob, torso=t_blazer, hand=tote),
+    dict(id="kh_hs1", name="Học sinh", role="Khách", skin=SKIN, hair="#2E2B2B", top="#FFFFFF", sleeve="short", pants="#2B3A5E", shoes="#F6F1E6", head=head_spiky, torso=t_tie("#2B3A5E"),
+         back=backpack("#4F9D5B", "#3C7A47"), scale=0.9),
+    dict(id="kh_hs2", name="Học sinh", role="Khách", skin=SKIN, hair="#3B2A28", top="#FFFFFF", sleeve="short", pants="#22304F", skirt="#2B3A5E", shoes="#2E2B2B", head=head_pigtails, torso=t_girl,
+         back=backpack("#F2C14E", "#D9A441"), scale=0.9),
+    dict(id="kh_ship1", name="Shipper", role="Khách", skin="#EBB98F", hair="#2E2B2B", top="#F08A2E", sleeve="long", pants="#2E3440", shoes="#2E2B2B", head=head_minh, torso=t_minh, back=delivery_box,
+         gear="#F08A2E", gear_d="#C96B1A"),
+    dict(id="kh_ship2", name="Shipper", role="Khách", skin=SKIN, hair="#2E2B2B", top="#3F7DB5", sleeve="long", pants="#2E3440", shoes="#2E2B2B", head=head_minh, torso=t_minh, back=delivery_box,
+         gear="#3F7DB5", gear_d="#2C5E8C"),
+    dict(id="kh_dl1", name="Khách du lịch", role="Khách", skin=SKIN, hair="#7A5238", top="#2FA39A", sleeve="short", pants="#C9B48A", shoes="#F6F1E6", head=head_hat, torso=t_tourist, hand=camera),
+    dict(id="kh_dl2", name="Chú hàng xóm", role="Khách", skin="#EBB98F", hair="#9A9690", top="#4F9D5B", sleeve="short", pants="#6B5A4A", shoes="#7A4B2E", head=head_grey, torso=t_polo, glasses=True),
+    dict(id="kh_dl3", name="Cô hàng xóm", role="Khách", skin=SKIN, hair="#3B2A28", top="#8E6CC0", sleeve="short", pants="#3B3A40", shoes="#7A4B2E", head=head_bun, torso=t_woman, hand=basket),
 ]
 
 # Vị trí khớp (đơn vị thiết kế, gốc = điểm chân trên mặt đất, y hướng xuống)
@@ -322,12 +410,12 @@ def main():
         with open(os.path.join(OUT, "portrait_" + c["id"] + ".svg"), "w", encoding="utf-8") as f:
             f.write(port)
         face = ["normal", "happy", "talk", "surprised"][i % 4]
-        sheet.append(standing(c, parts, face, 130 + i * 230, 360))
+        sheet.append(standing(c, parts, face, 130 + (i % 9) * 230, 360 + (i // 9) * 380))
         print("ok", c["id"], W, H, list(cells))
     with open(os.path.join(OUT, "characters.json"), "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=1)
-    w = 230 * len(CHARS) + 40
-    data = '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="400" viewBox="0 0 %d 400"><rect width="%d" height="400" fill="#F5EDE0"/>%s</svg>' % (w, w, w, "\n".join(sheet))
+    w = 230 * 9 + 40
+    data = '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="780" viewBox="0 0 %d 780"><rect width="%d" height="780" fill="#F5EDE0"/>%s</svg>' % (w, w, w, "\n".join(sheet))
     cairosvg.svg2png(bytestring=data.encode("utf-8"), write_to=os.path.join(HERE, "..", "..", "docs", "art", "characters_preview.png"))
 
 

@@ -1,4 +1,4 @@
-import { INGREDIENTS, READY_MAX, RECIPES, type Recipe } from "../data/items";
+import { INGREDIENTS, PACKS, READY_MAX, RECIPES, packPrice, type Recipe } from "../data/items";
 import type { GameState } from "./GameState";
 
 /** Kho nguyên liệu + khay ly pha sẵn (Phase 7). */
@@ -27,6 +27,26 @@ export class Business {
     const i = INGREDIENTS.find((x) => x.id === id)!;
     const n = this.stock(id);
     return n <= 0 ? "out" : n <= i.low ? "low" : "ok";
+  }
+
+  /** Tổng tiền của giỏ { id: số gói } theo giá hôm nay. */
+  cartTotal(cart: Record<string, number>): number {
+    const day = this.state.value.day;
+    return PACKS.reduce((sum, p) => sum + (cart[p.id] ?? 0) * packPrice(p, day), 0);
+  }
+
+  /** Mua giỏ hàng: trừ tiền, cộng kho, ghi chi phí trong ngày. Trả về tổng tiền, hoặc 0 nếu giỏ trống / không đủ tiền. */
+  buy(cart: Record<string, number>): number {
+    this.ensure();
+    const total = this.cartTotal(cart);
+    if (total <= 0 || total > this.state.value.money) return 0;
+    this.state.update((s) => {
+      s.money -= total;
+      for (const p of PACKS) s.stock![p.id] = (s.stock![p.id] ?? 0) + (cart[p.id] ?? 0) * p.amount;
+      const t = (s.today ??= { cups: 0, revenue: 0, tips: 0, happy: 0, okay: 0, lost: 0 });
+      t.cost = (t.cost ?? 0) + total;
+    });
+    return total;
   }
 
   /** Trừ nguyên liệu cho một ly (pha theo đơn, không qua khay). */
