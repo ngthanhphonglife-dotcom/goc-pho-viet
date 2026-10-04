@@ -13,13 +13,52 @@ export interface QuestDef {
   /** Nhiệm vụ đếm: khoá sự kiện + số cần đạt. */
   count?: { key: string; target: number };
   reward: { money: number; reputation: number };
+  /** Loại: chính (chuỗi phát triển quán) hay phụ (hàng xóm nhờ). Không ghi = phụ. */
+  kind?: "main" | "side";
+  /** Nhiệm vụ chính kế tiếp: tự nhận khi nhiệm vụ này xong. */
+  next?: string;
 }
 
 export const QUESTS: Record<string, QuestDef> = {
   "sell-20-coffee": {
     id: "sell-20-coffee", title: "Bán 20 ly cà phê", giver: "player", giverName: "Mục tiêu của quán",
     desc: "Bán đủ 20 ly cà phê cho bà con khu phố để quán có đà.", steps: [], count: { key: "sell-coffee", target: 20 },
-    reward: { money: 100_000, reputation: 10 },
+    reward: { money: 100_000, reputation: 10 }, kind: "main", next: "rep-30",
+  },
+  "rep-30": {
+    id: "rep-30", title: "Đạt 30 uy tín", giver: "player", giverName: "Mục tiêu của quán",
+    desc: "Phục vụ khách chu đáo để quán được bà con biết đến (uy tín Lv.2).", steps: [], count: { key: "rep", target: 30 },
+    reward: { money: 50_000, reputation: 2 }, kind: "main", next: "sell-bacxiu-10",
+  },
+  "sell-bacxiu-10": {
+    id: "sell-bacxiu-10", title: "Bán 10 ly Bạc xỉu", giver: "player", giverName: "Mục tiêu của quán",
+    desc: "Món mới Bạc xỉu cần sữa tươi — mua ở tạp hoá Cô Ba rồi bán thử 10 ly.", steps: [], count: { key: "sell:bacxiu", target: 10 },
+    reward: { money: 120_000, reputation: 8 }, kind: "main", next: "rep-80",
+  },
+  "rep-80": {
+    id: "rep-80", title: "Đạt 80 uy tín", giver: "player", giverName: "Mục tiêu của quán",
+    desc: "Giữ chất lượng đều tay để quán thành chỗ quen của khu phố (uy tín Lv.3).", steps: [], count: { key: "rep", target: 80 },
+    reward: { money: 80_000, reputation: 2 }, kind: "main", next: "sell-tradao-10",
+  },
+  "sell-tradao-10": {
+    id: "sell-tradao-10", title: "Bán 10 ly Trà đào", giver: "player", giverName: "Mục tiêu của quán",
+    desc: "Trà đào mát lạnh hợp ngày nắng. Bán thử 10 ly.", steps: [], count: { key: "sell:tradao", target: 10 },
+    reward: { money: 150_000, reputation: 10 }, kind: "main", next: "happy-50",
+  },
+  "happy-50": {
+    id: "happy-50", title: "Làm hài lòng 50 khách", giver: "player", giverName: "Mục tiêu của quán",
+    desc: "Pha ngon và giao nhanh để 50 khách ra về vui vẻ.", steps: [], count: { key: "happy", target: 50 },
+    reward: { money: 200_000, reputation: 15 }, kind: "main", next: "rep-160",
+  },
+  "rep-160": {
+    id: "rep-160", title: "Đạt 160 uy tín", giver: "player", giverName: "Mục tiêu của quán",
+    desc: "Quán đông khách hẳn lên (uy tín Lv.4).", steps: [], count: { key: "rep", target: 160 },
+    reward: { money: 150_000, reputation: 3 }, kind: "main", next: "rep-280",
+  },
+  "rep-280": {
+    id: "rep-280", title: "Đạt 280 uy tín", giver: "player", giverName: "Mục tiêu của quán",
+    desc: "Trở thành quán cà phê nổi tiếng nhất phố Hoa Sữa (uy tín Lv.5).", steps: [], count: { key: "rep", target: 280 },
+    reward: { money: 300_000, reputation: 5 }, kind: "main",
   },
   "talk-chu-tu": {
     id: "talk-chu-tu", title: "Nói chuyện với chú Tư sửa xe", giver: "chutu", giverName: "Chú Tư",
@@ -102,7 +141,24 @@ export class QuestSystem {
     return ready;
   }
 
-  /** Trao thưởng và chuyển nhiệm vụ sang "đã xong". */
+  /** Đặt tiến độ theo một con số có sẵn (vd. điểm uy tín) — không báo lại nhiệm vụ đã đủ từ trước. Im lặng nếu không đổi. */
+  setCount(key: string, value: number): void {
+    const hit = this.state.value.quests.some((q) => { const d = QUESTS[q.id]; return d?.count?.key === key && q.current < Math.max(0, Math.min(d.count.target, Math.floor(value))); });
+    if (!hit) return;
+    this.state.update((s) => {
+      for (const q of s.quests) {
+        const d = QUESTS[q.id];
+        if (d?.count?.key === key) q.current = Math.max(q.current, Math.max(0, Math.min(d.count.target, Math.floor(value))));
+      }
+    });
+  }
+
+  /** Các nhiệm vụ đếm số đã đủ nhưng chưa nhận thưởng. */
+  get ready(): QuestDef[] {
+    return this.state.value.quests.filter((q) => { const d = QUESTS[q.id]; return !!d?.count && q.current >= d.count.target; }).map((q) => QUESTS[q.id]);
+  }
+
+  /** Trao thưởng và chuyển nhiệm vụ sang "đã xong". Nhiệm vụ chính kế tiếp (nếu có) được nhận luôn. */
   claim(id: string): void {
     const d = QUESTS[id];
     if (!d || !this.isActive(id)) return;
@@ -112,5 +168,6 @@ export class QuestSystem {
       s.money += d.reward.money;
       s.reputation += d.reward.reputation;
     });
+    if (d.next) this.accept(d.next);
   }
 }

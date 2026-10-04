@@ -1,4 +1,5 @@
 import type { DayRecord, DayStats } from "./DayStats";
+import type { DailyState } from "./Daily";
 // Trạng thái game hiển thị trên Master UI. Phase 0 dùng dữ liệu mẫu đúng ảnh Master;
 // các phase sau (lịch, thời tiết, kinh tế, nhiệm vụ) sẽ cập nhật qua update().
 
@@ -43,6 +44,10 @@ export interface GameStateData {
   today?: DayStats;
   /** Kết quả các ngày đã qua (tối đa 7 ngày gần nhất). */
   history?: DayRecord[];
+  /** Cấp uy tín cao nhất đã đạt (Phase 11). */
+  repLevel?: number;
+  /** Nhiệm vụ hằng ngày của hôm nay. */
+  daily?: DailyState;
 }
 
 const WEEKDAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];

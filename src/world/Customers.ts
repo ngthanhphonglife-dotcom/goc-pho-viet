@@ -8,10 +8,10 @@ import type { NavGrid, Pt } from "./Nav";
  */
 export type CustomerType = "office" | "student" | "shipper" | "casual";
 export const TYPES: Record<CustomerType, { name: string; looks: string[]; patience: number; speed: number; likes: Record<string, number> }> = {
-  office: { name: "Khách văn phòng", looks: ["kh_vp1", "kh_vp2"], patience: 40, speed: 125, likes: { den: 3, sua: 3, tratac: 1 } },
-  student: { name: "Học sinh", looks: ["kh_hs1", "kh_hs2"], patience: 55, speed: 105, likes: { den: 0.5, sua: 2, tratac: 4 } },
-  shipper: { name: "Shipper", looks: ["kh_ship1", "kh_ship2"], patience: 30, speed: 150, likes: { den: 3, sua: 3, tratac: 1 } },
-  casual: { name: "Khách ghé quán", looks: ["kh_dl1", "kh_dl2", "kh_dl3"], patience: 60, speed: 110, likes: { den: 2, sua: 2, tratac: 2 } },
+  office: { name: "Khách văn phòng", looks: ["kh_vp1", "kh_vp2"], patience: 40, speed: 125, likes: { den: 3, sua: 3, tratac: 1, bacxiu: 2, tradao: 1 } },
+  student: { name: "Học sinh", looks: ["kh_hs1", "kh_hs2"], patience: 55, speed: 105, likes: { den: 0.5, sua: 2, tratac: 4, bacxiu: 3, tradao: 4 } },
+  shipper: { name: "Shipper", looks: ["kh_ship1", "kh_ship2"], patience: 30, speed: 150, likes: { den: 3, sua: 3, tratac: 1, bacxiu: 1, tradao: 1 } },
+  casual: { name: "Khách ghé quán", looks: ["kh_dl1", "kh_dl2", "kh_dl3"], patience: 60, speed: 110, likes: { den: 2, sua: 2, tratac: 2, bacxiu: 2, tradao: 2 } },
 };
 export const QUEUE_MAX = 6;
 const CX = 1080;
@@ -43,6 +43,8 @@ export class Customers {
   rate: () => number = () => 0;
   /** Chọn món cho loại khách (Boot cung cấp theo thực đơn đang mở + thời tiết). */
   pick: (type: CustomerType) => string = () => "sua";
+  /** Các loại khách đang ghé quán (Boot cung cấp theo cấp uy tín). */
+  types: () => CustomerType[] = () => ["office", "student", "shipper", "casual"];
   onLost: (c: Customer) => void = () => {};
   onChange: () => void = () => {};
   private uid = 0;
@@ -67,7 +69,8 @@ export class Customers {
   /** Thêm một khách (test có thể chỉ định loại/món/hướng). Trả về null nếu hàng đã đủ 6. */
   spawn(type?: CustomerType, recipe?: string, fromLeft = Math.random() < 0.5): Customer | null {
     if (this.queue.length >= QUEUE_MAX || !this.tex) return null;
-    const t = type ?? (["office", "student", "shipper", "casual"] as const)[Math.floor(Math.random() * 4)];
+    const pool = this.types();
+    const t = type ?? pool[Math.floor(Math.random() * pool.length)];
     const def = TYPES[t];
     const look = def.looks[Math.floor(Math.random() * def.looks.length)];
     const info = this.chars.find((c) => c.id === look)!;

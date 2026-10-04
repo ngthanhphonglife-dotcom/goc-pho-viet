@@ -5,8 +5,8 @@ export interface Recipe {
   id: string; name: string; price: number; icon: string;
   needs: Record<string, number>;
   steps: BrewStep[];
-  /** Có giá trị = món chưa mở (ghi điều kiện mở). */
-  locked?: string;
+  /** Cấp uy tín cần để mở món (Phase 11). Không ghi = có từ đầu. */
+  level?: number;
 }
 
 export const INGREDIENTS: Ingredient[] = [
@@ -27,8 +27,10 @@ export const RECIPES: Recipe[] = [
     steps: [{ label: "Cho sữa đặc vào ly", period: 1.9 }, { label: "Cho cà phê vào phin", period: 1.7 }, { label: "Rót nước sôi, chờ nhỏ giọt", period: 1.5 }, { label: "Khuấy đều, thêm đá", period: 1.4 }] },
   { id: "tratac", name: "Trà tắc", price: 20_000, icon: "drink_tratac", needs: { tea: 8, kumquat: 3, sugar: 15, ice: 5, cup: 1 },
     steps: [{ label: "Pha trà", period: 1.9 }, { label: "Vắt tắc", period: 1.7 }, { label: "Thêm đường", period: 1.5 }, { label: "Lắc với đá", period: 1.4 }] },
-  { id: "bacxiu", name: "Bạc xỉu", price: 28_000, icon: "drink_bacxiu", needs: { beans: 10, condensed: 30, milk: 60, ice: 4, cup: 1 }, steps: [], locked: "Mở khi quán được biết đến" },
-  { id: "tradao", name: "Trà đào", price: 25_000, icon: "drink_tradao", needs: { tea: 8, sugar: 15, ice: 5, cup: 1 }, steps: [], locked: "Mở khi quán quen thuộc" },
+  { id: "bacxiu", name: "Bạc xỉu", price: 28_000, icon: "drink_bacxiu", needs: { beans: 10, condensed: 30, milk: 60, ice: 4, cup: 1 }, level: 2,
+    steps: [{ label: "Cho sữa đặc vào ly", period: 1.8 }, { label: "Rót sữa tươi", period: 1.6 }, { label: "Thêm chút cà phê", period: 1.4 }, { label: "Khuấy nhẹ, thêm đá", period: 1.3 }] },
+  { id: "tradao", name: "Trà đào", price: 25_000, icon: "drink_tradao", needs: { tea: 8, sugar: 15, ice: 5, cup: 1 }, level: 3,
+    steps: [{ label: "Pha trà", period: 1.8 }, { label: "Thêm đường", period: 1.6 }, { label: "Lắc với đá", period: 1.4 }, { label: "Rót ra ly", period: 1.3 }] },
 ];
 
 export const QUALITY = ["", "Tạm được", "Ngon", "Tuyệt hảo"] as const;

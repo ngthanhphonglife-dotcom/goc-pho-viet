@@ -22,7 +22,7 @@ Nguyên tắc sắp xếp: dựng **thế giới → nhân vật → điều khi
 | 8 | **Khách hàng AI + Đơn hàng:** loại khách (văn phòng, học sinh, shipper, du lịch, khách quen), hàng chờ tối đa 6, bảng đơn có hẹn giờ, giao món – nhận tiền – tip, phản ứng hài lòng → uy tín | 3.9, 3.8 §5–7 | ✅ |
 | 9 | **Tạp hoá Cô Ba:** mua nguyên liệu (− số lượng +), giá dao động theo ngày | 3.4 §4, 3.19 §2 | ✅ |
 | 10 | **Kết thúc ngày + Thống kê:** tổng kết doanh thu/chi phí/lợi nhuận, số ly, khách hài lòng, biểu đồ khách theo giờ | 3.8 §9, 3.9 §11 | ✅ |
-| 11 | **Uy tín & Tiến trình:** cấp uy tín Lv.1–5, mở khoá món, khách mới, nhiệm vụ chính/phụ/hằng ngày/chuỗi | 3.10 | |
+| 11 | **Uy tín & Tiến trình:** cấp uy tín Lv.1–5, mở khoá món, khách mới, nhiệm vụ chính/phụ/hằng ngày/chuỗi | 3.10 | ✅ |
 | 12 | **Nâng cấp quầy:** mái che, máy pha, bảng menu, bàn ghế; quầy Lv.1 → Lv.4 đổi hình | 3.8 §8·§11, 3.4 §7, 3.10 §6 | |
 | 13 | **Trang trí & Tuỳ biến:** kiểu quầy, mái, bảng hiệu, đèn, cây; chế độ sửa (di chuyển/xoay/xoá); hiệu ứng lên khách | 3.13 | |
 | 14 | **NPC sống: lịch trình + tìm đường + đám đông:** lịch hằng ngày từng NPC, tránh vật cản, mật độ theo giờ cao điểm, phản ứng thời tiết (che ô, trú mưa) | 3.5 §4–7, 3.6 | |

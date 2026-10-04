@@ -6,9 +6,10 @@ export type Mood = "happy" | "ok" | "meh";
 export interface Sale { price: number; tip: number; reputation: number; mood: Mood }
 
 /** quality 1–3; patience = phần kiên nhẫn còn lại 0–1. */
-export function settle(r: Recipe, quality: number, patience: number): Sale {
+export function settle(r: Recipe, quality: number, patience: number, bonusTip = 0): Sale {
   let tip = quality === 3 ? Math.max(2000, Math.round((r.price * 0.1) / 1000) * 1000) : 0;
   if (quality >= 2 && patience > 0.6) tip += 1000;
+  if (quality >= 2) tip += bonusTip; // thưởng theo cấp uy tín (Phase 11)
   const mood: Mood = quality === 3 || (quality === 2 && patience > 0.3) ? "happy" : quality === 2 || patience > 0.5 ? "ok" : "meh";
   return { price: r.price, tip, reputation: mood === "happy" ? 2 : mood === "ok" ? 1 : 0, mood };
 }

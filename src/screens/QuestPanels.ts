@@ -1,5 +1,6 @@
 import { formatMoney } from "../core/GameState";
 import type { QuestDef, QuestSystem } from "../core/QuestSystem";
+import type { Daily } from "../core/Daily";
 import { ICONS, button, el, img } from "./dom";
 import { Modal } from "./screens";
 
@@ -73,7 +74,8 @@ export class QuestDonePanel extends Modal {
 
 /** Sổ nhiệm vụ: đang làm + đã xong. */
 export class QuestLogPanel extends Modal {
-  constructor(host: HTMLElement, private quests: QuestSystem, private currentOf: (id: string) => number) { super(host, "Sổ nhiệm vụ", "QuestLog"); }
+  constructor(host: HTMLElement, private quests: QuestSystem, private currentOf: (id: string) => number,
+    private daily: Daily | null = null, private day: () => number = () => 1, private onClaim: (id: string) => void = () => {}) { super(host, "Sổ nhiệm vụ", "QuestLog"); }
 
   show(): void {
     this.body.replaceChildren();
@@ -85,9 +87,30 @@ export class QuestLogPanel extends Modal {
       const c = el("div", "q-card", list);
       c.dataset.quest = d.id;
       el("strong", "q-title", c, d.title);
-      el("span", "q-giver", c, d.giverName);
+      const g = el("span", "q-giver", c, d.giverName);
+      el("em", "q-kind " + (d.kind === "main" ? "main" : "side"), g, d.kind === "main" ? "Chính" : "Phụ");
       steps(c, d, this.quests.flags(d.id), this.currentOf(d.id));
       rewards(c, d);
+    }
+    if (this.daily) {
+      el("h3", "q-section", list, `Hằng ngày (Ngày ${this.day()})`);
+      for (const q of this.daily.items) {
+        const full = q.current >= q.target;
+        const c = el("div", "daily-card" + (q.claimed ? " claimed" : full ? " full" : ""), list);
+        c.dataset.daily = q.id;
+        const t = el("div", "daily-info", c);
+        el("strong", "", t, q.title);
+        const shown = q.key === "revenue" ? `${formatMoney(q.current)} / ${formatMoney(q.target)}` : `${q.current}/${q.target}`;
+        el("span", "daily-prog", t, `${shown} · thưởng +${formatMoney(q.money)}, +${q.reputation} uy tín`);
+        const bar = el("div", "daily-bar", t);
+        el("i", "", bar).style.width = Math.round((q.current / q.target) * 100) + "%";
+        if (q.claimed) el("span", "daily-done", c, "✓ Đã nhận");
+        else {
+          const b = button("primary", c, "Nhận", () => { this.onClaim(q.id); this.show(); });
+          b.dataset.claim = q.id;
+          b.disabled = !full;
+        }
+      }
     }
     const done = this.quests.completed;
     if (done.length) {

@@ -39,7 +39,7 @@ export class StallPanel extends Modal {
     const list = el("div", "menu-list", this.body);
     for (const r of RECIPES) {
       const n = this.biz.canMake(r);
-      const c = el("div", "menu-card" + (r.locked ? " locked" : ""), list);
+      const c = el("div", "menu-card" + (this.biz.isLocked(r) ? " locked" : ""), list);
       c.dataset.recipe = r.id;
       img(ITEMS + r.icon + ".svg", "menu-icon", c, r.name);
       const t = el("div", "menu-info", c);
@@ -47,7 +47,7 @@ export class StallPanel extends Modal {
       el("strong", "", h, r.name);
       el("span", "menu-price", h, formatMoney(r.price));
       el("span", "menu-needs", t, Object.entries(r.needs).map(([id, q]) => `${ing(id).name} ${q}${ing(id).unit === "viên" || ing(id).unit === "quả" || ing(id).unit === "cái" ? " " + ing(id).unit : ing(id).unit}`).join(" · "));
-      if (r.locked) { el("span", "menu-lock", t, "🔒 " + r.locked); continue; }
+      if (this.biz.isLocked(r)) { el("span", "menu-lock", t, "🔒 " + this.biz.lockText(r)); continue; }
       el("span", "menu-can" + (n ? "" : " none"), t, n ? `Còn pha được ${n} ly` : "Thiếu nguyên liệu");
       const b = button("primary", c, "Pha chế", () => { this.close(); this.brew(r); });
       b.dataset.brew = r.id;

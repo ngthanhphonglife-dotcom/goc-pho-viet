@@ -1,6 +1,7 @@
 import { INGREDIENTS, PACKS, READY_MAX, RECIPES, packPrice, type Recipe } from "../data/items";
 import type { GameState } from "./GameState";
 import { ensureToday } from "./DayStats";
+import { currentLevel, levelInfo } from "./Reputation";
 
 /** Kho nguyên liệu + khay ly pha sẵn (Phase 7). */
 export class Business {
@@ -18,9 +19,18 @@ export class Business {
   get readyFull(): boolean { return this.ready.length >= READY_MAX; }
   recipe(id: string): Recipe { return RECIPES.find((r) => r.id === id)!; }
 
+  /** Cấp uy tín hiện tại. */
+  get level(): number { return currentLevel(this.state.value); }
+  /** Món chưa mở (chưa đủ cấp uy tín). */
+  isLocked(r: Recipe): boolean { return (r.level ?? 1) > this.level; }
+  /** Dòng chữ điều kiện mở món. */
+  lockText(r: Recipe): string { return `Mở ở uy tín Lv.${r.level} — ${levelInfo(r.level ?? 1).name}`; }
+  /** Các món đã mở. */
+  get openRecipes(): Recipe[] { return RECIPES.filter((r) => !this.isLocked(r)); }
+
   /** Còn pha được mấy ly món này. */
   canMake(r: Recipe): number {
-    if (r.locked) return 0;
+    if (this.isLocked(r)) return 0;
     return Math.min(...Object.entries(r.needs).map(([id, n]) => Math.floor(this.stock(id) / n)));
   }
 

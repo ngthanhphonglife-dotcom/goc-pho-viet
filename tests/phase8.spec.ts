@@ -202,7 +202,8 @@ test("Phase 8: hàng chờ, hết kiên nhẫn, hết món, về quầy, tần s
   expect(auto, "Bật tự sinh mà 60 giây cao điểm không có khách").toBeGreaterThanOrEqual(1);
   expect(auto).toBeLessThanOrEqual(6);
   const picks: string[] = await G(page, "Array.from({ length: 60 }, () => b.pickRecipe('student'))");
-  expect(picks.every((r) => ["den", "sua", "tratac"].includes(r)), "Khách gọi món chưa mở").toBe(true);
+  const openIds: string[] = await G(page, "b.biz.openRecipes.map((r) => r.id)"); // Phase 11: món mở theo cấp uy tín
+  expect(picks.every((r) => openIds.includes(r)), "Khách gọi món chưa mở").toBe(true);
   expect(picks.filter((r) => r === "tratac").length).toBeGreaterThan(picks.filter((r) => r === "den").length);
 
   // --- sang ngày mới: dọn hàng khách, số liệu ngày về 0 ---

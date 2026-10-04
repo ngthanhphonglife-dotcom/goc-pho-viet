@@ -17,7 +17,7 @@ import type { Character } from "../world/Character";
 import type { Hotspot } from "../world/World";
 import { Business } from "../core/Business";
 import { BrewPanel, IngredientsPanel, StallPanel } from "../screens/StallPanels";
-import { QUALITY, RECIPES, type Recipe } from "../data/items";
+import { QUALITY, type Recipe } from "../data/items";
 import { OrdersPanel } from "../screens/OrdersPanel";
 import { ShopPanel } from "../screens/ShopPanel";
 import { SHOP_CLOSE, SHOP_OPEN } from "../data/items";
@@ -35,6 +35,9 @@ import { TYPES } from "../world/Customers";
 import { World } from "../world/World";
 import type { ActionId } from "../core/actions";
 import { VERSION } from "../version";
+import { Daily } from "../core/Daily";
+import { customerTypes, levelOf, tipBonus } from "../core/Reputation";
+import { LevelUpPanel, ReputationPanel } from "../screens/ReputationPanels";
 
 const ICON_NAMES = ["icon_bag", "icon_calendar", "icon_check", "icon_decor", "icon_ingredients", "icon_map", "icon_money", "icon_quest",
   "icon_quest_scroll", "icon_sell", "icon_settings", "icon_shop", "icon_stall", "icon_star", "icon_upgrade", "icon_weather_rain", "icon_weather_sun", "icon_weather_cloud", "icon_weather_moon"];
@@ -60,6 +63,10 @@ export class Boot {
   questDone!: QuestDonePanel;
   questLog!: QuestLogPanel;
   readonly biz = new Business(this.state);
+  readonly daily = new Daily(this.state);
+  reputationPanel!: ReputationPanel;
+  levelUpPanel!: LevelUpPanel;
+  private progressing = false;
   ingredientsPanel!: IngredientsPanel;
   stallPanel!: StallPanel;
   brewPanel!: BrewPanel;
@@ -210,6 +217,7 @@ export class Boot {
     this.world.isPaused = () => this.fader.busy || !!document.querySelector(".overlay.open, .dialogue.open");
     cs.rate = () => customerRate(this.state.value.minuteOfDay, this.time.kind, this.state.value.reputation);
     cs.pick = (type) => this.pickRecipe(type);
+    cs.types = () => customerTypes(this.biz.level);
     cs.onLost = () => {
       this.state.update((s) => { this.today(s).lost++; s.reputation = Math.max(0, s.reputation - LOST_REPUTATION); }); // ghi số liệu trước để nhớ uy tín đầu ngày
       this.ui.toast("Một khách bỏ đi vì chờ lâu…");
@@ -252,7 +260,16 @@ export class Boot {
     this.dialogue = new Dialogue(this.hosts.app, import.meta.env.BASE_URL + "art/chars/");
     this.questOffer = new QuestOfferPanel(this.hosts.app);
     this.questDone = new QuestDonePanel(this.hosts.app);
-    this.questLog = new QuestLogPanel(this.hosts.app, this.quests, (id) => this.state.value.quests.find((q) => q.id === id)?.current ?? 0);
+    this.questLog = new QuestLogPanel(this.hosts.app, this.quests, (id) => this.state.value.quests.find((q) => q.id === id)?.current ?? 0,
+      this.daily, () => this.state.value.day, (id) => this.claimDaily(id));
+
+    // Phase 11: cấp uy tín — chạm ô ngôi sao trên HUD để xem
+    this.reputationPanel = new ReputationPanel(this.hosts.app);
+    this.levelUpPanel = new LevelUpPanel(this.hosts.app);
+    const repPill = this.hosts.ui.querySelector<HTMLElement>('[data-name="ReputationPanel"]')!;
+    repPill.style.cursor = "pointer";
+    repPill.style.pointerEvents = "auto"; // các ô HUD mặc định không nhận chạm
+    repPill.addEventListener("click", () => { if (this.screen === "game") { sfx.play("tap"); this.reputationPanel.show(this.state.value); } });
 
     // Phase 5: đồng hồ chạy khi đang trong game và không mở bảng nào; ánh sáng + thời tiết theo trạng thái
     this.weatherPanel = new WeatherPanel(this.hosts.app);
@@ -323,6 +340,9 @@ export class Boot {
       fitTexts(this.ui.root);
       this.screen = "game";
       this.biz.ensure();
+      // save cũ chưa có cấp uy tín → lấy theo điểm hiện có, không hiện bảng lên cấp dồn
+      if (this.state.value.repLevel === undefined) this.state.patchQuiet({ repLevel: levelOf(this.state.value.reputation) });
+      this.quests.setCount("rep", this.state.value.reputation);
       this.abortTalk = false;
       this.time.ended = false;
       this.summarizing = false;
@@ -373,7 +393,7 @@ export class Boot {
     if (this.summarizing || this.screen !== "game") return;
     this.summarizing = true;
     this.controls.reset();
-    for (const p of [this.ordersPanel, this.stallPanel, this.ingredientsPanel, this.shopPanel, this.weatherPanel, this.questLog]) p.close();
+    for (const p of [this.ordersPanel, this.stallPanel, this.ingredientsPanel, this.shopPanel, this.weatherPanel, this.questLog, this.reputationPanel]) p.close();
     this.ui.closePlaceholder();
     this.saveNow();
     const choice = await this.summaryPanel.show(this.state.value, early);
@@ -395,7 +415,7 @@ export class Boot {
     const kind = this.time.kind;
     const hot = kind === "sunny" && this.state.value.weather.temperatureC >= 31;
     const rain = kind === "lightRain" || kind === "heavyRain";
-    const open = RECIPES.filter((r) => !r.locked);
+    const open = this.biz.openRecipes;
     const w = open.map((r) => (TYPES[type].likes[r.id] ?? 1) * (rain && r.id !== "tratac" ? 1.5 : 1) * (hot && r.id === "tratac" ? 1.6 : 1));
     let x = Math.random() * w.reduce((a, b) => a + b, 0);
     for (let i = 0; i < open.length; i++) { x -= w[i]; if (x <= 0) return open[i].id; }
@@ -438,7 +458,7 @@ export class Boot {
       this.ui.toast(this.biz.addReady(r.id, q) ? "Khách đi mất rồi — ly để lên khay." : "Khách đi mất rồi, khay cũng đầy…");
       return;
     }
-    const sale = settle(r, q, front.patience / front.max);
+    const sale = settle(r, q, front.patience / front.max, tipBonus(this.biz.level));
     cs.serve(uid, sale.mood);
     this.state.update((s) => {
       const t = this.today(s); // tạo số liệu ngày trước khi cộng uy tín (để nhớ uy tín đầu ngày)
@@ -454,10 +474,56 @@ export class Boot {
     sfx.play("coin");
     this.ui.toast(`+${formatMoney(sale.price)}${sale.tip ? ` (tip +${formatMoney(sale.tip)})` : ""} · ${QUALITY[q]}`);
     this.saveNow();
-    if (r.id === "den" || r.id === "sua") {
-      const ready = this.quests.count("sell-coffee");
-      if (ready.length) { this.ordersPanel.close(); await this.reward(ready); }
-    }
+    // nhiệm vụ: chính/phụ đếm theo món, khách hài lòng; hằng ngày đếm thêm tổng ly và doanh thu
+    if (r.id === "den" || r.id === "sua") this.quests.count("sell-coffee");
+    this.quests.count("sell:" + r.id);
+    if (sale.mood === "happy") this.quests.count("happy");
+    const daily = [...this.daily.count("sell-any"), ...this.daily.count("sell:" + r.id), ...this.daily.count("revenue", sale.price), ...(sale.mood === "happy" ? this.daily.count("happy") : [])];
+    for (const d of daily) this.ui.toast(`Xong việc hằng ngày: ${d.title} — mở Nhiệm vụ để nhận thưởng`);
+    if (this.hasProgress) { this.ordersPanel.close(); await this.progress(); }
+  }
+
+  // ---------------------------------------------------------------- uy tín & tiến trình (Phase 11)
+
+  /** Có bảng lên cấp / nhận thưởng đang chờ hiện không. */
+  get hasProgress(): boolean {
+    const s = this.state.value;
+    this.quests.setCount("rep", s.reputation);
+    return levelOf(s.reputation) > (s.repLevel ?? 1) || this.quests.ready.length > 0;
+  }
+
+  /** Hiện lần lượt: bảng lên cấp uy tín, rồi thưởng các nhiệm vụ đếm số đã đủ (nhiệm vụ kế tiếp trong chuỗi tự nhận). */
+  async progress(): Promise<void> {
+    if (this.progressing || this.screen !== "game") return;
+    this.progressing = true;
+    try {
+      for (let guard = 0; guard < 20 && this.screen === "game" && !this.abortTalk; guard++) {
+        const s = this.state.value;
+        const lv = levelOf(s.reputation);
+        if (lv > (s.repLevel ?? 1)) {
+          const next = (s.repLevel ?? 1) + 1;
+          this.state.update({ repLevel: next });
+          sfx.play("quest");
+          await this.levelUpPanel.show(next);
+          this.saveNow();
+          continue;
+        }
+        this.quests.setCount("rep", s.reputation);
+        const ready = this.quests.ready;
+        if (!ready.length) break;
+        await this.reward(ready);
+      }
+    } finally { this.progressing = false; }
+  }
+
+  /** Nhận thưởng một nhiệm vụ hằng ngày. */
+  claimDaily(id: string): void {
+    const q = this.daily.claim(id);
+    if (!q) return;
+    sfx.play("coin");
+    this.ui.toast(`+${formatMoney(q.money)} · +${q.reputation} uy tín`);
+    this.saveNow();
+    if (this.hasProgress) { this.questLog.close(); void this.progress(); }
   }
 
   serveReady(uid: number): void {
@@ -529,6 +595,7 @@ export class Boot {
     const ready = this.quests.event("talk", c.info.id);
     for (const e of effects) if (e.type === "complete" && this.quests.isActive(e.quest) && !ready.some((d) => d.id === e.quest)) ready.push(this.quests.def(e.quest));
     await this.reward(ready);
+    await this.progress();
     for (const e of effects) {
       if (e.type === "offer" && this.quests.isNew(e.quest)) {
         if (await this.questOffer.show(this.quests.def(e.quest))) {
@@ -546,6 +613,7 @@ export class Boot {
   async visit(h: Hotspot): Promise<void> {
     if (this.screen !== "game") return;
     await this.reward(this.quests.event("visit", h.id));
+    await this.progress();
     if (h.action === "shop") this.showShop(); // đã đứng ở tiệm
     else if (h.action) this.ui.invoke(h.action as ActionId);
     else this.ui.toast(h.name);
@@ -566,6 +634,8 @@ export class Boot {
     this.ordersPanel.close();
     this.shopPanel.close();
     this.summaryPanel.close();
+    this.levelUpPanel.close();
+    this.questDone.close();
     this.world.customers.clear();
     this.saveNow();
     window.clearInterval(this.autosaveTimer);

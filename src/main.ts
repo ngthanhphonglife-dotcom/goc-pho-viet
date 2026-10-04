@@ -6,6 +6,8 @@ import { music } from "./core/Music";
 import { clipKey, voice, VOICE_ENABLED } from "./core/Voice";
 import { dialogueFor } from "./data/dialogues";
 import { DEMO_STATE } from "./core/GameState";
+import * as rep from "./core/Reputation";
+import { makeDaily } from "./core/Daily";
 
 const $ = (id: string) => document.getElementById(id)!;
 const boot = new Boot({ app: $("app"), world: $("world"), ui: $("ui"), screens: $("screens"), controls: $("controls") });
@@ -21,6 +23,8 @@ const hook = {
   music,
   voice,
   clipKey,
+  rep,
+  makeDaily,
   voiceEnabled: VOICE_ENABLED,
   dialogueFor,
   get dialogue() { return boot.dialogue; },
